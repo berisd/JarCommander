@@ -23,7 +23,7 @@ public class Application extends JFrame implements Runnable {
     public Application() {
         setSize(1024, 768);
         setLocationRelativeTo(null);
-        setTitle("JXCommander");
+        setTitle("JaxCommander");
 
         setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         addWindowListener(new CustomWindowAdapter());
