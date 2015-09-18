@@ -1,5 +1,5 @@
 /*
- * This file is part of JXCommander.
+ * This file is part of JaxCommander.
  *
  * Copyright 2015 by Bernd Riedl <bernd.riedl@gmail.com>
  *
@@ -20,15 +20,14 @@ public class JaxTable extends JPanel {
     JTable table;
 
     public JaxTable() {
-        GridLayout gridLayout = new GridLayout(1,1);
+        GridLayout gridLayout = new GridLayout(1, 1);
 
         setLayout(gridLayout);
 
-        setBorder (BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
+        setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
                 "Table Title",
                 TitledBorder.CENTER,
                 TitledBorder.TOP));
-
 
 
         String columnNames[] = {"File", "Date", "Size"};
