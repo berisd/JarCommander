@@ -39,15 +39,13 @@ public class Application extends JFrame implements Runnable {
         c.weightx = 0;
         c.weighty = 0;
         c.gridwidth = 1;
-        c.anchor = GridBagConstraints.WEST;
+        c.anchor = GridBagConstraints.NORTHWEST;
 
         add(createHeaderPanel(), c);
 
         c.fill = GridBagConstraints.BOTH;
         c.weightx = 1;
         c.weighty = 1;
-
-
         c.gridy++;
         add(createContentPanel(), c);
 
@@ -99,10 +97,6 @@ public class Application extends JFrame implements Runnable {
 
     private JLabel createStatusLine() {
         JLabel label = new JLabel("Hier ist der Statusbar");
-
-//        label.setMaximumSize(new Dimension(10000, 20));
-//        label.setPreferredSize(new Dimension(600, 20));
-//        label.setMinimumSize(new Dimension(1, 20));
 
         return label;
     }
@@ -169,13 +163,6 @@ public class Application extends JFrame implements Runnable {
 
     private JMenuBar createMenuBar() {
         JMenuBar menuBar = new JMenuBar();
-//        GridLayout layout = new GridLayout(1, 1);
-//        menuBar.setLayout(layout);
-
-//        menuBar.setMaximumSize(new Dimension(10000, 50));
-//        menuBar.setPreferredSize(new Dimension(600, 50));
-//        menuBar.setMinimumSize(new Dimension(1, 50));
-
         menuBar.add(createFileMenu());
         menuBar.add(createHelpMenu());
 

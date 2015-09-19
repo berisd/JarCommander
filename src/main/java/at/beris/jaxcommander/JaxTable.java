@@ -9,31 +9,48 @@
 
 package at.beris.jaxcommander;
 
-import javax.swing.BorderFactory;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
+import javax.swing.*;
 import javax.swing.border.TitledBorder;
-import java.awt.GridLayout;
+import javax.swing.table.TableModel;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
 
 public class JaxTable extends JPanel {
     JTable table;
 
     public JaxTable() {
-        GridLayout gridLayout = new GridLayout(1, 1);
-
-        setLayout(gridLayout);
+        GridBagLayout gridBagLayout = new GridBagLayout();
+        GridBagConstraints c = new GridBagConstraints();
+        setLayout(gridBagLayout);
 
         setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
                 "Table Title",
                 TitledBorder.CENTER,
                 TitledBorder.TOP));
 
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 0;
+        c.gridy = 0;
+        c.anchor = GridBagConstraints.NORTHWEST;
 
-        String columnNames[] = {"File", "Date", "Size"};
-        Object[][] columndata = {{"autostart.exe", "2012/05/13", "130k"}, {"my image is here.gif", "2012/06/12", "2400k"}};
+        JComboBox<Path> driveList = new JComboBox();
+        for (Path path : FileSystems.getDefault().getRootDirectories()) {
+            driveList.addItem(path);
+        }
 
-        table = new JTable(columndata, columnNames);
-        add(new JScrollPane(table));
+        add(driveList, c);
+
+        c.fill = GridBagConstraints.BOTH;
+        c.weightx = 1;
+        c.weighty = 1;
+        c.gridy++;
+//
+        Path currentRootDirectory = (Path) driveList.getSelectedItem();
+        TableModel fileTableModel = new PathTableModel(currentRootDirectory);
+
+        table = new JTable(fileTableModel);
+        add(new JScrollPane(table), c);
     }
 }
