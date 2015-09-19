@@ -20,28 +20,38 @@ import java.util.List;
 
 public class PathTableModel extends AbstractTableModel {
     private static final int columnCount = 3;
-    private List<Path> pathList;
+    private List<File> fileList;
 
-    public PathTableModel(Path parentPath) {
+    public PathTableModel(Path path) {
+        this.fileList = new ArrayList<>();
+        setPath(path);
+    }
+
+    public void setPath(Path path) {
+        fileList.clear();
+
         DirectoryStream<Path> directoryStream = null;
         try {
-            directoryStream = Files.newDirectoryStream(parentPath);
+            directoryStream = Files.newDirectoryStream(path);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        this.pathList = new ArrayList<>();
+        for (Path childPath : directoryStream)
+            fileList.add(childPath.toFile());
 
-        for (Path path : directoryStream)
-            pathList.add(path);
+        fileList.sort(Application.fileDefaultComparator);
     }
 
     @Override
     public String getColumnName(int columnIndex) {
         switch (columnIndex) {
-            case 0: return "File";
-            case 1: return "Date";
-            case 2: return "Size";
+            case 0:
+                return "File";
+            case 1:
+                return "Last Modified";
+            case 2:
+                return "Size";
 
         }
         return "";
@@ -49,7 +59,7 @@ public class PathTableModel extends AbstractTableModel {
 
     @Override
     public int getRowCount() {
-        return pathList.size();
+        return fileList.size();
     }
 
     @Override
@@ -59,8 +69,7 @@ public class PathTableModel extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        Path path = pathList.get(rowIndex);
-        File file = path.toFile();
+        File file = fileList.get(rowIndex);
 
         switch (columnIndex) {
             case 0:
@@ -68,8 +77,9 @@ public class PathTableModel extends AbstractTableModel {
             case 1:
                 return new java.util.Date(file.lastModified() * 1000).toString();
             case 2:
-                return String.valueOf(file.length() / 1024) + "k";
+                return file.isDirectory() ? "<DIR>" : String.valueOf(file.length() / 1024) + "k";
         }
         return null;
     }
+
 }

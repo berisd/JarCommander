@@ -15,8 +15,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
+import java.io.File;
+import java.util.Comparator;
 
 public class Application extends JFrame implements Runnable {
+
+    public static Comparator<File> fileDefaultComparator = new FileDefaultComparator();
 
     public Application() {
         setSize(1024, 768);
@@ -79,8 +83,8 @@ public class Application extends JFrame implements Runnable {
         GridLayout layout = new GridLayout(1, 2);
 
         panel.setLayout(layout);
-        panel.add(new JaxTable());
-        panel.add(new JaxTable());
+        panel.add(new NavigationPanel());
+        panel.add(new NavigationPanel());
 
         return panel;
     }
