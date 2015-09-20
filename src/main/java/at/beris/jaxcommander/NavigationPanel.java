@@ -9,25 +9,51 @@
 
 package at.beris.jaxcommander;
 
-import javax.swing.*;
+import org.apache.log4j.Logger;
+
+import javax.swing.BorderFactory;
+import javax.swing.JComboBox;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.Timer;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.TableModel;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
+import java.nio.file.StandardWatchEventKinds;
+import java.nio.file.WatchEvent;
+import java.nio.file.WatchKey;
+import java.nio.file.WatchService;
+import java.util.List;
 
 public class NavigationPanel extends JPanel {
+    private final static Logger LOGGER = Logger.getLogger(NavigationPanel.class.getName());
+
     JComboBox<Path> driveComboBox;
     JTextField currentPathTextField;
+    JTable fileTable;
     Path currentPath;
 
     FileTableMouseListener fileTableMouseListener;
+    WatchService watcher;
+    Timer timer;
 
     public NavigationPanel() {
+        try {
+            watcher = FileSystems.getDefault().newWatchService();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
 
         GridBagLayout gridBagLayout = new GridBagLayout();
@@ -50,6 +76,12 @@ public class NavigationPanel extends JPanel {
 
         Path currentRootDirectory = (Path) driveComboBox.getSelectedItem();
         currentPath = currentRootDirectory;
+        try {
+            currentPath.register(watcher, StandardWatchEventKinds.ENTRY_CREATE,
+                    StandardWatchEventKinds.ENTRY_DELETE, StandardWatchEventKinds.ENTRY_MODIFY);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         c.gridy++;
         currentPathTextField = createCurrentPathTextField(currentPath);
@@ -60,8 +92,13 @@ public class NavigationPanel extends JPanel {
         c.weighty = 1;
         c.gridy++;
 
+        fileTable = createFileTable(currentPath);
         fileTableMouseListener = new FileTableMouseListener();
-        add(new JScrollPane(createFileTable(currentPath)), c);
+
+        add(new JScrollPane(fileTable), c);
+
+        timer = new Timer(1000, new PeriodicalTask());
+        timer.start();
     }
 
     private JComboBox createDriveComboBox() {
@@ -89,7 +126,23 @@ public class NavigationPanel extends JPanel {
         return table;
     }
 
-    class FileTableMouseListener extends MouseAdapter {
+    private class PeriodicalTask implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            LOGGER.info(Thread.currentThread().getName() + " PeriodicalTask");
+            WatchKey watchKey = watcher.poll();
+            if (watchKey != null) {
+                List<WatchEvent<?>> watchEvents = watchKey.pollEvents();
+                if (watchEvents.size() > 0) {
+                    ((PathTableModel) fileTable.getModel()).setPath(currentPath);
+                    repaint();
+                }
+                watchKey.reset();
+            }
+
+        }
+    }
+
+    private class FileTableMouseListener extends MouseAdapter {
         @Override
         public void mouseClicked(MouseEvent e) {
             if (e.getClickCount() == 2) {
@@ -107,4 +160,9 @@ public class NavigationPanel extends JPanel {
         }
     }
 
+    public void dispose() {
+        LOGGER.info("dispose");
+        timer.stop();
+        timer = null;
+    }
 }

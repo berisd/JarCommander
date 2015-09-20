@@ -9,6 +9,9 @@
 
 package at.beris.jaxcommander;
 
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -19,10 +22,16 @@ import java.io.File;
 import java.util.Comparator;
 
 public class Application extends JFrame implements Runnable {
+    private final static Logger LOGGER = Logger.getLogger(Application.class.getName());
 
     public static Comparator<File> fileDefaultComparator = new FileDefaultComparator();
 
+    private NavigationPanel navigationPanelLeft;
+    private NavigationPanel navigationPanelRight;
+
     public Application() {
+        initLogging();
+
         setSize(1024, 768);
         setLocationRelativeTo(null);
         setTitle("JaxCommander");
@@ -63,6 +72,11 @@ public class Application extends JFrame implements Runnable {
         pack();
     }
 
+    private void initLogging() {
+        Logger rootLogger = LOGGER.getRootLogger();
+        rootLogger.setLevel(Level.INFO);
+    }
+
     private JPanel createHeaderPanel() {
         JPanel panel = new JPanel();
         GridLayout layout = new GridLayout(1, 1);
@@ -83,8 +97,10 @@ public class Application extends JFrame implements Runnable {
         GridLayout layout = new GridLayout(1, 2);
 
         panel.setLayout(layout);
-        panel.add(new NavigationPanel());
-        panel.add(new NavigationPanel());
+        navigationPanelLeft = new NavigationPanel();
+        panel.add(navigationPanelLeft);
+        navigationPanelRight = new NavigationPanel();
+        panel.add(navigationPanelRight);
 
         return panel;
     }
@@ -178,12 +194,18 @@ public class Application extends JFrame implements Runnable {
         fileMenu.setMnemonic(KeyEvent.VK_F);
         fileMenu.add(createMenuItemNew());
         fileMenu.add(createMenuItemShow());
+        fileMenu.add(createMenuItemQuit());
 
         return fileMenu;
     }
 
     private JMenuItem createMenuItemShow() {
         JMenuItem menuItem = new JMenuItem("Show", KeyEvent.VK_S);
+        return menuItem;
+    }
+
+    private JMenuItem createMenuItemQuit() {
+        JMenuItem menuItem = new JMenuItem("Quit", KeyEvent.VK_Q);
         return menuItem;
     }
 
@@ -227,6 +249,8 @@ public class Application extends JFrame implements Runnable {
                 "Are you sure to quit?", "Quit JXCommander",
                 JOptionPane.YES_NO_OPTION,
                 JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
+            navigationPanelLeft.dispose();
+            navigationPanelRight.dispose();
             System.exit(0);
         }
     }
