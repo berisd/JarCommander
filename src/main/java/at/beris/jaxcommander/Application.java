@@ -12,8 +12,25 @@ package at.beris.jaxcommander;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.AbstractAction;
+import javax.swing.ActionMap;
+import javax.swing.InputMap;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.KeyStroke;
+import javax.swing.WindowConstants;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.EventQueue;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -269,11 +286,21 @@ public class Application extends JFrame implements Runnable {
 
             if (e.getKeyCode() == KeyEvent.VK_F5) {
 //                JOptionPane.showMessageDialog(this., "Copy :)");
-                System.out.println("F5");
+                LOGGER.info("F5");
             }
 
 
         }
     }
 
+    public static void logException(Throwable throwable) {
+        StringBuilder sb = new StringBuilder(throwable.getClass().getName());
+
+        for (StackTraceElement element : throwable.getStackTrace()) {
+            sb.append(System.lineSeparator());
+            sb.append(element.toString());
+        }
+
+        LOGGER.warn(sb.toString());
+    }
 }

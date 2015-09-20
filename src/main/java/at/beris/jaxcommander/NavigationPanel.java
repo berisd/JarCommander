@@ -45,14 +45,15 @@ public class NavigationPanel extends JPanel {
     Path currentPath;
 
     FileTableMouseListener fileTableMouseListener;
-    WatchService watcher;
+    WatchService watchService;
+    WatchKey watchKey;
     Timer timer;
 
     public NavigationPanel() {
         try {
-            watcher = FileSystems.getDefault().newWatchService();
+            watchService = FileSystems.getDefault().newWatchService();
         } catch (IOException e) {
-            e.printStackTrace();
+            Application.logException(e);
         }
 
 
@@ -77,10 +78,10 @@ public class NavigationPanel extends JPanel {
         Path currentRootDirectory = (Path) driveComboBox.getSelectedItem();
         currentPath = currentRootDirectory;
         try {
-            currentPath.register(watcher, StandardWatchEventKinds.ENTRY_CREATE,
+            watchKey = currentPath.register(watchService, StandardWatchEventKinds.ENTRY_CREATE,
                     StandardWatchEventKinds.ENTRY_DELETE, StandardWatchEventKinds.ENTRY_MODIFY);
         } catch (IOException e) {
-            e.printStackTrace();
+            Application.logException(e);
         }
 
         c.gridy++;
@@ -93,7 +94,6 @@ public class NavigationPanel extends JPanel {
         c.gridy++;
 
         fileTable = createFileTable(currentPath);
-        fileTableMouseListener = new FileTableMouseListener();
 
         add(new JScrollPane(fileTable), c);
 
@@ -118,6 +118,7 @@ public class NavigationPanel extends JPanel {
     }
 
     private JTable createFileTable(Path currentPath) {
+        fileTableMouseListener = new FileTableMouseListener();
         TableModel tableModel = new PathTableModel(currentPath);
         JTable table = new JTable(tableModel);
 
@@ -129,12 +130,10 @@ public class NavigationPanel extends JPanel {
     private class PeriodicalTask implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             LOGGER.info(Thread.currentThread().getName() + " PeriodicalTask");
-            WatchKey watchKey = watcher.poll();
             if (watchKey != null) {
                 List<WatchEvent<?>> watchEvents = watchKey.pollEvents();
                 if (watchEvents.size() > 0) {
-                    ((PathTableModel) fileTable.getModel()).setPath(currentPath);
-                    repaint();
+                    refreshDirectory();
                 }
                 watchKey.reset();
             }
@@ -148,16 +147,33 @@ public class NavigationPanel extends JPanel {
             if (e.getClickCount() == 2) {
                 JTable table = (JTable) e.getSource();
                 int row = table.getSelectedRow();
-                System.out.println("Double Clicked on row with index " + row);
+                LOGGER.info("Double Clicked on row with index " + row);
 
                 String fileName = (String) table.getModel().getValueAt(table.getSelectedRow(), 0);
-                currentPath = new File(currentPath.toString(), fileName).toPath();
-                currentPathTextField.setText(currentPath.toString());
-                ((PathTableModel) table.getModel()).setPath(currentPath);
-
-                repaint();
+                changeDirectory(fileName);
             }
         }
+    }
+
+    private void changeDirectory(String fileName) {
+        watchKey.cancel();
+        currentPath = new File(currentPath.toString(), fileName).toPath();
+
+        try {
+            watchKey = currentPath.register(watchService, StandardWatchEventKinds.ENTRY_CREATE,
+                    StandardWatchEventKinds.ENTRY_DELETE, StandardWatchEventKinds.ENTRY_MODIFY);
+        } catch (IOException e) {
+            Application.logException(e);
+        }
+
+
+        currentPathTextField.setText(currentPath.toString());
+        refreshDirectory();
+    }
+
+    private void refreshDirectory() {
+        ((PathTableModel) fileTable.getModel()).setPath(currentPath);
+        repaint();
     }
 
     public void dispose() {
