@@ -36,7 +36,11 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.io.File;
+import java.nio.file.FileStore;
+import java.nio.file.FileSystems;
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 
 public class Application extends JFrame implements Runnable {
     private final static Logger LOGGER = Logger.getLogger(Application.class.getName());
@@ -133,7 +137,7 @@ public class Application extends JFrame implements Runnable {
     }
 
     private JLabel createStatusLine() {
-        JLabel label = new JLabel("Hier ist der Statusbar");
+        JLabel label = new JLabel("Ready.");
 
         return label;
     }
@@ -302,5 +306,31 @@ public class Application extends JFrame implements Runnable {
         }
 
         LOGGER.warn(sb.toString());
+    }
+
+    public static List<SimpleFileStore> getFileStores() {
+        List<SimpleFileStore> fileStoreList = new ArrayList<>();
+//        try {
+        for (FileStore fileStore : FileSystems.getDefault().getFileStores()) {
+//                long total = fileStore.getTotalSpace() / 1024;
+//                long used = (fileStore.getTotalSpace() - fileStore.getUnallocatedSpace()) / 1024;
+//                long avail = fileStore.getUsableSpace() / 1024;
+//                System.out.format("%-20s %12d %12d %12d%n", fileStore, total, used, avail);
+
+            fileStoreList.add(new SimpleFileStore(fileStore));
+
+        }
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+
+        fileStoreList.sort(new Comparator<SimpleFileStore>() {
+            @Override
+            public int compare(SimpleFileStore o1, SimpleFileStore o2) {
+                return o1.getPath().compareTo(o2.getPath());
+            }
+        });
+
+        return fileStoreList;
     }
 }

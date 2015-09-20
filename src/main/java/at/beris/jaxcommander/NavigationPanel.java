@@ -101,12 +101,25 @@ public class NavigationPanel extends JPanel {
         timer.start();
     }
 
+    private class ComboBoxActionListener implements ActionListener {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            JComboBox comboBox = (JComboBox) e.getSource();
+            Path newRootPath = (Path) comboBox.getSelectedItem();
+            changeDirectory(newRootPath.toString());
+        }
+    }
+
     private JComboBox createDriveComboBox() {
         JComboBox<Path> comboBox = new JComboBox();
 
-        for (Path path : FileSystems.getDefault().getRootDirectories()) {
-            comboBox.addItem(path);
+
+        for (SimpleFileStore simpleFileStore : Application.getFileStores()) {
+            comboBox.addItem(simpleFileStore.getPath());
         }
+
+        comboBox.addActionListener(new ComboBoxActionListener());
 
         return comboBox;
     }
@@ -150,14 +163,24 @@ public class NavigationPanel extends JPanel {
                 LOGGER.info("Double Clicked on row with index " + row);
 
                 String fileName = (String) table.getModel().getValueAt(table.getSelectedRow(), 0);
-                changeDirectory(fileName);
+
+                if (new File(currentPath.toString(), fileName).isDirectory()) {
+                    changeDirectory(fileName);
+                }
             }
         }
     }
 
     private void changeDirectory(String fileName) {
-        watchKey.cancel();
-        currentPath = new File(currentPath.toString(), fileName).toPath();
+        if (watchKey != null) {
+            watchKey.cancel();
+        }
+
+        if (currentPath != null)
+            currentPath = new File(currentPath.toString(), fileName).toPath();
+        else
+            currentPath = new File(fileName).toPath();
+        currentPath = currentPath.normalize();
 
         try {
             watchKey = currentPath.register(watchService, StandardWatchEventKinds.ENTRY_CREATE,

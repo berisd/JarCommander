@@ -9,11 +9,14 @@
 
 package at.beris.jaxcommander;
 
+import org.apache.commons.lang3.StringUtils;
+
 import javax.swing.table.AbstractTableModel;
 import java.io.File;
 import java.io.IOException;
 import java.math.RoundingMode;
 import java.nio.file.DirectoryStream;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.DateFormat;
@@ -47,6 +50,10 @@ public class PathTableModel extends AbstractTableModel {
             directoryStream = Files.newDirectoryStream(path);
         } catch (IOException e) {
             e.printStackTrace();
+        }
+
+        if (!path.toString().toString().equals("/") && StringUtils.countMatches(path.toString(), FileSystems.getDefault().getSeparator()) >= 1) {
+            fileList.add(new File(".."));
         }
 
         for (Path childPath : directoryStream)
