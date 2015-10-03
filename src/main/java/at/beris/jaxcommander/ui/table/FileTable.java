@@ -65,7 +65,7 @@ public class FileTable extends JTable {
         rowSorter.setComparator(0, new FileDefaultComparator());
 
         List<RowSorter.SortKey> sortKeys
-                = new ArrayList<RowSorter.SortKey>();
+                = new ArrayList<>();
 
         sortKeys.add(new RowSorter.SortKey(0, SortOrder.ASCENDING));
         rowSorter.setSortKeys(sortKeys);

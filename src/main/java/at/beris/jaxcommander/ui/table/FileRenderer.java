@@ -12,6 +12,7 @@ package at.beris.jaxcommander.ui.table;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.table.TableCellRenderer;
+import java.awt.Color;
 import java.awt.Component;
 import java.io.File;
 
@@ -20,6 +21,13 @@ public class FileRenderer extends JLabel implements TableCellRenderer {
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         File file = (File) value;
         setText(file.getName());
+
+        if (isSelected) {
+            setForeground(Color.RED);
+        } else {
+            setForeground(table.getForeground());
+        }
+
         return this;
     }
 }
