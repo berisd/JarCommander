@@ -9,54 +9,34 @@
 
 package at.beris.jaxcommander;
 
+import at.beris.jaxcommander.ui.table.FileTable;
+import at.beris.jaxcommander.ui.table.FileTableListener;
 import org.apache.log4j.Logger;
 
 import javax.swing.BorderFactory;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.Timer;
 import javax.swing.border.TitledBorder;
-import javax.swing.table.TableModel;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.FileSystems;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.nio.file.Path;
-import java.nio.file.StandardWatchEventKinds;
-import java.nio.file.WatchEvent;
-import java.nio.file.WatchKey;
-import java.nio.file.WatchService;
-import java.util.List;
+import java.nio.file.Paths;
 
 public class NavigationPanel extends JPanel {
     private final static Logger LOGGER = Logger.getLogger(NavigationPanel.class.getName());
 
     JComboBox<Path> driveComboBox;
     JTextField currentPathTextField;
-    JTable fileTable;
+    FileTable fileTable;
     Path currentPath;
 
-    FileTableMouseListener fileTableMouseListener;
-    WatchService watchService;
-    WatchKey watchKey;
-    Timer timer;
-
     public NavigationPanel() {
-        try {
-            watchService = FileSystems.getDefault().newWatchService();
-        } catch (IOException e) {
-            Application.logException(e);
-        }
-
-
         GridBagLayout gridBagLayout = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
         setLayout(gridBagLayout);
@@ -72,17 +52,9 @@ public class NavigationPanel extends JPanel {
         c.anchor = GridBagConstraints.NORTHWEST;
 
         driveComboBox = createDriveComboBox();
-
         add(driveComboBox, c);
 
-        Path currentRootDirectory = (Path) driveComboBox.getSelectedItem();
-        currentPath = currentRootDirectory;
-        try {
-            watchKey = currentPath.register(watchService, StandardWatchEventKinds.ENTRY_CREATE,
-                    StandardWatchEventKinds.ENTRY_DELETE, StandardWatchEventKinds.ENTRY_MODIFY);
-        } catch (IOException e) {
-            Application.logException(e);
-        }
+        currentPath = ((DriveInfo) driveComboBox.getSelectedItem()).getPath();
 
         c.gridy++;
         currentPathTextField = createCurrentPathTextField(currentPath);
@@ -93,30 +65,39 @@ public class NavigationPanel extends JPanel {
         c.weighty = 1;
         c.gridy++;
 
-        fileTable = createFileTable(currentPath);
+        fileTable = new FileTable(currentPath);
+        fileTable.setFileTableListener(new CustomFileTableListener());
 
         add(new JScrollPane(fileTable), c);
-
-        timer = new Timer(1000, new PeriodicalTask());
-        timer.start();
     }
 
     private class ComboBoxActionListener implements ActionListener {
-
         @Override
         public void actionPerformed(ActionEvent e) {
             JComboBox comboBox = (JComboBox) e.getSource();
-            Path newRootPath = (Path) comboBox.getSelectedItem();
-            changeDirectory(newRootPath.toString());
+            Path newRootPath = ((DriveInfo) comboBox.getSelectedItem()).getPath();
+            fileTable.changeDirectory(newRootPath);
+        }
+    }
+
+    private class CurrentPathTextFieldKeyListener extends KeyAdapter {
+        @Override
+        public void keyPressed(KeyEvent e) {
+            super.keyPressed(e);
+
+            JTextField textfield = (JTextField) e.getSource();
+            if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                fileTable.changeDirectory(Paths.get(textfield.getText()));
+            }
         }
     }
 
     private JComboBox createDriveComboBox() {
-        JComboBox<Path> comboBox = new JComboBox();
+        JComboBox<DriveInfo> comboBox = new JComboBox();
+        comboBox.setRenderer(new DriveInfoComboBoxRenderer());
 
-
-        for (SimpleFileStore simpleFileStore : Application.getFileStores()) {
-            comboBox.addItem(simpleFileStore.getPath());
+        for (DriveInfo driveInfo : Application.getDriveInfo()) {
+            comboBox.addItem(driveInfo);
         }
 
         comboBox.addActionListener(new ComboBoxActionListener());
@@ -127,81 +108,19 @@ public class NavigationPanel extends JPanel {
     private JTextField createCurrentPathTextField(Path currentPath) {
         JTextField textField = new JTextField();
         textField.setText(currentPath.toString());
+        textField.addKeyListener(new CurrentPathTextFieldKeyListener());
         return textField;
     }
 
-    private JTable createFileTable(Path currentPath) {
-        fileTableMouseListener = new FileTableMouseListener();
-        TableModel tableModel = new PathTableModel(currentPath);
-        JTable table = new JTable(tableModel);
-
-        table.addMouseListener(fileTableMouseListener);
-
-        return table;
-    }
-
-    private class PeriodicalTask implements ActionListener {
-        public void actionPerformed(ActionEvent e) {
-            LOGGER.info(Thread.currentThread().getName() + " PeriodicalTask");
-            if (watchKey != null) {
-                List<WatchEvent<?>> watchEvents = watchKey.pollEvents();
-                if (watchEvents.size() > 0) {
-                    refreshDirectory();
-                }
-                watchKey.reset();
-            }
-
-        }
-    }
-
-    private class FileTableMouseListener extends MouseAdapter {
+    private class CustomFileTableListener implements FileTableListener {
         @Override
-        public void mouseClicked(MouseEvent e) {
-            if (e.getClickCount() == 2) {
-                JTable table = (JTable) e.getSource();
-                int row = table.getSelectedRow();
-                LOGGER.info("Double Clicked on row with index " + row);
-
-                String fileName = (String) table.getModel().getValueAt(table.getSelectedRow(), 0);
-
-                if (new File(currentPath.toString(), fileName).isDirectory()) {
-                    changeDirectory(fileName);
-                }
-            }
+        public void changeDirectory(Path path) {
+            currentPathTextField.setText(path.toString());
         }
-    }
-
-    private void changeDirectory(String fileName) {
-        if (watchKey != null) {
-            watchKey.cancel();
-        }
-
-        if (currentPath != null)
-            currentPath = new File(currentPath.toString(), fileName).toPath();
-        else
-            currentPath = new File(fileName).toPath();
-        currentPath = currentPath.normalize();
-
-        try {
-            watchKey = currentPath.register(watchService, StandardWatchEventKinds.ENTRY_CREATE,
-                    StandardWatchEventKinds.ENTRY_DELETE, StandardWatchEventKinds.ENTRY_MODIFY);
-        } catch (IOException e) {
-            Application.logException(e);
-        }
-
-
-        currentPathTextField.setText(currentPath.toString());
-        refreshDirectory();
-    }
-
-    private void refreshDirectory() {
-        ((PathTableModel) fileTable.getModel()).setPath(currentPath);
-        repaint();
     }
 
     public void dispose() {
-        LOGGER.info("dispose");
-        timer.stop();
-        timer = null;
+        LOGGER.debug("dispose");
+        fileTable.dispose();
     }
 }

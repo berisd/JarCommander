@@ -23,6 +23,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
 import javax.swing.KeyStroke;
 import javax.swing.WindowConstants;
 import java.awt.Color;
@@ -36,8 +37,10 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.FileStore;
 import java.nio.file.FileSystems;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -45,10 +48,10 @@ import java.util.List;
 public class Application extends JFrame implements Runnable {
     private final static Logger LOGGER = Logger.getLogger(Application.class.getName());
 
-    public static Comparator<File> fileDefaultComparator = new FileDefaultComparator();
-
     private NavigationPanel navigationPanelLeft;
     private NavigationPanel navigationPanelRight;
+
+    private static List<DriveInfo> driveInfoList = new ArrayList<>();
 
     public Application() {
         initLogging();
@@ -113,7 +116,7 @@ public class Application extends JFrame implements Runnable {
         return panel;
     }
 
-    private JPanel createContentPanel() {
+    private JTabbedPane createContentPanel() {
         JPanel panel = new JPanel();
         GridLayout layout = new GridLayout(1, 2);
 
@@ -123,7 +126,10 @@ public class Application extends JFrame implements Runnable {
         navigationPanelRight = new NavigationPanel();
         panel.add(navigationPanelRight);
 
-        return panel;
+        JTabbedPane tabbedPane = new JTabbedPane();
+        tabbedPane.addTab("Local", panel);
+
+        return tabbedPane;
     }
 
     private JPanel createFooterPanel() {
@@ -154,6 +160,9 @@ public class Application extends JFrame implements Runnable {
         toolBar.setLayout(gridLayout);
         toolBar.add(createButtonCopy());
         toolBar.add(createButtonMove());
+        toolBar.add(createButtonMkDir());
+        toolBar.add(createButtonDelete());
+        toolBar.add(createButtonRename());
 
         return toolBar;
     }
@@ -175,6 +184,72 @@ public class Application extends JFrame implements Runnable {
         };
 
         actionMap.put("copy", actionCopy);
+        button.addActionListener(actionCopy);
+
+        return button;
+    }
+
+    private JButton createButtonMkDir() {
+        JButton button = new JButton("F7 MkDir");
+
+        button.setToolTipText("MkDir");
+        button.setMnemonic(KeyEvent.VK_F7);
+
+        InputMap inputMap = button.getInputMap();
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_F7, 0), "mkdir");
+        ActionMap actionMap = button.getActionMap();
+
+        AbstractAction actionCopy = new AbstractAction() {
+            public void actionPerformed(ActionEvent ae) {
+                new JOptionPane("MkDir :)");
+            }
+        };
+
+        actionMap.put("mkdir", actionCopy);
+        button.addActionListener(actionCopy);
+
+        return button;
+    }
+
+    private JButton createButtonDelete() {
+        JButton button = new JButton("F8 Delete");
+
+        button.setToolTipText("Delete");
+        button.setMnemonic(KeyEvent.VK_F8);
+
+        InputMap inputMap = button.getInputMap();
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_F8, 0), "Delete");
+        ActionMap actionMap = button.getActionMap();
+
+        AbstractAction actionCopy = new AbstractAction() {
+            public void actionPerformed(ActionEvent ae) {
+                new JOptionPane("Delete :)");
+            }
+        };
+
+        actionMap.put("delete", actionCopy);
+        button.addActionListener(actionCopy);
+
+        return button;
+    }
+
+    private JButton createButtonRename() {
+        JButton button = new JButton("F9 Rename");
+
+        button.setToolTipText("Rename");
+        button.setMnemonic(KeyEvent.VK_F9);
+
+        InputMap inputMap = button.getInputMap();
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_F9, 0), "Rename");
+        ActionMap actionMap = button.getActionMap();
+
+        AbstractAction actionCopy = new AbstractAction() {
+            public void actionPerformed(ActionEvent ae) {
+                new JOptionPane("Rename :)");
+            }
+        };
+
+        actionMap.put("rename", actionCopy);
         button.addActionListener(actionCopy);
 
         return button;
@@ -308,29 +383,44 @@ public class Application extends JFrame implements Runnable {
         LOGGER.warn(sb.toString());
     }
 
-    public static List<SimpleFileStore> getFileStores() {
-        List<SimpleFileStore> fileStoreList = new ArrayList<>();
-//        try {
-        for (FileStore fileStore : FileSystems.getDefault().getFileStores()) {
+    public static List<DriveInfo> getDriveInfo() {
+        if (driveInfoList.size() > 0)
+            return driveInfoList;
+
+        try {
+            for (FileStore fileStore : FileSystems.getDefault().getFileStores()) {
 //                long total = fileStore.getTotalSpace() / 1024;
 //                long used = (fileStore.getTotalSpace() - fileStore.getUnallocatedSpace()) / 1024;
 //                long avail = fileStore.getUsableSpace() / 1024;
 //                System.out.format("%-20s %12d %12d %12d%n", fileStore, total, used, avail);
 
-            fileStoreList.add(new SimpleFileStore(fileStore));
+                String[] parts = fileStore.toString().split(" ");
+                Path path = new File(parts[0]).toPath();
 
+                DriveInfo driveInfo = new DriveInfo();
+                driveInfo.setPath(path);
+
+                driveInfo.setSpaceTotal(fileStore.getTotalSpace());
+                driveInfo.setSpaceLeft(fileStore.getUsableSpace());
+
+
+                driveInfoList.add(driveInfo);
+
+
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
 
-        fileStoreList.sort(new Comparator<SimpleFileStore>() {
+        driveInfoList.sort(new Comparator<DriveInfo>() {
             @Override
-            public int compare(SimpleFileStore o1, SimpleFileStore o2) {
+            public int compare(DriveInfo o1, DriveInfo o2) {
                 return o1.getPath().compareTo(o2.getPath());
             }
         });
 
-        return fileStoreList;
+        return driveInfoList;
     }
+
+
 }

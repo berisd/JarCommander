@@ -22,6 +22,7 @@ import java.nio.file.Path;
 import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -59,7 +60,7 @@ public class PathTableModel extends AbstractTableModel {
         for (Path childPath : directoryStream)
             fileList.add(childPath.toFile());
 
-        fileList.sort(Application.fileDefaultComparator);
+//        fileList.sort(Application.fileDefaultComparator);
     }
 
     @Override
@@ -74,6 +75,20 @@ public class PathTableModel extends AbstractTableModel {
 
         }
         return "";
+    }
+
+    @Override
+    public Class<?> getColumnClass(int columnIndex) {
+        switch (columnIndex) {
+            case 0:
+                return File.class;
+            case 1:
+                return Date.class;
+            case 2:
+                return Long.class;
+            default:
+                return String.class;
+        }
     }
 
     @Override
@@ -92,11 +107,13 @@ public class PathTableModel extends AbstractTableModel {
 
         switch (columnIndex) {
             case 0:
-                return file.getName();
+                return file;
             case 1:
-                return dateFormat.format(new java.util.Date(file.lastModified()));
+//                return dateFormat.format(new java.util.Date(file.lastModified()));
+                return new java.util.Date(file.lastModified());
             case 2:
-                return file.isDirectory() ? "<DIR>" : numberFormat.format((double) file.length() / 1024) + "K";
+//                return file.isDirectory() ? "<DIR>" : numberFormat.format((double) file.length() / 1024) + "K";
+                return file.length();
         }
         return null;
     }

@@ -29,7 +29,7 @@ public class FileDefaultComparator implements Comparator<File> {
             if (file1.isDirectory() != file2.isDirectory()) {
                 return file1.isDirectory() ? -1 : 1;
             }
-            cmp = file1.getName().compareTo(file2.getName());
+            cmp = file1.getName().toUpperCase().compareTo(file2.getName().toUpperCase());
         }
         return cmp;
     }
