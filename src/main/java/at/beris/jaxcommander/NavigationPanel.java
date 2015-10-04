@@ -9,6 +9,7 @@
 
 package at.beris.jaxcommander;
 
+import at.beris.jaxcommander.ui.SessionPanel;
 import at.beris.jaxcommander.ui.table.FileTable;
 import at.beris.jaxcommander.ui.table.FileTableListener;
 import org.apache.log4j.Logger;
@@ -18,18 +19,26 @@ import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
-import javax.swing.border.TitledBorder;
+import javax.swing.border.Border;
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class NavigationPanel extends JPanel {
     private final static Logger LOGGER = Logger.getLogger(NavigationPanel.class.getName());
+
+    private boolean selected;
+    private Border borderNormal;
+    private Border borderSelected;
 
     JComboBox<Path> driveComboBox;
     JTextField currentPathTextField;
@@ -37,14 +46,19 @@ public class NavigationPanel extends JPanel {
     Path currentPath;
 
     public NavigationPanel() {
+        selected = false;
+
+        addMouseListener(new MouseListener());
+        setBackground(Color.ORANGE);
+
+        borderNormal = BorderFactory.createEtchedBorder();
+        borderSelected = BorderFactory.createLineBorder(Color.RED, 2);
+
         GridBagLayout gridBagLayout = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
         setLayout(gridBagLayout);
 
-        setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
-                "Table Title",
-                TitledBorder.CENTER,
-                TitledBorder.TOP));
+        setBorder(borderNormal);
 
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
@@ -64,11 +78,21 @@ public class NavigationPanel extends JPanel {
         c.weightx = 1;
         c.weighty = 1;
         c.gridy++;
-
         fileTable = new FileTable(currentPath);
         fileTable.setFileTableListener(new CustomFileTableListener());
 
-        add(new JScrollPane(fileTable), c);
+
+        JScrollPane scrollPane = new JScrollPane(fileTable);
+        scrollPane.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                LOGGER.info("scrollPane clicked");
+                super.mouseClicked(e);
+                childDispatchMouseEvent(e);
+            }
+        });
+
+        add(scrollPane, c);
     }
 
     private class ComboBoxActionListener implements ActionListener {
@@ -94,6 +118,14 @@ public class NavigationPanel extends JPanel {
 
     private JComboBox createDriveComboBox() {
         JComboBox<DriveInfo> comboBox = new JComboBox();
+        comboBox.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                childDispatchMouseEvent(e);
+            }
+        });
+
         comboBox.setRenderer(new DriveInfoComboBoxRenderer());
 
         for (DriveInfo driveInfo : Application.getDriveInfo()) {
@@ -107,9 +139,22 @@ public class NavigationPanel extends JPanel {
 
     private JTextField createCurrentPathTextField(Path currentPath) {
         JTextField textField = new JTextField();
+        textField.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                childDispatchMouseEvent(e);
+            }
+        });
         textField.setText(currentPath.toString());
         textField.addKeyListener(new CurrentPathTextFieldKeyListener());
         return textField;
+    }
+
+    private void childDispatchMouseEvent(MouseEvent e) {
+        LOGGER.info("childDispatchMouseEvent");
+        NavigationPanel navigationPanel = (NavigationPanel) ((Component) e.getSource()).getParent();
+        navigationPanel.dispatchEvent(new java.awt.event.MouseEvent(navigationPanel, e.getID(), e.getWhen(), e.getModifiers(), e.getX(), e.getY(), e.getClickCount(), false));
     }
 
     private class CustomFileTableListener implements FileTableListener {
@@ -126,5 +171,25 @@ public class NavigationPanel extends JPanel {
 
     public FileTable getFileTable() {
         return fileTable;
+    }
+
+    public boolean isSelected() {
+        return selected;
+    }
+
+    public void setSelected(boolean selected) {
+        this.selected = selected;
+        setBorder(selected ? borderSelected : borderNormal);
+    }
+
+    private class MouseListener extends MouseAdapter {
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            LOGGER.info("mouseClicked");
+            super.mouseClicked(e);
+
+            SessionPanel sessionPanel = (SessionPanel) ((Component) e.getSource()).getParent().getParent();
+            sessionPanel.dispatchEvent(e);
+        }
     }
 }

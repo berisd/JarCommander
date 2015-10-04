@@ -14,12 +14,15 @@ import at.beris.jaxcommander.FileDefaultComparator;
 import at.beris.jaxcommander.PathTableModel;
 import org.apache.log4j.Logger;
 
+import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.RowSorter;
 import javax.swing.SortOrder;
 import javax.swing.Timer;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -54,6 +57,7 @@ public class FileTable extends JTable {
         mouseEventHandler = new FileTableMouseListener();
         tableModel = new PathTableModel(path);
 
+        setBackground(Color.PINK);
         setModel(tableModel);
         getColumnModel().getColumn(0).setCellRenderer(new FileRenderer());
         getColumnModel().getColumn(1).setCellRenderer(new DateRenderer());
@@ -96,6 +100,7 @@ public class FileTable extends JTable {
     private class FileTableMouseListener extends MouseAdapter {
         @Override
         public void mouseClicked(MouseEvent e) {
+            LOGGER.info("mouseClicked");
             if (e.getClickCount() == 2) {
                 JTable table = (JTable) e.getSource();
                 int rowIndex = convertRowIndexToModel(table.getSelectedRow());
@@ -107,6 +112,9 @@ public class FileTable extends JTable {
                     changeDirectory(file.toPath());
                 }
             }
+
+            JScrollPane scrollPane = (JScrollPane) ((Component) e.getSource()).getParent().getParent();
+            scrollPane.dispatchEvent(new java.awt.event.MouseEvent(scrollPane, e.getID(), e.getWhen(), e.getModifiers(), e.getX(), e.getY(), e.getClickCount(), false));
         }
     }
 
