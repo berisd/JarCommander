@@ -14,7 +14,7 @@ import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.util.Locale;
 
-public abstract class Localization {
+public final class Localization {
     private static DateFormat dateFormat;
     private static NumberFormat numberFormat;
 

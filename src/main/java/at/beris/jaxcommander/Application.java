@@ -9,13 +9,13 @@
 
 package at.beris.jaxcommander;
 
+import at.beris.jaxcommander.action.ActionType;
+import at.beris.jaxcommander.helper.ActionHelper;
+import at.beris.jaxcommander.ui.SessionPanel;
+import at.beris.jaxcommander.ui.button.ButtonFactory;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
-import javax.swing.AbstractAction;
-import javax.swing.ActionMap;
-import javax.swing.InputMap;
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -23,7 +23,6 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
 import javax.swing.KeyStroke;
 import javax.swing.WindowConstants;
 import java.awt.Color;
@@ -33,7 +32,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.io.File;
@@ -46,25 +44,24 @@ import java.util.Comparator;
 import java.util.List;
 
 public class Application extends JFrame implements Runnable {
-    private final static Logger LOGGER = Logger.getLogger(Application.class.getName());
-
-    private NavigationPanel navigationPanelLeft;
-    private NavigationPanel navigationPanelRight;
+    private final static Logger LOGGER = Logger.getLogger(Application.class);
 
     private static List<DriveInfo> driveInfoList = new ArrayList<>();
+
+    private SessionPanel sessionPanel;
 
     public Application() {
         initLogging();
 
         setSize(1024, 768);
         setLocationRelativeTo(null);
-        setTitle("JaxCommander");
+        setTitle("Jax Commander");
 
         setFocusable(true);
         setPreferredSize(new Dimension(1024, 768));
         setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+
         addWindowListener(new CustomWindowAdapter());
-        addKeyListener(new CustomKeyListener());
 
         GridBagLayout gridBagLayout = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
@@ -84,14 +81,16 @@ public class Application extends JFrame implements Runnable {
         c.weightx = 1;
         c.weighty = 1;
         c.gridy++;
-        add(createContentPanel(), c);
+        sessionPanel = new SessionPanel();
+        add(sessionPanel, c);
 
         c.fill = GridBagConstraints.HORIZONTAL;
         c.anchor = GridBagConstraints.SOUTHWEST;
         c.weightx = 0;
         c.weighty = 0;
         c.gridy++;
-        add(createFooterPanel(), c);
+        JPanel footerPanel = createFooterPanel();
+        add(footerPanel, c);
 
         pack();
     }
@@ -114,22 +113,6 @@ public class Application extends JFrame implements Runnable {
         panel.add(createMenuBar());
 
         return panel;
-    }
-
-    private JTabbedPane createContentPanel() {
-        JPanel panel = new JPanel();
-        GridLayout layout = new GridLayout(1, 2);
-
-        panel.setLayout(layout);
-        navigationPanelLeft = new NavigationPanel();
-        panel.add(navigationPanelLeft);
-        navigationPanelRight = new NavigationPanel();
-        panel.add(navigationPanelRight);
-
-        JTabbedPane tabbedPane = new JTabbedPane();
-        tabbedPane.addTab("Local", panel);
-
-        return tabbedPane;
     }
 
     private JPanel createFooterPanel() {
@@ -158,123 +141,13 @@ public class Application extends JFrame implements Runnable {
         toolBar.setMinimumSize(new Dimension(1, 40));
 
         toolBar.setLayout(gridLayout);
-        toolBar.add(createButtonCopy());
-        toolBar.add(createButtonMove());
-        toolBar.add(createButtonMkDir());
-        toolBar.add(createButtonDelete());
-        toolBar.add(createButtonRename());
+        toolBar.add(ButtonFactory.createButton(ActionType.COPY));
+        toolBar.add(ButtonFactory.createButton(ActionType.MOVE));
+        toolBar.add(ButtonFactory.createButton(ActionType.MAKE_DIR));
+        toolBar.add(ButtonFactory.createButton(ActionType.DELETE));
+        toolBar.add(ButtonFactory.createButton(ActionType.RENAME));
 
         return toolBar;
-    }
-
-    private JButton createButtonCopy() {
-        JButton button = new JButton("F5 Copy");
-
-        button.setToolTipText("Copy");
-        button.setMnemonic(KeyEvent.VK_F5);
-
-        InputMap inputMap = button.getInputMap();
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0), "copy");
-        ActionMap actionMap = button.getActionMap();
-
-        AbstractAction actionCopy = new AbstractAction() {
-            public void actionPerformed(ActionEvent ae) {
-                new JOptionPane("Copy :)");
-            }
-        };
-
-        actionMap.put("copy", actionCopy);
-        button.addActionListener(actionCopy);
-
-        return button;
-    }
-
-    private JButton createButtonMkDir() {
-        JButton button = new JButton("F7 MkDir");
-
-        button.setToolTipText("MkDir");
-        button.setMnemonic(KeyEvent.VK_F7);
-
-        InputMap inputMap = button.getInputMap();
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_F7, 0), "mkdir");
-        ActionMap actionMap = button.getActionMap();
-
-        AbstractAction actionCopy = new AbstractAction() {
-            public void actionPerformed(ActionEvent ae) {
-                new JOptionPane("MkDir :)");
-            }
-        };
-
-        actionMap.put("mkdir", actionCopy);
-        button.addActionListener(actionCopy);
-
-        return button;
-    }
-
-    private JButton createButtonDelete() {
-        JButton button = new JButton("F8 Delete");
-
-        button.setToolTipText("Delete");
-        button.setMnemonic(KeyEvent.VK_F8);
-
-        InputMap inputMap = button.getInputMap();
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_F8, 0), "Delete");
-        ActionMap actionMap = button.getActionMap();
-
-        AbstractAction actionCopy = new AbstractAction() {
-            public void actionPerformed(ActionEvent ae) {
-                new JOptionPane("Delete :)");
-            }
-        };
-
-        actionMap.put("delete", actionCopy);
-        button.addActionListener(actionCopy);
-
-        return button;
-    }
-
-    private JButton createButtonRename() {
-        JButton button = new JButton("F9 Rename");
-
-        button.setToolTipText("Rename");
-        button.setMnemonic(KeyEvent.VK_F9);
-
-        InputMap inputMap = button.getInputMap();
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_F9, 0), "Rename");
-        ActionMap actionMap = button.getActionMap();
-
-        AbstractAction actionCopy = new AbstractAction() {
-            public void actionPerformed(ActionEvent ae) {
-                new JOptionPane("Rename :)");
-            }
-        };
-
-        actionMap.put("rename", actionCopy);
-        button.addActionListener(actionCopy);
-
-        return button;
-    }
-
-    private JButton createButtonMove() {
-        JButton button = new JButton("F6 Move");
-
-        button.setToolTipText("Move");
-        button.setMnemonic(KeyEvent.VK_F6);
-
-        InputMap inputMap = button.getInputMap();
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0), "move");
-        ActionMap actionMap = button.getActionMap();
-
-        AbstractAction actionCopy = new AbstractAction() {
-            public void actionPerformed(ActionEvent ae) {
-                new JOptionPane("Move :)");
-            }
-        };
-
-        actionMap.put("move", actionCopy);
-        button.addActionListener(actionCopy);
-
-        return button;
     }
 
     private JMenuBar createMenuBar() {
@@ -301,7 +174,8 @@ public class Application extends JFrame implements Runnable {
     }
 
     private JMenuItem createMenuItemQuit() {
-        JMenuItem menuItem = new JMenuItem("Quit", KeyEvent.VK_Q);
+        JMenuItem menuItem = new JMenuItem("Quit");
+        menuItem.setAction(ActionHelper.getAction(ActionType.QUIT));
         return menuItem;
     }
 
@@ -321,12 +195,13 @@ public class Application extends JFrame implements Runnable {
 //        fileMenu.getAccessibleContext().setAccessibleDescription(
 //                "The only menu in this program that has menu items");
 
-        JMenuItem menuItem = new JMenuItem("About",
-                KeyEvent.VK_T);
-        menuItem.setAccelerator(KeyStroke.getKeyStroke(
-                KeyEvent.VK_A, ActionEvent.ALT_MASK));
+        JMenuItem menuItem = new JMenuItem("About");
+        menuItem.setAction(ActionHelper.getAction(ActionType.SHOW_ABOUT_DIALOG));
+//        menuItem.setAccelerator(KeyStroke.getKeyStroke(
+//                KeyEvent.VK_A, ActionEvent.ALT_MASK));
 //        menuItem.getAccessibleContext().setAccessibleDescription(
 //                "This doesn't really do anything");
+
         fileMenu.add(menuItem);
 
         return fileMenu;
@@ -342,11 +217,9 @@ public class Application extends JFrame implements Runnable {
 
     public void quit() {
         if (JOptionPane.showConfirmDialog(null,
-                "Are you sure to quit?", "Quit JXCommander",
+                "Are you sure to quit?", "Quit Jax Commander",
                 JOptionPane.YES_NO_OPTION,
                 JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
-            navigationPanelLeft.dispose();
-            navigationPanelRight.dispose();
             System.exit(0);
         }
     }
@@ -355,20 +228,6 @@ public class Application extends JFrame implements Runnable {
         @Override
         public void windowClosing(java.awt.event.WindowEvent windowEvent) {
             quit();
-        }
-    }
-
-    class CustomKeyListener extends KeyAdapter {
-        @Override
-        public void keyPressed(KeyEvent e) {
-            super.keyPressed(e);
-
-            if (e.getKeyCode() == KeyEvent.VK_F5) {
-//                JOptionPane.showMessageDialog(this., "Copy :)");
-                LOGGER.info("F5");
-            }
-
-
         }
     }
 
@@ -421,6 +280,4 @@ public class Application extends JFrame implements Runnable {
 
         return driveInfoList;
     }
-
-
 }

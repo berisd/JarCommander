@@ -123,4 +123,8 @@ public class NavigationPanel extends JPanel {
         LOGGER.debug("dispose");
         fileTable.dispose();
     }
+
+    public FileTable getFileTable() {
+        return fileTable;
+    }
 }
