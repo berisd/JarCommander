@@ -23,6 +23,7 @@ public final class ButtonFactory {
         button.setText(action.getKeyStrokeString() + " " + action.getName());
         button.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(action.getKeyStroke(), action.getKey());
         button.getActionMap().put(action.getKey(), action);
+        button.setAction(action);
         return button;
     }
 }
