@@ -62,6 +62,12 @@ public class FileTable extends JTable {
         LOGGER.debug("dispose");
     }
 
+    public void refresh() {
+        ((PathTableModel) getModel()).setPath(path);
+        rowSorter.sort();
+        repaint();
+    }
+
     public void setPath(Path path) {
         this.path = path;
         ((PathTableModel) getModel()).setPath(path);

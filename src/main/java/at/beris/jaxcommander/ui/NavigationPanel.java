@@ -173,8 +173,13 @@ public class NavigationPanel extends JPanel {
             int modelIndex = fileTable.getRowSorter().convertRowIndexToModel(rowIndex);
             fileList.add((File) fileTable.getModel().getValueAt(modelIndex, 0));
         }
-        return null;
+        return fileList;
     }
+
+    public void refreshDirectory() {
+        fileTable.refresh();
+    }
+
 
     public void changeDirectory(Path newPath) {
 

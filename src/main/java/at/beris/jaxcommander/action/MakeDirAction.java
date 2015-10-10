@@ -51,14 +51,17 @@ public class MakeDirAction extends CustomAction {
 
         String newDirectoryMame = JOptionPane.showInputDialog("New directory name");
 
-        File newDirectory = new File(sourcePanel.getCurrentPath().toString(), newDirectoryMame);
+        if (newDirectoryMame != null) {
+            File newDirectory = new File(sourcePanel.getCurrentPath().toString(), newDirectoryMame);
 
-        try {
-            Files.createDirectory(newDirectory.toPath());
-        } catch (AccessDeniedException ex) {
-            JOptionPane.showMessageDialog(application, "Access Denied!" + System.lineSeparator() + "(No permissions?)", "Error", JOptionPane.ERROR_MESSAGE);
-        } catch (IOException ex) {
-            ex.printStackTrace();
+            try {
+                Files.createDirectory(newDirectory.toPath());
+                sourcePanel.refreshDirectory();
+            } catch (AccessDeniedException ex) {
+                JOptionPane.showMessageDialog(application, "Access Denied!" + System.lineSeparator() + "(No permissions?)", "Error", JOptionPane.ERROR_MESSAGE);
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
         }
     }
 
