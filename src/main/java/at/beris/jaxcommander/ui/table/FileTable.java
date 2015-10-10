@@ -21,7 +21,6 @@ import javax.swing.SortOrder;
 import javax.swing.Timer;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -57,7 +56,6 @@ public class FileTable extends JTable {
         mouseEventHandler = new FileTableMouseListener();
         tableModel = new PathTableModel(path);
 
-        setBackground(Color.PINK);
         setModel(tableModel);
         getColumnModel().getColumn(0).setCellRenderer(new FileRenderer());
         getColumnModel().getColumn(1).setCellRenderer(new DateRenderer());

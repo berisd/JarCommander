@@ -30,8 +30,11 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
 public class NavigationPanel extends JPanel {
     private final static Logger LOGGER = Logger.getLogger(NavigationPanel.class.getName());
@@ -49,7 +52,6 @@ public class NavigationPanel extends JPanel {
         selected = false;
 
         addMouseListener(new MouseListener());
-        setBackground(Color.ORANGE);
 
         borderNormal = BorderFactory.createEtchedBorder();
         borderSelected = BorderFactory.createLineBorder(Color.RED, 2);
@@ -160,6 +162,7 @@ public class NavigationPanel extends JPanel {
     private class CustomFileTableListener implements FileTableListener {
         @Override
         public void changeDirectory(Path path) {
+            currentPath = path;
             currentPathTextField.setText(path.toString());
         }
     }
@@ -191,5 +194,18 @@ public class NavigationPanel extends JPanel {
             SessionPanel sessionPanel = (SessionPanel) ((Component) e.getSource()).getParent().getParent();
             sessionPanel.dispatchEvent(e);
         }
+    }
+
+    public List<File> getSelection() {
+        List<File> fileList = new ArrayList<>();
+        for (int rowIndex : fileTable.getSelectedRows()) {
+            int modelIndex = fileTable.getRowSorter().convertRowIndexToModel(rowIndex);
+            fileList.add((File) fileTable.getModel().getValueAt(modelIndex, 0));
+        }
+        return null;
+    }
+
+    public Path getCurrentPath() {
+        return currentPath;
     }
 }

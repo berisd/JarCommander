@@ -14,7 +14,6 @@ import org.apache.log4j.Logger;
 
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
-import java.awt.Color;
 import java.awt.GridLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -22,8 +21,8 @@ import java.awt.event.MouseEvent;
 public class SessionPanel extends JTabbedPane {
     private final static Logger LOGGER = Logger.getLogger(SessionPanel.class);
 
-    private NavigationPanel navigationPanelLeft;
-    private NavigationPanel navigationPanelRight;
+    private NavigationPanel leftNavigationPanel;
+    private NavigationPanel rightNavigationPanel;
 
     public SessionPanel() {
         super();
@@ -34,19 +33,13 @@ public class SessionPanel extends JTabbedPane {
         GridLayout layout = new GridLayout(1, 2);
 
         panel.setLayout(layout);
-        navigationPanelLeft = new NavigationPanel();
-        navigationPanelLeft.setSelected(true);
-        panel.add(navigationPanelLeft);
-        navigationPanelRight = new NavigationPanel();
-        panel.add(navigationPanelRight);
-
-        setBackground(Color.MAGENTA);
+        leftNavigationPanel = new NavigationPanel();
+        leftNavigationPanel.setSelected(true);
+        panel.add(leftNavigationPanel);
+        rightNavigationPanel = new NavigationPanel();
+        panel.add(rightNavigationPanel);
 
         addTab("Local", panel);
-    }
-
-    public void copy() {
-        LOGGER.info("copy");
     }
 
     private class MouseListener extends MouseAdapter {
@@ -57,9 +50,28 @@ public class SessionPanel extends JTabbedPane {
 
             if (e.getSource() instanceof NavigationPanel) {
                 NavigationPanel navigationPanel = (NavigationPanel) e.getSource();
-                navigationPanelLeft.setSelected(navigationPanelLeft.equals(navigationPanel));
-                navigationPanelRight.setSelected(navigationPanelRight.equals(navigationPanel));
+                leftNavigationPanel.setSelected(leftNavigationPanel.equals(navigationPanel));
+                rightNavigationPanel.setSelected(rightNavigationPanel.equals(navigationPanel));
             }
         }
+    }
+
+    public NavigationPanel getLeftNavigationPanel() {
+        return leftNavigationPanel;
+    }
+
+    public NavigationPanel getRightNavigationPanel() {
+        return rightNavigationPanel;
+    }
+
+    public NavigationPanel getSelectedNavigationPanel() {
+        NavigationPanel selectedPanel = null;
+
+        if (selectedPanel == null && leftNavigationPanel.isSelected())
+            selectedPanel = leftNavigationPanel;
+        if (selectedPanel == null && rightNavigationPanel.isSelected())
+            selectedPanel = rightNavigationPanel;
+
+        return selectedPanel;
     }
 }

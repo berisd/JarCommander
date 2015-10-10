@@ -9,12 +9,21 @@
 
 package at.beris.jaxcommander.action;
 
+import at.beris.jaxcommander.Application;
+import at.beris.jaxcommander.NavigationPanel;
+import at.beris.jaxcommander.ui.SessionPanel;
 import org.apache.log4j.Logger;
 
 import javax.swing.Action;
+import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 
 public class MakeDirAction extends CustomAction {
     private final static Logger LOGGER = Logger.getLogger(MakeDirAction.class);
@@ -35,6 +44,19 @@ public class MakeDirAction extends CustomAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         LOGGER.info("MkDir");
+        Application application = (Application) SwingUtilities.getRoot((Component) e.getSource());
+        SessionPanel sessionPanel = application.getSessionPanel();
+        NavigationPanel sourcePanel = sessionPanel.getSelectedNavigationPanel();
+
+        String newDirectoryMame = JOptionPane.showInputDialog("New directory name");
+
+        File newDirectory = new File(sourcePanel.getCurrentPath().toString(), newDirectoryMame);
+
+        try {
+            Files.createDirectory(newDirectory.toPath());
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }
     }
 
     @Override

@@ -197,8 +197,6 @@ public class Application extends JFrame implements Runnable {
 
         JMenuItem menuItem = new JMenuItem("About");
         menuItem.setAction(ActionHelper.getAction(ActionType.SHOW_ABOUT_DIALOG));
-//        menuItem.setAccelerator(KeyStroke.getKeyStroke(
-//                KeyEvent.VK_A, ActionEvent.ALT_MASK));
 //        menuItem.getAccessibleContext().setAccessibleDescription(
 //                "This doesn't really do anything");
 
@@ -279,5 +277,9 @@ public class Application extends JFrame implements Runnable {
         });
 
         return driveInfoList;
+    }
+
+    public SessionPanel getSessionPanel() {
+        return sessionPanel;
     }
 }

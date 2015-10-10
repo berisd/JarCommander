@@ -20,10 +20,12 @@ public final class ButtonFactory {
     public static JButton createButton(ActionType actionType) {
         JButton button = new JButton();
         CustomAction action = ActionHelper.getAction(actionType);
-        button.setText(action.getKeyStrokeString() + " " + action.getName());
+
+        button.setAction(action);
         button.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(action.getKeyStroke(), action.getKey());
         button.getActionMap().put(action.getKey(), action);
-        button.setAction(action);
+        button.setText(action.getKeyStrokeString() + " " + action.getName());
+
         return button;
     }
 }
