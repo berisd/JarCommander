@@ -23,6 +23,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.AccessDeniedException;
 import java.nio.file.Files;
 
 public class MakeDirAction extends CustomAction {
@@ -42,9 +43,9 @@ public class MakeDirAction extends CustomAction {
     }
 
     @Override
-    public void actionPerformed(ActionEvent e) {
+    public void actionPerformed(ActionEvent event) {
         LOGGER.info("MkDir");
-        Application application = (Application) SwingUtilities.getRoot((Component) e.getSource());
+        Application application = (Application) SwingUtilities.getRoot((Component) event.getSource());
         SessionPanel sessionPanel = application.getSessionPanel();
         NavigationPanel sourcePanel = sessionPanel.getSelectedNavigationPanel();
 
@@ -54,8 +55,10 @@ public class MakeDirAction extends CustomAction {
 
         try {
             Files.createDirectory(newDirectory.toPath());
-        } catch (IOException e1) {
-            e1.printStackTrace();
+        } catch (AccessDeniedException ex) {
+            JOptionPane.showMessageDialog(application, "Access Denied!" + System.lineSeparator() + "(No permissions?)", "Error", JOptionPane.ERROR_MESSAGE);
+        } catch (IOException ex) {
+            ex.printStackTrace();
         }
     }
 
