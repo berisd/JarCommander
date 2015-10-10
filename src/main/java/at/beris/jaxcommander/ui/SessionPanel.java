@@ -37,6 +37,7 @@ public class SessionPanel extends JTabbedPane {
         leftNavigationPanel.setSelected(true);
         panel.add(leftNavigationPanel);
         rightNavigationPanel = new NavigationPanel();
+        rightNavigationPanel.setSelected(false);
         panel.add(rightNavigationPanel);
 
         addTab("Local", panel);

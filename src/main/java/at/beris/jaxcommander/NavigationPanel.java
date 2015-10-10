@@ -83,7 +83,6 @@ public class NavigationPanel extends JPanel {
         fileTable = new FileTable(currentPath);
         fileTable.setFileTableListener(new CustomFileTableListener());
 
-
         JScrollPane scrollPane = new JScrollPane(fileTable);
         scrollPane.addMouseListener(new MouseAdapter() {
             @Override
@@ -181,8 +180,12 @@ public class NavigationPanel extends JPanel {
     }
 
     public void setSelected(boolean selected) {
+        if (!this.selected && selected)
+            getFileTable().getSelectionModel().clearSelection();
+
         this.selected = selected;
         setBorder(selected ? borderSelected : borderNormal);
+        getFileTable().setRowSelectionAllowed(selected);
     }
 
     private class MouseListener extends MouseAdapter {
