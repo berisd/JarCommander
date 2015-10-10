@@ -10,7 +10,7 @@
 package at.beris.jaxcommander.action;
 
 import at.beris.jaxcommander.Application;
-import at.beris.jaxcommander.NavigationPanel;
+import at.beris.jaxcommander.ui.NavigationPanel;
 import at.beris.jaxcommander.ui.SessionPanel;
 import org.apache.log4j.Logger;
 

@@ -7,7 +7,9 @@
  * Some rights reserved. See COPYING, AUTHORS.
  */
 
-package at.beris.jaxcommander;
+package at.beris.jaxcommander.ui.combobox;
+
+import at.beris.jaxcommander.DriveInfo;
 
 import javax.swing.JLabel;
 import javax.swing.JList;

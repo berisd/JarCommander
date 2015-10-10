@@ -9,14 +9,19 @@
 
 package at.beris.jaxcommander.ui;
 
-import at.beris.jaxcommander.NavigationPanel;
+import at.beris.jaxcommander.DriveInfo;
+import at.beris.jaxcommander.ui.combobox.DriveComboBox;
+import at.beris.jaxcommander.ui.table.FileTable;
 import org.apache.log4j.Logger;
 
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
+import javax.swing.JTextField;
+import java.awt.Component;
 import java.awt.GridLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.nio.file.Path;
 
 public class SessionPanel extends JTabbedPane {
     private final static Logger LOGGER = Logger.getLogger(SessionPanel.class);
@@ -33,14 +38,26 @@ public class SessionPanel extends JTabbedPane {
         GridLayout layout = new GridLayout(1, 2);
 
         panel.setLayout(layout);
-        leftNavigationPanel = new NavigationPanel();
+        leftNavigationPanel = createNavigationPanel();
         leftNavigationPanel.setSelected(true);
         panel.add(leftNavigationPanel);
-        rightNavigationPanel = new NavigationPanel();
+        rightNavigationPanel = createNavigationPanel();
         rightNavigationPanel.setSelected(false);
         panel.add(rightNavigationPanel);
 
         addTab("Local", panel);
+    }
+
+    private NavigationPanel createNavigationPanel() {
+        DriveComboBox driveComboBox = new DriveComboBox();
+        Path currentPath = ((DriveInfo) driveComboBox.getSelectedItem()).getPath();
+
+        final FileTable fileTable = new FileTable(currentPath);
+
+        JTextField currentPathTextField = new JTextField();
+        currentPathTextField.setText(currentPath.toString());
+
+        return new NavigationPanel(fileTable, driveComboBox, currentPathTextField);
     }
 
     private class MouseListener extends MouseAdapter {

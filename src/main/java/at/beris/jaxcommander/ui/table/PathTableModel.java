@@ -7,7 +7,7 @@
  * Some rights reserved. See COPYING, AUTHORS.
  */
 
-package at.beris.jaxcommander;
+package at.beris.jaxcommander.ui.table;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -32,8 +32,10 @@ public class PathTableModel extends AbstractTableModel {
 
     private DateFormat dateFormat;
     private NumberFormat numberFormat;
+    private Path path;
 
     public PathTableModel(Path path) {
+        this.path = path;
         dateFormat = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.MEDIUM, Locale.getDefault());
         numberFormat = NumberFormat.getInstance(Locale.getDefault());
         numberFormat.setMinimumFractionDigits(2);
@@ -43,7 +45,12 @@ public class PathTableModel extends AbstractTableModel {
         setPath(path);
     }
 
+    public Path getPath() {
+        return path;
+    }
+
     public void setPath(Path path) {
+        this.path = path;
         fileList.clear();
 
         DirectoryStream<Path> directoryStream = null;
@@ -59,8 +66,6 @@ public class PathTableModel extends AbstractTableModel {
 
         for (Path childPath : directoryStream)
             fileList.add(childPath.toFile());
-
-//        fileList.sort(Application.fileDefaultComparator);
     }
 
     @Override
@@ -109,10 +114,8 @@ public class PathTableModel extends AbstractTableModel {
             case 0:
                 return file;
             case 1:
-//                return dateFormat.format(new java.util.Date(file.lastModified()));
                 return new java.util.Date(file.lastModified());
             case 2:
-//                return file.isDirectory() ? "<DIR>" : numberFormat.format((double) file.length() / 1024) + "K";
                 return file.length();
         }
         return null;
