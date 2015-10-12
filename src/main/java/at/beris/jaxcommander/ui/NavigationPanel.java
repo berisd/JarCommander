@@ -15,15 +15,18 @@ import at.beris.jaxcommander.ui.table.FileTable;
 import at.beris.jaxcommander.ui.table.FileTableMouseListener;
 import org.apache.log4j.Logger;
 
+import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.KeyStroke;
 import javax.swing.border.Border;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyAdapter;
@@ -36,7 +39,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-public class NavigationPanel extends JPanel {
+public class NavigationPanel extends JPanel implements ActionListener {
     private final static Logger LOGGER = Logger.getLogger(NavigationPanel.class.getName());
 
     private boolean selected;
@@ -44,9 +47,9 @@ public class NavigationPanel extends JPanel {
     private Border borderSelected;
     private Path currentPath;
 
-    DriveComboBox driveComboBox;
-    JTextField currentPathTextField;
-    FileTable fileTable;
+    private DriveComboBox driveComboBox;
+    private JTextField currentPathTextField;
+    private FileTable fileTable;
 
     public NavigationPanel(FileTable fileTable, DriveComboBox driveComboBox, JTextField currentPathTextField) {
         selected = false;
@@ -60,71 +63,111 @@ public class NavigationPanel extends JPanel {
 
         fileTable.addMouseListener(new FileTableMouseListener());
 
-        driveComboBox.addItemListener(new ItemListener() {
+        getInputMap(WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_HOME, 0), "scrollToTop");
+        getActionMap().put("enterDirectoy", new AbstractAction() {
             @Override
-            public void itemStateChanged(ItemEvent e) {
-                LOGGER.info("drivecombo itemStateChanged " + e.getItem().getClass());
-                DriveInfo driveInfo = (DriveInfo) e.getItem();
-                changeDirectory(driveInfo.getPath());
-            }
-        });
-        driveComboBox.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                super.mouseClicked(e);
-                childDispatchMouseEvent(e);
+            public void actionPerformed(ActionEvent e) {
+                LOGGER.info("enterDirectoy");
             }
         });
 
-        currentPathTextField.addKeyListener(new KeyAdapter() {
+        getActionMap().put("directoryUp", new AbstractAction() {
             @Override
-            public void keyPressed(KeyEvent e) {
-                super.keyPressed(e);
+            public void actionPerformed(ActionEvent e) {
+                LOGGER.info("directoryUp");
+            }
+        });
 
-                JTextField textfield = (JTextField) e.getSource();
-                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-                    changeDirectory(Paths.get(textfield.getText()));
-                }
-            }
-        });
-        currentPathTextField.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                super.mouseClicked(e);
-                childDispatchMouseEvent(e);
-            }
-        });
+        driveComboBox.addItemListener(new
+
+                                              ItemListener() {
+                                                  @Override
+                                                  public void itemStateChanged(ItemEvent e) {
+                                                      LOGGER.info("drivecombo itemStateChanged " + e.getItem().getClass());
+                                                      DriveInfo driveInfo = (DriveInfo) e.getItem();
+                                                      changeDirectory(driveInfo.getPath());
+                                                  }
+                                              }
+
+        );
+        driveComboBox.addMouseListener(new
+                                               MouseAdapter() {
+                                                   @Override
+                                                   public void mouseClicked(MouseEvent e) {
+                                                       super.mouseClicked(e);
+                                                       childDispatchMouseEvent(e);
+                                                   }
+                                               }
+        );
+
+        currentPathTextField.addKeyListener(new
+                                                    KeyAdapter() {
+                                                        @Override
+                                                        public void keyPressed(KeyEvent e) {
+                                                            super.keyPressed(e);
+
+                                                            JTextField textfield = (JTextField) e.getSource();
+                                                            if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                                                                changeDirectory(Paths.get(textfield.getText()));
+                                                            }
+                                                        }
+                                                    }
+
+        );
+        currentPathTextField.addMouseListener(new
+
+                                                      MouseAdapter() {
+                                                          @Override
+                                                          public void mouseClicked(MouseEvent e) {
+                                                              super.mouseClicked(e);
+                                                              childDispatchMouseEvent(e);
+                                                          }
+                                                      }
+
+        );
 
 
         borderNormal = BorderFactory.createEtchedBorder();
         borderSelected = BorderFactory.createLineBorder(Color.RED, 2);
 
         GridBagConstraints c = new GridBagConstraints();
-        setLayout(new GridBagLayout());
+
+        setLayout(new GridBagLayout()
+
+        );
+
         setBorder(borderNormal);
 
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
         c.gridy = 0;
         c.anchor = GridBagConstraints.NORTHWEST;
+
         add(driveComboBox, c);
 
         c.gridy++;
+
         add(currentPathTextField, c);
 
         c.fill = GridBagConstraints.BOTH;
         c.weightx = 1;
         c.weighty = 1;
         c.gridy++;
-        JScrollPane scrollPane = new JScrollPane(fileTable);
-        scrollPane.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                LOGGER.info("scrollPane clicked");
-                super.mouseClicked(e);
-                childDispatchMouseEvent(e);
-            }
-        });
+        ActionScrollPane scrollPane = new ActionScrollPane(fileTable);
+
+
+        scrollPane.addMouseListener(new
+                                            MouseAdapter() {
+                                                @Override
+                                                public void mouseClicked(MouseEvent e) {
+                                                    LOGGER.info("scrollPane clicked");
+                                                    super.mouseClicked(e);
+                                                    childDispatchMouseEvent(e);
+                                                }
+                                            }
+
+        );
+
         add(scrollPane, c);
     }
 
@@ -156,6 +199,24 @@ public class NavigationPanel extends JPanel {
         getFileTable().setRowSelectionAllowed(selected);
     }
 
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        LOGGER.info("actionPerformed " + e.getClass().getName());
+        if (e.getSource() instanceof FileTable) {
+            FileTable table = (FileTable) e.getSource();
+
+            if (e.getActionCommand().equals("enterItem")) {
+                int rowIndex = table.getSelectedRow();
+                if (rowIndex != -1) {
+                    File file = (File) table.getValueAt(rowIndex, 0);
+                    changeDirectory(file.toPath());
+                }
+            } else if (e.getActionCommand().equals("levelUp")) {
+                changeDirectory(new File("..").toPath());
+            }
+        }
+    }
+
     private class MouseListener extends MouseAdapter {
         @Override
         public void mouseClicked(MouseEvent e) {
@@ -182,6 +243,9 @@ public class NavigationPanel extends JPanel {
 
 
     public void changeDirectory(Path newPath) {
+        if (newPath.toString().equals("..") && currentPath.equals(currentPath.getRoot()))
+            return;
+
 
         if (newPath.toString().equals("..")) {
             currentPath = currentPath.getParent();
