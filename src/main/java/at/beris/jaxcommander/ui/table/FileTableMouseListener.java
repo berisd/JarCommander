@@ -9,14 +9,19 @@
 
 package at.beris.jaxcommander.ui.table;
 
+import at.beris.jaxcommander.action.ActionCommand;
 import at.beris.jaxcommander.ui.NavigationPanel;
 import org.apache.log4j.Logger;
 
 import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import java.awt.Component;
+import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
+
+import static at.beris.jaxcommander.action.ActionCommand.*;
 
 public class FileTableMouseListener extends MouseAdapter {
 
@@ -26,11 +31,11 @@ public class FileTableMouseListener extends MouseAdapter {
     public void mouseClicked(MouseEvent e) {
         LOGGER.info("mouseClicked");
 
-        JScrollPane scrollPane = (JScrollPane) ((Component) e.getSource()).getParent().getParent();
-        NavigationPanel navigationPanel = (NavigationPanel) scrollPane.getParent();
+        FileTablePane pane = (FileTablePane) ((Component) e.getSource()).getParent().getParent();
+        NavigationPanel navigationPanel = (NavigationPanel) pane.getParent();
 
         if (e.getClickCount() == 2) {
-            FileTable table = (FileTable) e.getSource();
+            JTable table = (JTable) e.getSource();
             int rowIndex = table.convertRowIndexToModel(table.getSelectedRow());
             LOGGER.info("Double Clicked on row with index " + rowIndex);
 
@@ -41,6 +46,6 @@ public class FileTableMouseListener extends MouseAdapter {
             }
         }
 
-        scrollPane.dispatchEvent(new java.awt.event.MouseEvent(scrollPane, e.getID(), e.getWhen(), e.getModifiers(), e.getX(), e.getY(), e.getClickCount(), false));
+        pane.actionPerformed(new ActionEvent(e.getSource(), e.getID(), SELECT_NAVIGATION_PANEL));
     }
 }

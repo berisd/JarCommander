@@ -11,7 +11,7 @@ package at.beris.jaxcommander;
 
 import at.beris.jaxcommander.ui.NavigationPanel;
 import at.beris.jaxcommander.ui.combobox.DriveComboBox;
-import at.beris.jaxcommander.ui.table.FileTable;
+import at.beris.jaxcommander.ui.table.FileTablePane;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -22,22 +22,22 @@ import static org.junit.Assert.assertEquals;
 public class NavigationPanelTest {
 
     private NavigationPanel navPanel;
-    private FileTable fileTable;
+    private FileTablePane fileTablePane;
 
     @Before
     public void setUp() {
-        fileTable = new FileTable();
+        fileTablePane = new FileTablePane();
         DriveComboBox driveComboBox = new DriveComboBox();
         JTextField currentPathTextField = new JTextField();
-        navPanel = new NavigationPanel(fileTable, driveComboBox, currentPathTextField);
+        navPanel = new NavigationPanel(fileTablePane, driveComboBox, currentPathTextField);
     }
 
     @Test
     public void whenPanelGetsSelectedThenTableSelectionMustBeEmpty() throws Exception {
-        fileTable.getSelectionModel().addSelectionInterval(1, 3);
-        assertEquals(3, navPanel.getFileTable().getSelectedRowCount());
+        fileTablePane.getTable().getSelectionModel().addSelectionInterval(1, 3);
+        assertEquals(3, navPanel.getFileTablePane().getTable().getSelectedRowCount());
 
         navPanel.setSelected(true);
-        assertEquals(0, navPanel.getFileTable().getSelectedRowCount());
+        assertEquals(0, navPanel.getFileTablePane().getTable().getSelectedRowCount());
     }
 }

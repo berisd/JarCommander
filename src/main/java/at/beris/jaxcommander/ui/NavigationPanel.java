@@ -10,16 +10,16 @@
 package at.beris.jaxcommander.ui;
 
 import at.beris.jaxcommander.DriveInfo;
+import at.beris.jaxcommander.action.ActionCommand;
+import at.beris.jaxcommander.action.ParamActionEvent;
 import at.beris.jaxcommander.ui.combobox.DriveComboBox;
 import at.beris.jaxcommander.ui.table.FileTable;
-import at.beris.jaxcommander.ui.table.FileTableMouseListener;
+import at.beris.jaxcommander.ui.table.FileTablePane;
 import org.apache.log4j.Logger;
 
-import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.KeyStroke;
 import javax.swing.border.Border;
 import java.awt.Color;
 import java.awt.Component;
@@ -27,8 +27,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -38,6 +36,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+
+import static at.beris.jaxcommander.action.ActionCommand.*;
 
 public class NavigationPanel extends JPanel implements ActionListener {
     private final static Logger LOGGER = Logger.getLogger(NavigationPanel.class.getName());
@@ -49,11 +49,11 @@ public class NavigationPanel extends JPanel implements ActionListener {
 
     private DriveComboBox driveComboBox;
     private JTextField currentPathTextField;
-    private FileTable fileTable;
+    private FileTablePane fileTablePane;
 
-    public NavigationPanel(FileTable fileTable, DriveComboBox driveComboBox, JTextField currentPathTextField) {
+    public NavigationPanel(FileTablePane fileTablePane, DriveComboBox driveComboBox, JTextField currentPathTextField) {
         selected = false;
-        this.fileTable = fileTable;
+        this.fileTablePane = fileTablePane;
         this.driveComboBox = driveComboBox;
         this.currentPathTextField = currentPathTextField;
 
@@ -61,80 +61,25 @@ public class NavigationPanel extends JPanel implements ActionListener {
 
         currentPath = ((DriveInfo) driveComboBox.getSelectedItem()).getPath();
 
-        fileTable.addMouseListener(new FileTableMouseListener());
-
-        getInputMap(WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_HOME, 0), "scrollToTop");
-        getActionMap().put("enterDirectoy", new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                LOGGER.info("enterDirectoy");
-            }
-        });
-
-        getActionMap().put("directoryUp", new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                LOGGER.info("directoryUp");
-            }
-        });
-
-        driveComboBox.addItemListener(new
-
-                                              ItemListener() {
-                                                  @Override
-                                                  public void itemStateChanged(ItemEvent e) {
-                                                      LOGGER.info("drivecombo itemStateChanged " + e.getItem().getClass());
-                                                      DriveInfo driveInfo = (DriveInfo) e.getItem();
-                                                      changeDirectory(driveInfo.getPath());
-                                                  }
-                                              }
-
-        );
-        driveComboBox.addMouseListener(new
-                                               MouseAdapter() {
-                                                   @Override
-                                                   public void mouseClicked(MouseEvent e) {
-                                                       super.mouseClicked(e);
-                                                       childDispatchMouseEvent(e);
-                                                   }
-                                               }
-        );
-
         currentPathTextField.addKeyListener(new
                                                     KeyAdapter() {
                                                         @Override
                                                         public void keyPressed(KeyEvent e) {
                                                             super.keyPressed(e);
-
                                                             JTextField textfield = (JTextField) e.getSource();
                                                             if (e.getKeyCode() == KeyEvent.VK_ENTER) {
                                                                 changeDirectory(Paths.get(textfield.getText()));
                                                             }
                                                         }
                                                     }
-
         );
-        currentPathTextField.addMouseListener(new
-
-                                                      MouseAdapter() {
-                                                          @Override
-                                                          public void mouseClicked(MouseEvent e) {
-                                                              super.mouseClicked(e);
-                                                              childDispatchMouseEvent(e);
-                                                          }
-                                                      }
-
-        );
-
 
         borderNormal = BorderFactory.createEtchedBorder();
         borderSelected = BorderFactory.createLineBorder(Color.RED, 2);
 
         GridBagConstraints c = new GridBagConstraints();
 
-        setLayout(new GridBagLayout()
-
-        );
+        setLayout(new GridBagLayout());
 
         setBorder(borderNormal);
 
@@ -153,37 +98,12 @@ public class NavigationPanel extends JPanel implements ActionListener {
         c.weightx = 1;
         c.weighty = 1;
         c.gridy++;
-        ActionScrollPane scrollPane = new ActionScrollPane(fileTable);
 
-
-        scrollPane.addMouseListener(new
-                                            MouseAdapter() {
-                                                @Override
-                                                public void mouseClicked(MouseEvent e) {
-                                                    LOGGER.info("scrollPane clicked");
-                                                    super.mouseClicked(e);
-                                                    childDispatchMouseEvent(e);
-                                                }
-                                            }
-
-        );
-
-        add(scrollPane, c);
+        add(fileTablePane, c);
     }
 
-    private void childDispatchMouseEvent(MouseEvent e) {
-        NavigationPanel navigationPanel = (NavigationPanel) ((Component) e.getSource()).getParent();
-        navigationPanel.dispatchEvent(new java.awt.event.MouseEvent(navigationPanel, e.getID(), e.getWhen(), e.getModifiers(), e.getX(), e.getY(), e.getClickCount(), false));
-    }
-
-
-    public void dispose() {
-        LOGGER.debug("dispose");
-        fileTable.dispose();
-    }
-
-    public FileTable getFileTable() {
-        return fileTable;
+    public FileTablePane getFileTablePane() {
+        return fileTablePane;
     }
 
     public boolean isSelected() {
@@ -192,11 +112,11 @@ public class NavigationPanel extends JPanel implements ActionListener {
 
     public void setSelected(boolean selected) {
         if (!this.selected && selected)
-            getFileTable().getSelectionModel().clearSelection();
+            getFileTablePane().getTable().getSelectionModel().clearSelection();
 
         this.selected = selected;
         setBorder(selected ? borderSelected : borderNormal);
-        getFileTable().setRowSelectionAllowed(selected);
+        getFileTablePane().getTable().setRowSelectionAllowed(selected);
     }
 
     @Override
@@ -205,14 +125,23 @@ public class NavigationPanel extends JPanel implements ActionListener {
         if (e.getSource() instanceof FileTable) {
             FileTable table = (FileTable) e.getSource();
 
-            if (e.getActionCommand().equals("enterItem")) {
+            if (e.getActionCommand().equals(ENTER_DIRECTORY)) {
                 int rowIndex = table.getSelectedRow();
                 if (rowIndex != -1) {
                     File file = (File) table.getValueAt(rowIndex, 0);
                     changeDirectory(file.toPath());
                 }
-            } else if (e.getActionCommand().equals("levelUp")) {
+            } else if (e.getActionCommand().equals(NAVIGATE_PATH_UP)) {
                 changeDirectory(new File("..").toPath());
+            }
+            else if (e.getActionCommand().equals(ActionCommand.SELECT_NAVIGATION_PANEL)) {
+                e.setSource(this);
+                ((ActionListener) this.getParent().getParent()).actionPerformed(e);
+            }
+        } else if (e.getSource() instanceof DriveComboBox) {
+            if (e.getActionCommand().equals(DRIVE_CHANGED)) {
+                DriveInfo driveInfo = (DriveInfo) ((ParamActionEvent) e).getParam();
+                changeDirectory(driveInfo.getPath());
             }
         }
     }
@@ -230,22 +159,21 @@ public class NavigationPanel extends JPanel implements ActionListener {
 
     public List<File> getSelection() {
         List<File> fileList = new ArrayList<>();
-        for (int rowIndex : fileTable.getSelectedRows()) {
-            int modelIndex = fileTable.getRowSorter().convertRowIndexToModel(rowIndex);
-            fileList.add((File) fileTable.getModel().getValueAt(modelIndex, 0));
+        for (int rowIndex : fileTablePane.getTable().getSelectedRows()) {
+            int modelIndex = fileTablePane.getTable().getRowSorter().convertRowIndexToModel(rowIndex);
+            fileList.add((File) fileTablePane.getTable().getModel().getValueAt(modelIndex, 0));
         }
         return fileList;
     }
 
     public void refreshDirectory() {
-        fileTable.refresh();
+        fileTablePane.refresh();
     }
 
 
     public void changeDirectory(Path newPath) {
         if (newPath.toString().equals("..") && currentPath.equals(currentPath.getRoot()))
             return;
-
 
         if (newPath.toString().equals("..")) {
             currentPath = currentPath.getParent();
@@ -254,11 +182,10 @@ public class NavigationPanel extends JPanel implements ActionListener {
         }
 
         currentPathTextField.setText(currentPath.toString());
-        fileTable.setPath(currentPath);
+        fileTablePane.setPath(currentPath);
     }
 
-
     public Path getCurrentPath() {
-        return fileTable.getPath();
+        return fileTablePane.getPath();
     }
 }

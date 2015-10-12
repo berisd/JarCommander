@@ -11,19 +11,20 @@ package at.beris.jaxcommander.ui;
 
 import at.beris.jaxcommander.DriveInfo;
 import at.beris.jaxcommander.ui.combobox.DriveComboBox;
-import at.beris.jaxcommander.ui.table.FileTable;
+import at.beris.jaxcommander.ui.table.FileTablePane;
 import org.apache.log4j.Logger;
 
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
-import java.awt.Component;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.nio.file.Path;
 
-public class SessionPanel extends JTabbedPane {
+public class SessionPanel extends JTabbedPane implements ActionListener {
     private final static Logger LOGGER = Logger.getLogger(SessionPanel.class);
 
     private NavigationPanel leftNavigationPanel;
@@ -31,8 +32,6 @@ public class SessionPanel extends JTabbedPane {
 
     public SessionPanel() {
         super();
-
-        addMouseListener(new MouseListener());
 
         JPanel panel = new JPanel();
         GridLayout layout = new GridLayout(1, 2);
@@ -51,26 +50,19 @@ public class SessionPanel extends JTabbedPane {
     private NavigationPanel createNavigationPanel() {
         DriveComboBox driveComboBox = new DriveComboBox();
         Path currentPath = ((DriveInfo) driveComboBox.getSelectedItem()).getPath();
-
-        final FileTable fileTable = new FileTable(currentPath);
-
+        final FileTablePane fileTablePane = new FileTablePane(currentPath);
         JTextField currentPathTextField = new JTextField();
         currentPathTextField.setText(currentPath.toString());
 
-        return new NavigationPanel(fileTable, driveComboBox, currentPathTextField);
+        return new NavigationPanel(fileTablePane, driveComboBox, currentPathTextField);
     }
 
-    private class MouseListener extends MouseAdapter {
-        @Override
-        public void mouseClicked(MouseEvent e) {
-            LOGGER.info("mouseClicked");
-            super.mouseClicked(e);
-
-            if (e.getSource() instanceof NavigationPanel) {
-                NavigationPanel navigationPanel = (NavigationPanel) e.getSource();
-                leftNavigationPanel.setSelected(leftNavigationPanel.equals(navigationPanel));
-                rightNavigationPanel.setSelected(rightNavigationPanel.equals(navigationPanel));
-            }
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource() instanceof NavigationPanel) {
+            NavigationPanel navigationPanel = (NavigationPanel) e.getSource();
+            leftNavigationPanel.setSelected(leftNavigationPanel.equals(navigationPanel));
+            rightNavigationPanel.setSelected(rightNavigationPanel.equals(navigationPanel));
         }
     }
 
