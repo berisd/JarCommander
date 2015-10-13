@@ -51,8 +51,6 @@ public class Application extends JFrame implements Runnable {
     private SessionPanel sessionPanel;
 
     public Application() {
-        initLogging();
-
         setSize(1024, 768);
         setLocationRelativeTo(null);
         setTitle("Jax Commander");
@@ -93,11 +91,6 @@ public class Application extends JFrame implements Runnable {
         add(footerPanel, c);
 
         pack();
-    }
-
-    private void initLogging() {
-        Logger rootLogger = LOGGER.getRootLogger();
-        rootLogger.setLevel(Level.INFO);
     }
 
     private JPanel createHeaderPanel() {

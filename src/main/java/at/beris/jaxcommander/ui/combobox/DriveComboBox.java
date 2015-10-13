@@ -33,7 +33,7 @@ public class DriveComboBox extends JComboBox<DriveInfo> {
                                 ItemListener() {
                                     @Override
                                     public void itemStateChanged(ItemEvent e) {
-                                        LOGGER.info("drivecombo itemStateChanged " + e.getItem().getClass());
+                                        LOGGER.debug("drivecombo itemStateChanged " + e.getItem().getClass());
                                         DriveInfo driveInfo = (DriveInfo) e.getItem();
                                         ActionListener parent = (ActionListener) ((JComponent) e.getSource()).getParent();
 

@@ -45,9 +45,8 @@ public class CopyAction extends CustomAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        LOGGER.info("Copy");
+        LOGGER.debug("Copy");
         Application application = (Application) SwingUtilities.getRoot((Component) e.getSource());
-//        new CopyTask(application).start();
 
         SessionPanel sessionPanel = application.getSessionPanel();
         NavigationPanel sourcePanel = sessionPanel.getSelectedNavigationPanel();

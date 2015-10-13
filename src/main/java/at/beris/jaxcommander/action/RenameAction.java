@@ -34,7 +34,7 @@ public class RenameAction extends CustomAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        LOGGER.info("Rename");
+        LOGGER.debug("Rename");
     }
 
     @Override

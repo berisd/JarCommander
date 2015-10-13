@@ -44,7 +44,7 @@ public class MakeDirAction extends CustomAction {
 
     @Override
     public void actionPerformed(ActionEvent event) {
-        LOGGER.info("MkDir");
+        LOGGER.debug("MkDir");
         Application application = (Application) SwingUtilities.getRoot((Component) event.getSource());
         SessionPanel sessionPanel = application.getSessionPanel();
         NavigationPanel sourcePanel = sessionPanel.getSelectedNavigationPanel();

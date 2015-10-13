@@ -41,7 +41,7 @@ public class DeleteAction extends CustomAction {
 
     @Override
     public void actionPerformed(ActionEvent event) {
-        LOGGER.info("Delete");
+        LOGGER.debug("Delete");
 
         Application application = (Application) SwingUtilities.getRoot((Component) event.getSource());
         SessionPanel sessionPanel = application.getSessionPanel();

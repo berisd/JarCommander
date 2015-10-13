@@ -66,7 +66,7 @@ public class FileTablePane extends JScrollPane implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        LOGGER.info("actionPerformed");
+        LOGGER.debug("actionPerformed");
         if (e.getSource() instanceof FileTable) {
             FileTable table = (FileTable) e.getSource();
 

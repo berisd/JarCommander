@@ -98,7 +98,7 @@ public class FileTable extends JTable {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            LOGGER.info("actionPerformed");
+            LOGGER.debug("actionPerformed");
             FileTable table = (FileTable) e.getSource();
             ((ActionListener) table.getParent().getParent()).actionPerformed(e);
         }
@@ -107,7 +107,7 @@ public class FileTable extends JTable {
     private class CustomerKeyListener extends KeyAdapter {
         @Override
         public void keyPressed(KeyEvent e) {
-            LOGGER.info("keyPressed");
+            LOGGER.debug("keyPressed");
             super.keyPressed(e);
 
             FileTable table = (FileTable) e.getSource();

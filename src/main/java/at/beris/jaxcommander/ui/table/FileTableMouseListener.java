@@ -29,7 +29,7 @@ public class FileTableMouseListener extends MouseAdapter {
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        LOGGER.info("mouseClicked");
+        LOGGER.debug("mouseClicked");
 
         FileTablePane pane = (FileTablePane) ((Component) e.getSource()).getParent().getParent();
         NavigationPanel navigationPanel = (NavigationPanel) pane.getParent();
@@ -37,7 +37,7 @@ public class FileTableMouseListener extends MouseAdapter {
         if (e.getClickCount() == 2) {
             JTable table = (JTable) e.getSource();
             int rowIndex = table.convertRowIndexToModel(table.getSelectedRow());
-            LOGGER.info("Double Clicked on row with index " + rowIndex);
+            LOGGER.debug("Double Clicked on row with index " + rowIndex);
 
             File file = (File) table.getModel().getValueAt(rowIndex, 0);
 

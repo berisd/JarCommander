@@ -121,7 +121,7 @@ public class NavigationPanel extends JPanel implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        LOGGER.info("actionPerformed " + e.getClass().getName());
+        LOGGER.debug("actionPerformed " + e.getClass().getName());
         if (e.getSource() instanceof FileTable) {
             FileTable table = (FileTable) e.getSource();
 
@@ -149,7 +149,7 @@ public class NavigationPanel extends JPanel implements ActionListener {
     private class MouseListener extends MouseAdapter {
         @Override
         public void mouseClicked(MouseEvent e) {
-            LOGGER.info("mouseClicked");
+            LOGGER.debug("mouseClicked");
             super.mouseClicked(e);
 
             SessionPanel sessionPanel = (SessionPanel) ((Component) e.getSource()).getParent().getParent();

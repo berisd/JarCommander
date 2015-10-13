@@ -34,7 +34,7 @@ public class MoveAction extends CustomAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        LOGGER.info("Move");
+        LOGGER.debug("Move");
     }
 
     @Override
