@@ -110,8 +110,7 @@ public class Application extends JFrame implements Runnable {
 
     private JPanel createFooterPanel() {
         JPanel panel = new JPanel();
-        GridLayout footerLayout = new GridLayout(2, 1);
-        panel.setLayout(footerLayout);
+        panel.setLayout(new GridLayout(2, 1));
 
         panel.add(createCommandBar());
         panel.add(createStatusLine());
