@@ -10,11 +10,9 @@
 package at.beris.jaxcommander.ui.table;
 
 import at.beris.jaxcommander.action.ParamActionEvent;
-import at.beris.jaxcommander.ui.NavigationPanel;
 import org.apache.log4j.Logger;
 
 import javax.swing.JScrollPane;
-import javax.swing.JTable;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
@@ -41,7 +39,7 @@ public class FileTablePane extends JScrollPane implements ActionListener {
         getViewport().add(table);
     }
 
-    public JTable getTable() {
+    public FileTable getTable() {
         return table;
     }
 

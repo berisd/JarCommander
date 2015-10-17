@@ -86,7 +86,6 @@ public class NavigationPanel extends JPanel implements ActionListener {
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
         c.gridy = 0;
-        c.anchor = GridBagConstraints.NORTHWEST;
 
         add(driveComboBox, c);
 
@@ -100,6 +99,12 @@ public class NavigationPanel extends JPanel implements ActionListener {
         c.gridy++;
 
         add(fileTablePane, c);
+
+        c.weightx = 0;
+        c.weighty = 0;
+        c.gridy++;
+
+        add(new FileTableStatusLabel(fileTablePane.getTable()), c);
     }
 
     public FileTablePane getFileTablePane() {
