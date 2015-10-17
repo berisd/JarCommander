@@ -50,7 +50,7 @@ public class DeleteAction extends CustomAction {
         if (sourcePanel.getSelection().size() == 0) {
             JOptionPane.showMessageDialog(application, "Nothing selected!");
         } else {
-            int deletion = JOptionPane.showConfirmDialog(application, "Delete current selection?", "Deletion", JOptionPane.YES_NO_OPTION);
+            int deletion = JOptionPane.showConfirmDialog(application, "Delete " + sourcePanel.getSelection().size() + " items?", "Deletion", JOptionPane.YES_NO_OPTION);
             if (deletion == JOptionPane.YES_OPTION) {
                 for (File file : sourcePanel.getSelection()) {
                     file.delete();
