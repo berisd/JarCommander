@@ -111,12 +111,8 @@ public class NavigationPanel extends JPanel implements ActionListener {
     }
 
     public void setSelected(boolean selected) {
-        if (!this.selected && selected)
-            getFileTablePane().getTable().getSelectionModel().clearSelection();
-
         this.selected = selected;
         setBorder(selected ? borderSelected : borderNormal);
-        getFileTablePane().getTable().setRowSelectionAllowed(selected);
     }
 
     @Override

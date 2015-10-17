@@ -47,12 +47,13 @@ public class FileTable extends JTable {
         this.path = path;
 
         setModel(new PathTableModel(path));
+        setSelectionModel(new FileTableSelectionModel(this));
+
         getColumnModel().getColumn(0).setCellRenderer(new FileRenderer());
         getColumnModel().getColumn(1).setCellRenderer(new DateRenderer());
         getColumnModel().getColumn(2).setCellRenderer(new FileSizeRenderer());
 
         addMouseListener(new FileTableMouseListener());
-
         addKeyListener(new CustomerKeyListener());
 
         getInputMap(WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_HOME, 0), SCROLL_TO_TOP);
