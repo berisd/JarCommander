@@ -133,8 +133,7 @@ public class NavigationPanel extends JPanel implements ActionListener {
                 }
             } else if (e.getActionCommand().equals(NAVIGATE_PATH_UP)) {
                 changeDirectory(new File("..").toPath());
-            }
-            else if (e.getActionCommand().equals(ActionCommand.SELECT_NAVIGATION_PANEL)) {
+            } else if (e.getActionCommand().equals(ActionCommand.SELECT_NAVIGATION_PANEL)) {
                 e.setSource(this);
                 ((ActionListener) this.getParent().getParent()).actionPerformed(e);
             }
@@ -186,6 +185,6 @@ public class NavigationPanel extends JPanel implements ActionListener {
     }
 
     public Path getCurrentPath() {
-        return fileTablePane.getPath();
+        return currentPath;
     }
 }
