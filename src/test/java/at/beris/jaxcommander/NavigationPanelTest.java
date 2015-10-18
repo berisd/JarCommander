@@ -9,6 +9,7 @@
 
 package at.beris.jaxcommander;
 
+import at.beris.jaxcommander.ui.FileTableStatusLabel;
 import at.beris.jaxcommander.ui.NavigationPanel;
 import at.beris.jaxcommander.ui.combobox.DriveComboBox;
 import at.beris.jaxcommander.ui.table.FileTablePane;
@@ -29,7 +30,8 @@ public class NavigationPanelTest {
         fileTablePane = new FileTablePane();
         DriveComboBox driveComboBox = new DriveComboBox();
         JTextField currentPathTextField = new JTextField();
-        navPanel = new NavigationPanel(fileTablePane, driveComboBox, currentPathTextField);
+        FileTableStatusLabel statusLabel = new FileTableStatusLabel(fileTablePane.getTable());
+        navPanel = new NavigationPanel(fileTablePane, driveComboBox, currentPathTextField, statusLabel);
     }
 
     @Test

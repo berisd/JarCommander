@@ -13,7 +13,6 @@ import at.beris.jaxcommander.DriveInfo;
 import at.beris.jaxcommander.action.ActionCommand;
 import at.beris.jaxcommander.action.ParamActionEvent;
 import at.beris.jaxcommander.ui.combobox.DriveComboBox;
-import at.beris.jaxcommander.ui.table.FileTable;
 import at.beris.jaxcommander.ui.table.FileTablePane;
 import org.apache.log4j.Logger;
 
@@ -51,7 +50,7 @@ public class NavigationPanel extends JPanel implements ActionListener {
     private JTextField currentPathTextField;
     private FileTablePane fileTablePane;
 
-    public NavigationPanel(FileTablePane fileTablePane, DriveComboBox driveComboBox, JTextField currentPathTextField) {
+    public NavigationPanel(FileTablePane fileTablePane, DriveComboBox driveComboBox, JTextField currentPathTextField, FileTableStatusLabel statusLabel) {
         selected = false;
         this.fileTablePane = fileTablePane;
         this.driveComboBox = driveComboBox;
@@ -104,7 +103,7 @@ public class NavigationPanel extends JPanel implements ActionListener {
         c.weighty = 0;
         c.gridy++;
 
-        add(new FileTableStatusLabel(fileTablePane.getTable()), c);
+        add(statusLabel, c);
     }
 
     public FileTablePane getFileTablePane() {
@@ -123,26 +122,17 @@ public class NavigationPanel extends JPanel implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         LOGGER.debug("actionPerformed " + e.getClass().getName());
-        if (e.getSource() instanceof FileTable) {
-            FileTable table = (FileTable) e.getSource();
-
-            if (e.getActionCommand().equals(ENTER_DIRECTORY)) {
-                int rowIndex = table.getSelectedRow();
-                if (rowIndex != -1) {
-                    File file = (File) table.getValueAt(rowIndex, 0);
-                    changeDirectory(file.toPath());
-                }
-            } else if (e.getActionCommand().equals(NAVIGATE_PATH_UP)) {
-                changeDirectory(new File("..").toPath());
-            } else if (e.getActionCommand().equals(ActionCommand.SELECT_NAVIGATION_PANEL)) {
-                e.setSource(this);
-                ((ActionListener) this.getParent().getParent()).actionPerformed(e);
-            }
-        } else if (e.getSource() instanceof DriveComboBox) {
-            if (e.getActionCommand().equals(DRIVE_CHANGED)) {
-                DriveInfo driveInfo = (DriveInfo) ((ParamActionEvent) e).getParam();
-                changeDirectory(driveInfo.getPath());
-            }
+        if (e.getActionCommand().equals(ActionCommand.SELECT_NAVIGATION_PANEL)) {
+            e.setSource(this);
+            ((ActionListener) this.getParent().getParent()).actionPerformed(e);
+        } else if (e.getActionCommand().equals(CHANGE_DIRECTORY)) {
+            File file = (File) ((ParamActionEvent) e).getParam();
+            changeDirectory(file.toPath());
+        } else if (e.getActionCommand().equals(NAVIGATE_PATH_UP)) {
+            changeDirectory(new File("..").toPath());
+        } else if (e.getActionCommand().equals(CHANGE_DRIVE)) {
+            DriveInfo driveInfo = (DriveInfo) ((ParamActionEvent) e).getParam();
+            changeDirectory(driveInfo.getPath());
         }
     }
 
@@ -155,6 +145,7 @@ public class NavigationPanel extends JPanel implements ActionListener {
             SessionPanel sessionPanel = (SessionPanel) ((Component) e.getSource()).getParent().getParent();
             sessionPanel.dispatchEvent(e);
         }
+
     }
 
     public List<File> getSelection() {

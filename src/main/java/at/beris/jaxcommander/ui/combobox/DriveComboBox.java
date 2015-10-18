@@ -17,9 +17,15 @@ import org.apache.log4j.Logger;
 
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
+import java.awt.Component;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+
+import static at.beris.jaxcommander.action.ActionCommand.SELECT_NAVIGATION_PANEL;
 
 public class DriveComboBox extends JComboBox<DriveInfo> {
 
@@ -38,16 +44,27 @@ public class DriveComboBox extends JComboBox<DriveInfo> {
                                         ActionListener parent = (ActionListener) ((JComponent) e.getSource()).getParent();
 
                                         if (parent != null) {
-                                            ParamActionEvent<DriveInfo> event = new ParamActionEvent<>(e.getSource(), e.getID(), ActionCommand.DRIVE_CHANGED, driveInfo);
+                                            ParamActionEvent<DriveInfo> event = new ParamActionEvent<>(e.getSource(), e.getID(), ActionCommand.CHANGE_DRIVE, driveInfo);
                                             parent.actionPerformed(event);
                                         }
                                     }
                                 });
 
+        addMouseListener(new MouseListener());
+
         setRenderer(new DriveInfoComboBoxRenderer());
 
         for (DriveInfo driveInfo : Application.getDriveInfo()) {
             addItem(driveInfo);
+        }
+    }
+
+    private class MouseListener extends MouseAdapter {
+        @Override
+        public void mousePressed(MouseEvent e) {
+            LOGGER.debug("mousePressed");
+            ActionListener parent = (ActionListener) ((Component) e.getSource()).getParent();
+            parent.actionPerformed(new ActionEvent(e.getSource(), e.getID(), SELECT_NAVIGATION_PANEL));
         }
     }
 }

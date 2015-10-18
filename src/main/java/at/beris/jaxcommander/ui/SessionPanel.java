@@ -17,12 +17,15 @@ import org.apache.log4j.Logger;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
+import java.awt.Component;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.nio.file.Path;
+
+import static at.beris.jaxcommander.action.ActionCommand.SELECT_NAVIGATION_PANEL;
 
 public class SessionPanel extends JTabbedPane implements ActionListener {
     private final static Logger LOGGER = Logger.getLogger(SessionPanel.class);
@@ -53,8 +56,19 @@ public class SessionPanel extends JTabbedPane implements ActionListener {
         final FileTablePane fileTablePane = new FileTablePane(currentPath);
         JTextField currentPathTextField = new JTextField();
         currentPathTextField.setText(currentPath.toString());
+        FileTableStatusLabel statusLabel = new FileTableStatusLabel(fileTablePane.getTable());
 
-        return new NavigationPanel(fileTablePane, driveComboBox, currentPathTextField);
+        for (Component component : new Component[]{currentPathTextField, statusLabel}) {
+            component.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mousePressed(MouseEvent e) {
+                    ActionListener parent = (ActionListener) ((Component) e.getSource()).getParent();
+                    parent.actionPerformed(new ActionEvent(e.getSource(), e.getID(), SELECT_NAVIGATION_PANEL));
+                }
+            });
+        }
+
+        return new NavigationPanel(fileTablePane, driveComboBox, currentPathTextField, statusLabel);
     }
 
     @Override

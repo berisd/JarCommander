@@ -10,12 +10,11 @@
 package at.beris.jaxcommander.action;
 
 public interface ActionCommand {
-    String DRIVE_CHANGED = "driveChanged";
+    String CHANGE_DRIVE = "changeDrive";
     String CHANGE_DIRECTORY = "changeDirectory";
     String SCROLL_TO_TOP = "scrollToTop";
     String SCROLL_TO_BOTTOM = "scrollToBottom";
     String KEY_PRESSED = "keyPressed";
-    String ENTER_DIRECTORY = "enterDirectory";
     String NAVIGATE_PATH_UP = "navigatePathUp";
     String SELECT_NAVIGATION_PANEL = "selectNavigationPanel";
 }
