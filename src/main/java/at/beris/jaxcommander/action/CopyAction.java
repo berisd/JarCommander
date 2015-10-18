@@ -16,6 +16,7 @@ import at.beris.jaxcommander.ui.SessionPanel;
 import org.apache.log4j.Logger;
 
 import javax.swing.Action;
+import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import java.awt.Component;
@@ -51,14 +52,17 @@ public class CopyAction extends CustomAction {
         else
             targetPanel = sessionPanel.getLeftNavigationPanel();
 
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                CopyTask copyTask = new CopyTask(sourcePanel.getSelection(), targetPanel);
-                copyTask.setVisible(true);
-                copyTask.startWorker();
-            }
-        });
+        if (sourcePanel.getSelection().size() == 0) {
+            JOptionPane.showMessageDialog(application, "No items selected!");
+        } else {
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    CopyTask copyTask = new CopyTask(sourcePanel.getSelection(), targetPanel);
+                    copyTask.setVisible(true);
+                }
+            });
+        }
     }
 
     @Override

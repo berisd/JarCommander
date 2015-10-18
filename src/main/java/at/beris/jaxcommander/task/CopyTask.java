@@ -12,39 +12,43 @@ package at.beris.jaxcommander.task;
 import at.beris.jaxcommander.ui.NavigationPanel;
 
 import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.SwingWorker;
-import java.awt.Dimension;
-import java.awt.GridLayout;
+import java.awt.BorderLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
+import java.nio.file.Files;
 import java.util.List;
 
 import static at.beris.jaxcommander.Application.logException;
 
 public class CopyTask extends JDialog implements ActionListener, PropertyChangeListener {
     private final static org.apache.log4j.Logger LOGGER = org.apache.log4j.Logger.getLogger(CopyTask.class);
+    private final static int COPY_BUFFER_SIZE = 1024 * 16;
+
 
     private JProgressBar progressbarCurrent;
     private JProgressBar progressbarAll;
     private JButton buttonAction;
 
-    private JPanel panelProgress;
-    private JPanel panelInput;
     private CopyWorker copyWorker;
     private JLabel labelInfo;
+    private JLabel labelCopyStatus;
 
     private NavigationPanel targetPanel;
     private List<File> fileList;
@@ -54,43 +58,63 @@ public class CopyTask extends JDialog implements ActionListener, PropertyChangeL
         this.targetPanel = targetPanel;
 
         setTitle("Copy");
-        setLayout(new GridLayout(3, 1));
+        setModalityType(ModalityType.APPLICATION_MODAL);
+        setLayout(new BorderLayout());
+        ((JPanel) getContentPane()).setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
         progressbarAll = new JProgressBar(0, 100);
         progressbarAll.setStringPainted(true);
-        progressbarAll.setPreferredSize(new Dimension(100, 25));
 
         progressbarCurrent = new JProgressBar(0, 100);
         progressbarCurrent.setStringPainted(true);
-        progressbarCurrent.setPreferredSize(new Dimension(100, 25));
 
-
-        panelInput = new JPanel(new GridLayout(1, 1));
-        panelInput.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder("Input"), BorderFactory.createEmptyBorder(5, 5, 5, 5)));
-
-        labelInfo = new JLabel("Calculating size...");
-
-        panelInput.add(labelInfo);
-
-        panelProgress = new JPanel(new GridLayout(2, 2));
-        panelProgress.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder("Progress"), BorderFactory.createEmptyBorder(5, 5, 5, 5)));
-
-        panelProgress.add(new JLabel("Current:"));
-        panelProgress.add(progressbarCurrent);
-        panelProgress.add(new JLabel("All:"));
-        panelProgress.add(progressbarAll);
-
-        buttonAction = new JButton("Cancel");
+        buttonAction = new JButton("Start");
         buttonAction.addActionListener(this);
 
-        ((JPanel) getContentPane()).setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-
-        add(panelInput);
-        add(panelProgress);
-        add(buttonAction);
+        add(createPanelInput(), BorderLayout.NORTH);
+        add(createPanelProgress(), BorderLayout.CENTER);
+        add(buttonAction, BorderLayout.SOUTH);
 
         pack();
         setLocationRelativeTo(null);
+    }
+
+    private JPanel createPanelInput() {
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder("Input"), BorderFactory.createEmptyBorder(5, 5, 5, 5)));
+
+        labelInfo = new JLabel("Copy " + fileList.size() + " items to:");
+        panel.add(labelInfo);
+
+        labelCopyStatus = new JLabel(targetPanel.getCurrentPath().toString());
+        panel.add(labelCopyStatus);
+
+        return panel;
+    }
+
+    private JPanel createPanelProgress() {
+        JPanel panelProgress = new JPanel();
+        panelProgress.setLayout(new GridBagLayout());
+        GridBagConstraints c = new GridBagConstraints();
+
+        panelProgress.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder("Progress"), BorderFactory.createEmptyBorder(5, 5, 5, 5)));
+
+        c.gridx = 0;
+        c.gridy = 0;
+
+        panelProgress.add(new JLabel("Current:"), c);
+        c.gridx++;
+        panelProgress.add(progressbarCurrent, c);
+
+        c.gridy++;
+        c.gridx = 0;
+        panelProgress.add(new JLabel("All:"), c);
+
+        c.gridx++;
+        panelProgress.add(progressbarAll, c);
+
+        return panelProgress;
     }
 
     @Override
@@ -103,15 +127,18 @@ public class CopyTask extends JDialog implements ActionListener, PropertyChangeL
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if ("Close".equals(buttonAction.getText())) {
-            this.dispose();
+        if ("Start".equals(buttonAction.getText())) {
+            startWorker();
+            buttonAction.setText("Cancel");
         } else if ("Cancel".equals(buttonAction.getText())) {
             copyWorker.cancel(true);
-            buttonAction.setText("Close");
+            targetPanel.refreshDirectory();
+            this.dispose();
         }
     }
 
     public void startWorker() {
+        LOGGER.debug("startWorker");
         copyWorker = new CopyWorker(fileList, targetPanel);
         copyWorker.addPropertyChangeListener(this);
         copyWorker.execute();
@@ -120,8 +147,10 @@ public class CopyTask extends JDialog implements ActionListener, PropertyChangeL
     class CopyWorker extends SwingWorker<Void, Integer> {
         private List<File> sourceList;
         private NavigationPanel targetPanel;
-        private long totalBytes = 0L;
-        private long copiedBytes = 0L;
+        private long bytesTotal = 0L;
+        private long bytesCopied = 0L;
+        private long totalCountFiles = 0;
+        private long currentFileNumber = 0;
 
         public CopyWorker(List<File> sourceList, NavigationPanel targetPanel) {
             this.sourceList = sourceList;
@@ -134,10 +163,8 @@ public class CopyTask extends JDialog implements ActionListener, PropertyChangeL
         public Void doInBackground() throws Exception {
             LOGGER.debug("doInBackground");
             try {
-                labelInfo.setText("Calculating size...");
-
                 for (File file : sourceList) {
-                    retrieveTotalBytes(file);
+                    retrieveFileInfo(file);
                 }
 
                 for (File file : sourceList) {
@@ -162,13 +189,13 @@ public class CopyTask extends JDialog implements ActionListener, PropertyChangeL
                 LOGGER.debug("done");
                 setProgress(100);
                 targetPanel.refreshDirectory();
-                buttonAction.setText("Close");
+                CopyTask.this.dispose();
             } catch (Exception ex) {
                 LOGGER.debug(ex.getMessage());
             }
         }
 
-        private void retrieveTotalBytes(File sourceFile) {
+        private void retrieveFileInfo(File sourceFile) {
 
             File[] files = sourceFile.listFiles();
             if (files == null) {
@@ -176,13 +203,17 @@ public class CopyTask extends JDialog implements ActionListener, PropertyChangeL
             }
 
             for (File file : files) {
-                if (file.isDirectory()) retrieveTotalBytes(file);
-                else totalBytes += file.length();
+                if (file.isDirectory()) retrieveFileInfo(file);
+                else {
+                    bytesTotal += file.length();
+                    totalCountFiles++;
+                }
             }
         }
 
         private void copyFiles(File sourceFile, File targetFile) throws IOException {
             LOGGER.debug("CopyFile " + sourceFile);
+
             if (sourceFile.isDirectory()) {
                 if (!targetFile.exists()) targetFile.mkdirs();
 
@@ -195,31 +226,51 @@ public class CopyTask extends JDialog implements ActionListener, PropertyChangeL
                     copyFiles(srcFile, destFile);
                 }
             } else {
-                labelInfo.setText("Copying " + sourceFile.getAbsolutePath() + " ... ");
-                labelInfo.setToolTipText("Copying " + sourceFile.getAbsolutePath() + " ... ");
+                String infoText = "Copying " + sourceFile.getAbsolutePath() + " ... ";
+                labelInfo.setText(infoText);
+                labelInfo.setToolTipText(infoText);
 
-                BufferedInputStream bis = new BufferedInputStream(new FileInputStream(sourceFile));
-                BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(targetFile));
+                currentFileNumber++;
 
-                long fileBytes = sourceFile.length();
-                long soFar = 0L;
+                String statusText = "Item " + currentFileNumber + " of  " + totalCountFiles + " processed.";
+                labelCopyStatus.setText(statusText);
+                labelCopyStatus.setToolTipText(statusText);
 
-                int theByte;
+                FileChannel bis = new FileInputStream(sourceFile).getChannel();
+                FileChannel bos = new FileOutputStream(targetFile).getChannel();
 
-                while ((theByte = bis.read()) != -1) {
-                    bos.write(theByte);
+                ByteBuffer buffer = ByteBuffer.allocate(COPY_BUFFER_SIZE);
 
-                    setProgress((int) (copiedBytes++ * 100 / totalBytes));
-                    publish((int) (soFar++ * 100 / fileBytes));
+                long bytesSizeCurrentFile = bis.size();
+                long bytesWrittenCurrentFile = 0L;
+                long bytesWritten = 0;
+
+                boolean isCancelled = false;
+                try {
+                    while ((bis.read(buffer) >= 0 || buffer.position() != 0) && !isCancelled()) {
+                        buffer.flip();
+                        bytesWritten = bos.write(buffer);
+                        buffer.compact();
+
+                        bytesWrittenCurrentFile += bytesWritten;
+                        bytesCopied += bytesWritten;
+
+                        setProgress((int) (bytesCopied * 100 / bytesTotal));
+                        publish((int) (bytesWrittenCurrentFile * 100 / bytesSizeCurrentFile));
+                    }
+                } catch (IOException ex) {
+                    isCancelled = true;
+                } finally {
+                    bis.close();
+                    bos.close();
+                    isCancelled = isCancelled || isCancelled();
                 }
 
-                bis.close();
-                bos.close();
+                if (isCancelled && bytesSizeCurrentFile != bytesWrittenCurrentFile) {
+                    Files.delete(targetFile.toPath());
+                }
 
                 publish(100);
-
-                labelInfo.setText("Done!\n");
-                labelInfo.setToolTipText("");
             }
         }
     }
