@@ -9,19 +9,21 @@
 
 package at.beris.jaxcommander.filesystem;
 
+import at.beris.jaxcommander.filesystem.path.VirtualPath;
+
 import java.nio.file.Path;
 
-public class DriveInfo {
-    private Path path;
+public class VirtualDrive {
+    private VirtualPath path;
     private long spaceTotal;
     private long spaceLeft;
 
-    public Path getPath() {
+    public VirtualPath getPath() {
         return path;
     }
 
     public void setPath(Path path) {
-        this.path = path;
+        this.path = new VirtualPath(path);
     }
 
     public long getSpaceTotal() {

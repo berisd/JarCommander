@@ -9,15 +9,22 @@
 
 package at.beris.jaxcommander.filesystem.file;
 
-import java.nio.file.Path;
+import at.beris.jaxcommander.filesystem.path.VirtualPath;
+
 import java.util.Date;
 
 public interface Provider<T> {
     String getName();
+
     Date getLastModified();
+
     long getSize();
+
     boolean isDirectory();
-    Path toPath();
+
+    VirtualPath toPath();
+
     T[] listFiles();
+
     T getBaseObject();
 }

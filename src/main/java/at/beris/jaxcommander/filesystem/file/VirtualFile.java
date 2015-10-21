@@ -9,14 +9,9 @@
 
 package at.beris.jaxcommander.filesystem.file;
 
-import at.beris.jaxcommander.Application;
+import at.beris.jaxcommander.filesystem.path.VirtualPath;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 public class VirtualFile<T> {
 
@@ -55,28 +50,7 @@ public class VirtualFile<T> {
         return parentFile;
     }
 
-    public Path toPath() {
+    public VirtualPath toPath() {
         return provider.toPath();
-    }
-
-    public VirtualFile[] listFiles() {
-        List<VirtualFile> fileList = new ArrayList();
-
-        for (T file : provider.listFiles()) {
-            try {
-                Constructor<? extends Provider> constructor = provider.getClass().getConstructor(provider.getBaseObject().getClass());
-                fileList.add(new VirtualFile(constructor.newInstance(file)));
-            } catch (NoSuchMethodException e) {
-                Application.logException(e);
-            } catch (InvocationTargetException e) {
-                Application.logException(e);
-            } catch (InstantiationException e) {
-                Application.logException(e);
-            } catch (IllegalAccessException e) {
-                Application.logException(e);
-            }
-
-        }
-        return (VirtualFile[]) fileList.toArray();
     }
 }

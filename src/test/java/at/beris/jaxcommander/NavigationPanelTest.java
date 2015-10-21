@@ -9,16 +9,14 @@
 
 package at.beris.jaxcommander;
 
+import at.beris.jaxcommander.filesystem.VirtualFileSystem;
 import at.beris.jaxcommander.ui.FileTableStatusLabel;
 import at.beris.jaxcommander.ui.NavigationPanel;
 import at.beris.jaxcommander.ui.combobox.DriveComboBox;
 import at.beris.jaxcommander.ui.table.FileTablePane;
 import org.junit.Before;
-import org.junit.Test;
 
 import javax.swing.JTextField;
-
-import static org.junit.Assert.assertEquals;
 
 public class NavigationPanelTest {
 
@@ -28,7 +26,7 @@ public class NavigationPanelTest {
     @Before
     public void setUp() {
         fileTablePane = new FileTablePane();
-        DriveComboBox driveComboBox = new DriveComboBox();
+        DriveComboBox driveComboBox = new DriveComboBox(new VirtualFileSystem());
         JTextField currentPathTextField = new JTextField();
         FileTableStatusLabel statusLabel = new FileTableStatusLabel(fileTablePane.getTable());
         navPanel = new NavigationPanel(fileTablePane, driveComboBox, currentPathTextField, statusLabel);

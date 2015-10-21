@@ -9,9 +9,10 @@
 
 package at.beris.jaxcommander.filesystem.file;
 
+import at.beris.jaxcommander.filesystem.path.VirtualPath;
 import org.apache.commons.compress.archivers.ArchiveEntry;
+import org.apache.commons.lang3.NotImplementedException;
 
-import java.nio.file.Path;
 import java.util.Date;
 
 public class ArchiveEntryProvider implements Provider<ArchiveEntry> {
@@ -42,8 +43,13 @@ public class ArchiveEntryProvider implements Provider<ArchiveEntry> {
     }
 
     @Override
-    public Path toPath() {
-        return null;
+    public VirtualPath toPath() {
+        throw new NotImplementedException("");
+    }
+
+    @Override
+    public ArchiveEntry[] listFiles() {
+        throw new NotImplementedException("");
     }
 
     @Override

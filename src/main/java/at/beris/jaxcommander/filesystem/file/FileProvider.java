@@ -9,8 +9,9 @@
 
 package at.beris.jaxcommander.filesystem.file;
 
+import at.beris.jaxcommander.filesystem.path.VirtualPath;
+
 import java.io.File;
-import java.nio.file.Path;
 import java.util.Date;
 
 public class FileProvider implements Provider<File> {
@@ -41,8 +42,8 @@ public class FileProvider implements Provider<File> {
     }
 
     @Override
-    public Path toPath() {
-        return file.toPath();
+    public VirtualPath toPath() {
+        return new VirtualPath(file.toPath());
     }
 
     @Override

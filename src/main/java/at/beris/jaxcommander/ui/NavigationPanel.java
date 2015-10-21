@@ -9,10 +9,12 @@
 
 package at.beris.jaxcommander.ui;
 
-import at.beris.jaxcommander.filesystem.DriveInfo;
-import at.beris.jaxcommander.filesystem.file.VirtualFile;
 import at.beris.jaxcommander.action.ActionCommand;
 import at.beris.jaxcommander.action.ParamActionEvent;
+import at.beris.jaxcommander.filesystem.VirtualDrive;
+import at.beris.jaxcommander.filesystem.VirtualFileSystem;
+import at.beris.jaxcommander.filesystem.file.VirtualFile;
+import at.beris.jaxcommander.filesystem.path.VirtualPath;
 import at.beris.jaxcommander.ui.combobox.DriveComboBox;
 import at.beris.jaxcommander.ui.table.FileTablePane;
 import org.apache.log4j.Logger;
@@ -32,8 +34,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,7 +45,7 @@ public class NavigationPanel extends JPanel implements ActionListener {
     private boolean selected;
     private Border borderNormal;
     private Border borderSelected;
-    private Path currentPath;
+    private VirtualPath currentPath;
 
     private DriveComboBox driveComboBox;
     private JTextField currentPathTextField;
@@ -59,7 +59,7 @@ public class NavigationPanel extends JPanel implements ActionListener {
 
         addMouseListener(new MouseListener());
 
-        currentPath = ((DriveInfo) driveComboBox.getSelectedItem()).getPath();
+        currentPath = ((VirtualDrive) driveComboBox.getSelectedItem()).getPath();
 
         currentPathTextField.addKeyListener(new
                                                     KeyAdapter() {
@@ -68,7 +68,7 @@ public class NavigationPanel extends JPanel implements ActionListener {
                                                             super.keyPressed(e);
                                                             JTextField textfield = (JTextField) e.getSource();
                                                             if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-                                                                changeDirectory(Paths.get(textfield.getText()));
+                                                                changeDirectory(VirtualFileSystem.getPath(textfield.getText()));
                                                             }
                                                         }
                                                     }
@@ -131,13 +131,13 @@ public class NavigationPanel extends JPanel implements ActionListener {
             changeDirectory(file.toPath());
         } else if (e.getActionCommand().equals(EXECUTE_FILE)) {
             VirtualFile virtualFile = (VirtualFile) ((ParamActionEvent) e).getParam();
-            Path path = virtualFile.toPath();
+            VirtualPath path = virtualFile.toPath();
             currentPathTextField.setText(path.toString());
-            fileTablePane.listFile((File)virtualFile.getBaseObject());
+            fileTablePane.listFile((File) virtualFile.getBaseObject());
         } else if (e.getActionCommand().equals(NAVIGATE_PATH_UP)) {
-            changeDirectory(new File("..").toPath());
+            changeDirectory(new VirtualPath(new File("..").toPath()));
         } else if (e.getActionCommand().equals(CHANGE_DRIVE)) {
-            DriveInfo driveInfo = (DriveInfo) ((ParamActionEvent) e).getParam();
+            VirtualDrive driveInfo = (VirtualDrive) ((ParamActionEvent) e).getParam();
             changeDirectory(driveInfo.getPath());
         }
     }
@@ -168,7 +168,7 @@ public class NavigationPanel extends JPanel implements ActionListener {
     }
 
 
-    public void changeDirectory(Path newPath) {
+    public void changeDirectory(VirtualPath newPath) {
         if (newPath.toString().equals("..") && currentPath.equals(currentPath.getRoot()))
             return;
 
@@ -182,7 +182,7 @@ public class NavigationPanel extends JPanel implements ActionListener {
         fileTablePane.setPath(currentPath);
     }
 
-    public Path getCurrentPath() {
+    public VirtualPath getCurrentPath() {
         return currentPath;
     }
 }

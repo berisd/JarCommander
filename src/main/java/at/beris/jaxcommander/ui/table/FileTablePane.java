@@ -10,6 +10,7 @@
 package at.beris.jaxcommander.ui.table;
 
 import at.beris.jaxcommander.action.ParamActionEvent;
+import at.beris.jaxcommander.filesystem.path.VirtualPath;
 import org.apache.log4j.Logger;
 
 import javax.swing.JScrollPane;
@@ -21,21 +22,20 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
-import java.nio.file.Path;
 
 import static at.beris.jaxcommander.action.ActionCommand.*;
 
 public class FileTablePane extends JScrollPane implements ActionListener {
     private final static Logger LOGGER = Logger.getLogger(FileTablePane.class);
 
-    private Path path;
+    private VirtualPath path;
     private FileTable table;
 
     public FileTablePane() {
         super();
     }
 
-    public FileTablePane(Path path) {
+    public FileTablePane(VirtualPath path) {
         super();
         this.path = path;
         table = new FileTable(path);
@@ -52,7 +52,7 @@ public class FileTablePane extends JScrollPane implements ActionListener {
         table.refresh();
     }
 
-    public void setPath(Path path) {
+    public void setPath(VirtualPath path) {
         table.setPath(path);
     }
 

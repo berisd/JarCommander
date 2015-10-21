@@ -10,7 +10,6 @@
 package at.beris.jaxcommander;
 
 import at.beris.jaxcommander.action.ActionType;
-import at.beris.jaxcommander.filesystem.DriveInfo;
 import at.beris.jaxcommander.helper.ActionHelper;
 import at.beris.jaxcommander.ui.SessionPanel;
 import at.beris.jaxcommander.ui.button.ButtonFactory;
@@ -34,19 +33,9 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.FileStore;
-import java.nio.file.FileSystems;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
 
 public class Application extends JFrame implements Runnable {
     private final static Logger LOGGER = Logger.getLogger(Application.class);
-
-    private static List<DriveInfo> driveInfoList = new ArrayList<>();
 
     private SessionPanel sessionPanel;
 
@@ -232,44 +221,6 @@ public class Application extends JFrame implements Runnable {
         LOGGER.warn(sb.toString());
     }
 
-    public static List<DriveInfo> getDriveInfo() {
-        if (driveInfoList.size() > 0)
-            return driveInfoList;
-
-        try {
-            for (FileStore fileStore : FileSystems.getDefault().getFileStores()) {
-//                long total = fileStore.getTotalSpace() / 1024;
-//                long used = (fileStore.getTotalSpace() - fileStore.getUnallocatedSpace()) / 1024;
-//                long avail = fileStore.getUsableSpace() / 1024;
-//                System.out.format("%-20s %12d %12d %12d%n", fileStore, total, used, avail);
-
-                String[] parts = fileStore.toString().split(" ");
-                Path path = new File(parts[0]).toPath();
-
-                DriveInfo driveInfo = new DriveInfo();
-                driveInfo.setPath(path);
-
-                driveInfo.setSpaceTotal(fileStore.getTotalSpace());
-                driveInfo.setSpaceLeft(fileStore.getUsableSpace());
-
-
-                driveInfoList.add(driveInfo);
-
-
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        driveInfoList.sort(new Comparator<DriveInfo>() {
-            @Override
-            public int compare(DriveInfo o1, DriveInfo o2) {
-                return o1.getPath().compareTo(o2.getPath());
-            }
-        });
-
-        return driveInfoList;
-    }
 
     public SessionPanel getSessionPanel() {
         return sessionPanel;

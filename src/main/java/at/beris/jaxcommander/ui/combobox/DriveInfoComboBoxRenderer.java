@@ -9,7 +9,7 @@
 
 package at.beris.jaxcommander.ui.combobox;
 
-import at.beris.jaxcommander.filesystem.DriveInfo;
+import at.beris.jaxcommander.filesystem.VirtualDrive;
 
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -22,13 +22,13 @@ public class DriveInfoComboBoxRenderer extends JLabel implements ListCellRendere
 
     @Override
     public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-        DriveInfo driveInfo = (DriveInfo) value;
+        VirtualDrive driveInfo = (VirtualDrive) value;
         setText(driveInfo.getPath() + " [" + numberFormat().format((double) driveInfo.getSpaceTotal() / (1024 * 1024 * 1024))
                 + "G / " + calculateSpaceFreePercentage(driveInfo) + "% free]");
         return this;
     }
 
-    private long calculateSpaceFreePercentage(DriveInfo driveInfo) {
+    private long calculateSpaceFreePercentage(VirtualDrive driveInfo) {
         if (driveInfo.getSpaceLeft() == 0 || driveInfo.getSpaceTotal() == 0)
             return 0;
         return driveInfo.getSpaceLeft() * 100 / driveInfo.getSpaceTotal();

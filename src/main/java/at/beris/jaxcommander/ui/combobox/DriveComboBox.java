@@ -9,10 +9,10 @@
 
 package at.beris.jaxcommander.ui.combobox;
 
-import at.beris.jaxcommander.Application;
-import at.beris.jaxcommander.filesystem.DriveInfo;
 import at.beris.jaxcommander.action.ActionCommand;
 import at.beris.jaxcommander.action.ParamActionEvent;
+import at.beris.jaxcommander.filesystem.VirtualDrive;
+import at.beris.jaxcommander.filesystem.VirtualFileSystem;
 import org.apache.log4j.Logger;
 
 import javax.swing.JComboBox;
@@ -27,11 +27,11 @@ import java.awt.event.MouseEvent;
 
 import static at.beris.jaxcommander.action.ActionCommand.SELECT_NAVIGATION_PANEL;
 
-public class DriveComboBox extends JComboBox<DriveInfo> {
+public class DriveComboBox extends JComboBox<VirtualDrive> {
 
     private final static Logger LOGGER = Logger.getLogger(DriveComboBox.class.getName());
 
-    public DriveComboBox() {
+    public DriveComboBox(VirtualFileSystem fileSystem) {
         super();
 
         addItemListener(new
@@ -40,11 +40,11 @@ public class DriveComboBox extends JComboBox<DriveInfo> {
                                     @Override
                                     public void itemStateChanged(ItemEvent e) {
                                         LOGGER.debug("drivecombo itemStateChanged " + e.getItem().getClass());
-                                        DriveInfo driveInfo = (DriveInfo) e.getItem();
+                                        VirtualDrive driveInfo = (VirtualDrive) e.getItem();
                                         ActionListener parent = (ActionListener) ((JComponent) e.getSource()).getParent();
 
                                         if (parent != null) {
-                                            ParamActionEvent<DriveInfo> event = new ParamActionEvent<>(e.getSource(), e.getID(), ActionCommand.CHANGE_DRIVE, driveInfo);
+                                            ParamActionEvent<VirtualDrive> event = new ParamActionEvent<>(e.getSource(), e.getID(), ActionCommand.CHANGE_DRIVE, driveInfo);
                                             parent.actionPerformed(event);
                                         }
                                     }
@@ -54,7 +54,7 @@ public class DriveComboBox extends JComboBox<DriveInfo> {
 
         setRenderer(new DriveInfoComboBoxRenderer());
 
-        for (DriveInfo driveInfo : Application.getDriveInfo()) {
+        for (VirtualDrive driveInfo : fileSystem.getDriveList()) {
             addItem(driveInfo);
         }
     }
