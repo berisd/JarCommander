@@ -15,10 +15,10 @@ import java.util.Date;
 
 public class VirtualFile<T> {
 
-    private Provider<T> provider;
+    private FileProvider<T> provider;
     private VirtualFile<T> parentFile;
 
-    public VirtualFile(Provider<T> provider) {
+    public VirtualFile(FileProvider<T> provider) {
         this.provider = provider;
     }
 
@@ -48,6 +48,22 @@ public class VirtualFile<T> {
 
     public VirtualFile getParentFile() {
         return parentFile;
+    }
+
+    public boolean exists() {
+        return provider.exists();
+    }
+
+    public boolean mkdirs() {
+        return provider.mkdirs();
+    }
+
+    public String[] list() {
+        return provider.list();
+    }
+
+    public String getAbsolutePath() {
+        return provider.getAbsolutePath();
     }
 
     public VirtualPath toPath() {

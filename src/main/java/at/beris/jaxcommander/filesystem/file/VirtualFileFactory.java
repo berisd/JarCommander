@@ -15,7 +15,7 @@ import java.io.File;
 
 public class VirtualFileFactory {
     public static VirtualFile newInstance(File file) {
-        VirtualFile<File>  virtualFile = new VirtualFile<>(new FileProvider(file));
+        VirtualFile<File>  virtualFile = new VirtualFile<>(new LocalFileProvider(file));
 
         File parent = file.getParentFile();
         VirtualFile virtualChild = virtualFile;

@@ -11,48 +11,28 @@ package at.beris.jaxcommander.filesystem.file;
 
 import at.beris.jaxcommander.filesystem.path.VirtualPath;
 
-import java.io.File;
 import java.util.Date;
 
-public class FileProvider implements Provider<File> {
-    private File file;
+public interface FileProvider<T> {
+    String getName();
 
-    public FileProvider(File file) {
-        this.file = file;
-    }
+    Date getLastModified();
 
-    @Override
-    public String getName() {
-        return file.getName();
-    }
+    long getSize();
 
-    @Override
-    public Date getLastModified() {
-        return new java.util.Date(file.lastModified());
-    }
+    boolean isDirectory();
 
-    @Override
-    public long getSize() {
-        return file.length();
-    }
+    VirtualPath toPath();
 
-    @Override
-    public boolean isDirectory() {
-        return file.isDirectory();
-    }
+    boolean exists();
 
-    @Override
-    public VirtualPath toPath() {
-        return new VirtualPath(file.toPath());
-    }
+    boolean mkdirs();
 
-    @Override
-    public File[] listFiles() {
-        return file.listFiles();
-    }
+    String[] list();
 
-    @Override
-    public File getBaseObject() {
-        return file;
-    }
+    String getAbsolutePath();
+
+    T[] listFiles();
+
+    T getBaseObject();
 }

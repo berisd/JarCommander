@@ -9,6 +9,7 @@
 
 package at.beris.jaxcommander.ui;
 
+import at.beris.jaxcommander.filesystem.LocalFileSystem;
 import at.beris.jaxcommander.filesystem.VirtualDrive;
 import at.beris.jaxcommander.filesystem.VirtualFileSystem;
 import at.beris.jaxcommander.filesystem.path.VirtualPath;
@@ -53,7 +54,8 @@ public class SessionPanel extends JTabbedPane implements ActionListener {
     }
 
     private NavigationPanel createNavigationPanel() {
-        DriveComboBox driveComboBox = new DriveComboBox(new VirtualFileSystem());
+        VirtualFileSystem fileSystem = new VirtualFileSystem(new LocalFileSystem());
+        DriveComboBox driveComboBox = new DriveComboBox(fileSystem);
         VirtualPath currentPath = ((VirtualDrive) driveComboBox.getSelectedItem()).getPath();
         final FileTablePane fileTablePane = new FileTablePane(currentPath);
         JTextField currentPathTextField = new JTextField();
@@ -70,7 +72,7 @@ public class SessionPanel extends JTabbedPane implements ActionListener {
             });
         }
 
-        return new NavigationPanel(fileTablePane, driveComboBox, currentPathTextField, statusLabel);
+        return new NavigationPanel(fileSystem, fileTablePane, driveComboBox, currentPathTextField, statusLabel);
     }
 
     @Override

@@ -9,60 +9,47 @@
 
 package at.beris.jaxcommander.filesystem.path;
 
-import at.beris.jaxcommander.Application;
 import at.beris.jaxcommander.filesystem.file.VirtualFile;
-import at.beris.jaxcommander.filesystem.file.VirtualFileFactory;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.List;
 
-public class VirtualPath {
-    Path path;
-    public VirtualPath(Path path) {
-        this.path = path;
+public class VirtualPath<T> {
+    private PathProvider<T> pathProvider;
+
+    public VirtualPath(PathProvider<T> pathProvider) {
+        this.pathProvider = pathProvider;
     }
 
-    public int compareTo(VirtualPath o) {
-        return path.compareTo(o.getPath());
+    public T getBaseObject() {
+        return pathProvider.getBaseObject();
+    }
+
+    public int compareTo(VirtualPath virtualPath) {
+        return pathProvider.compareTo(virtualPath);
     }
 
     public List<VirtualFile> getEntries() {
-        List<VirtualFile> entryList = new ArrayList<>();
-        try {
-            for (Path childPath : Files.newDirectoryStream(path))
-                entryList.add(VirtualFileFactory.newInstance(childPath.toFile()));
-        } catch (IOException e) {
-            Application.logException(e);
-        }
-        return entryList;
+        return pathProvider.getEntries();
     }
 
     public VirtualPath normalize() {
-        return new VirtualPath(path.normalize());
+        return new VirtualPath(pathProvider.newInstance(pathProvider.normalize()));
     }
 
     public VirtualPath getRoot() {
-        return new VirtualPath(path.getRoot());
+        return new VirtualPath(pathProvider.newInstance(pathProvider.getRoot()));
     }
 
     public VirtualPath getParent() {
-        return new VirtualPath(path.getParent());
+        return new VirtualPath(pathProvider.newInstance(pathProvider.getParent()));
     }
 
-    public File toFile() {
-        return path.toFile();
-    }
-
-    public Path getPath() {
-        return path;
+    public VirtualFile toFile() {
+        return pathProvider.toFile();
     }
 
     @Override
     public String toString() {
-        return path.toString();
+        return pathProvider.toString();
     }
 }

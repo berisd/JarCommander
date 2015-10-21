@@ -14,6 +14,7 @@ import at.beris.jaxcommander.action.ParamActionEvent;
 import at.beris.jaxcommander.filesystem.VirtualDrive;
 import at.beris.jaxcommander.filesystem.VirtualFileSystem;
 import at.beris.jaxcommander.filesystem.file.VirtualFile;
+import at.beris.jaxcommander.filesystem.file.VirtualFileFactory;
 import at.beris.jaxcommander.filesystem.path.VirtualPath;
 import at.beris.jaxcommander.ui.combobox.DriveComboBox;
 import at.beris.jaxcommander.ui.table.FileTablePane;
@@ -46,12 +47,13 @@ public class NavigationPanel extends JPanel implements ActionListener {
     private Border borderNormal;
     private Border borderSelected;
     private VirtualPath currentPath;
+    private VirtualFileSystem fileSystem;
 
     private DriveComboBox driveComboBox;
     private JTextField currentPathTextField;
     private FileTablePane fileTablePane;
 
-    public NavigationPanel(FileTablePane fileTablePane, DriveComboBox driveComboBox, JTextField currentPathTextField, FileTableStatusLabel statusLabel) {
+    public NavigationPanel(VirtualFileSystem fileSystem, FileTablePane fileTablePane, DriveComboBox driveComboBox, JTextField currentPathTextField, FileTableStatusLabel statusLabel) {
         selected = false;
         this.fileTablePane = fileTablePane;
         this.driveComboBox = driveComboBox;
@@ -59,7 +61,8 @@ public class NavigationPanel extends JPanel implements ActionListener {
 
         addMouseListener(new MouseListener());
 
-        currentPath = ((VirtualDrive) driveComboBox.getSelectedItem()).getPath();
+        final VirtualDrive currentDrive = (VirtualDrive) driveComboBox.getSelectedItem();
+        currentPath = currentDrive.getPath();
 
         currentPathTextField.addKeyListener(new
                                                     KeyAdapter() {
@@ -68,7 +71,7 @@ public class NavigationPanel extends JPanel implements ActionListener {
                                                             super.keyPressed(e);
                                                             JTextField textfield = (JTextField) e.getSource();
                                                             if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-                                                                changeDirectory(VirtualFileSystem.getPath(textfield.getText()));
+                                                                changeDirectory(currentDrive.getPath(textfield.getText()));
                                                             }
                                                         }
                                                     }
@@ -135,7 +138,7 @@ public class NavigationPanel extends JPanel implements ActionListener {
             currentPathTextField.setText(path.toString());
             fileTablePane.listFile((File) virtualFile.getBaseObject());
         } else if (e.getActionCommand().equals(NAVIGATE_PATH_UP)) {
-            changeDirectory(new VirtualPath(new File("..").toPath()));
+            changeDirectory(VirtualFileFactory.newInstance(new File("..")).toPath());
         } else if (e.getActionCommand().equals(CHANGE_DRIVE)) {
             VirtualDrive driveInfo = (VirtualDrive) ((ParamActionEvent) e).getParam();
             changeDirectory(driveInfo.getPath());
@@ -184,5 +187,9 @@ public class NavigationPanel extends JPanel implements ActionListener {
 
     public VirtualPath getCurrentPath() {
         return currentPath;
+    }
+
+    public VirtualFileSystem getFileSystem() {
+        return fileSystem;
     }
 }

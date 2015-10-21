@@ -9,9 +9,11 @@
 
 package at.beris.jaxcommander.filesystem;
 
+import at.beris.jaxcommander.filesystem.path.LocalPathProvider;
 import at.beris.jaxcommander.filesystem.path.VirtualPath;
 
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class VirtualDrive {
     private VirtualPath path;
@@ -23,7 +25,7 @@ public class VirtualDrive {
     }
 
     public void setPath(Path path) {
-        this.path = new VirtualPath(path);
+        this.path = new VirtualPath(new LocalPathProvider(path));
     }
 
     public long getSpaceTotal() {
@@ -40,5 +42,9 @@ public class VirtualDrive {
 
     public void setSpaceLeft(long spaceLeft) {
         this.spaceLeft = spaceLeft;
+    }
+
+    public VirtualPath getPath(String path) {
+        return new VirtualPath(new LocalPathProvider(Paths.get(path)));
     }
 }

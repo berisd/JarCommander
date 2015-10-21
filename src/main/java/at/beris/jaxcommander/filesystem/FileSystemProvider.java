@@ -7,24 +7,14 @@
  * Some rights reserved. See COPYING, AUTHORS.
  */
 
-package at.beris.jaxcommander.filesystem.file;
+package at.beris.jaxcommander.filesystem;
 
 import at.beris.jaxcommander.filesystem.path.VirtualPath;
 
-import java.util.Date;
+import java.io.IOException;
+import java.util.List;
 
-public interface Provider<T> {
-    String getName();
-
-    Date getLastModified();
-
-    long getSize();
-
-    boolean isDirectory();
-
-    VirtualPath toPath();
-
-    T[] listFiles();
-
-    T getBaseObject();
+public interface FileSystemProvider {
+    List<VirtualDrive> getDriveList();
+    void delete(VirtualPath virtualPath) throws IOException;
 }

@@ -9,7 +9,9 @@
 
 package at.beris.jaxcommander.task;
 
+import at.beris.jaxcommander.filesystem.VirtualFileSystem;
 import at.beris.jaxcommander.filesystem.file.VirtualFile;
+import at.beris.jaxcommander.filesystem.file.VirtualFileFactory;
 import at.beris.jaxcommander.ui.NavigationPanel;
 
 import javax.swing.BorderFactory;
@@ -34,6 +36,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 
 import static at.beris.jaxcommander.Application.logException;
@@ -162,6 +165,9 @@ public class CopyTask extends JDialog implements ActionListener, PropertyChangeL
 
         @Override
         public Void doInBackground() throws Exception {
+            VirtualFileSystem fileSystem = targetPanel.getFileSystem();
+
+
             LOGGER.debug("doInBackground");
             try {
                 for (VirtualFile virtualFile : sourceList) {
@@ -170,8 +176,7 @@ public class CopyTask extends JDialog implements ActionListener, PropertyChangeL
                 }
 
                 for (VirtualFile virtualFile : sourceList) {
-                    File file = (File)virtualFile.getBaseObject();
-                    copyFiles(file, new File(targetPanel.getCurrentPath().toFile(), file.getName()));
+                    copyFiles(virtualFile, VirtualFileFactory.newInstance(new File(((Path) targetPanel.getCurrentPath().getBaseObject()).toFile(), virtualFile.getName())));
                 }
             } catch (Exception ex) {
                 logException(ex);
@@ -214,8 +219,9 @@ public class CopyTask extends JDialog implements ActionListener, PropertyChangeL
             }
         }
 
-        private void copyFiles(File sourceFile, File targetFile) throws IOException {
+        private void copyFiles(VirtualFile sourceFile, VirtualFile targetFile) throws IOException {
             LOGGER.debug("CopyFile " + sourceFile);
+            VirtualFileSystem targetFileSystem = targetPanel.getFileSystem();
 
             if (sourceFile.isDirectory()) {
                 if (!targetFile.exists()) targetFile.mkdirs();
@@ -223,8 +229,8 @@ public class CopyTask extends JDialog implements ActionListener, PropertyChangeL
                 String[] filePaths = sourceFile.list();
 
                 for (String filePath : filePaths) {
-                    File srcFile = new File(sourceFile, filePath);
-                    File destFile = new File(targetFile, filePath);
+                    VirtualFile srcFile = VirtualFileFactory.newInstance(new File((File)sourceFile.getBaseObject(), filePath));
+                    VirtualFile destFile = VirtualFileFactory.newInstance(new File((File)targetFile.getBaseObject(), filePath));
 
                     copyFiles(srcFile, destFile);
                 }
@@ -239,8 +245,8 @@ public class CopyTask extends JDialog implements ActionListener, PropertyChangeL
                 labelCopyStatus.setText(statusText);
                 labelCopyStatus.setToolTipText(statusText);
 
-                FileChannel bis = new FileInputStream(sourceFile).getChannel();
-                FileChannel bos = new FileOutputStream(targetFile).getChannel();
+                FileChannel bis = new FileInputStream((File)sourceFile.getBaseObject()).getChannel();
+                FileChannel bos = new FileOutputStream((File)targetFile.getBaseObject()).getChannel();
 
                 ByteBuffer buffer = ByteBuffer.allocate(COPY_BUFFER_SIZE);
 
@@ -270,7 +276,7 @@ public class CopyTask extends JDialog implements ActionListener, PropertyChangeL
                 }
 
                 if (isCancelled && bytesSizeCurrentFile != bytesWrittenCurrentFile) {
-                    Files.delete(targetFile.toPath());
+                    targetFileSystem.delete(targetFile.toPath());
                 }
 
                 publish(100);
