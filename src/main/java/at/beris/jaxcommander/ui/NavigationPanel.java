@@ -9,7 +9,8 @@
 
 package at.beris.jaxcommander.ui;
 
-import at.beris.jaxcommander.DriveInfo;
+import at.beris.jaxcommander.filesystem.DriveInfo;
+import at.beris.jaxcommander.filesystem.file.VirtualFile;
 import at.beris.jaxcommander.action.ActionCommand;
 import at.beris.jaxcommander.action.ParamActionEvent;
 import at.beris.jaxcommander.ui.combobox.DriveComboBox;
@@ -126,8 +127,13 @@ public class NavigationPanel extends JPanel implements ActionListener {
             e.setSource(this);
             ((ActionListener) this.getParent().getParent()).actionPerformed(e);
         } else if (e.getActionCommand().equals(CHANGE_DIRECTORY)) {
-            File file = (File) ((ParamActionEvent) e).getParam();
+            VirtualFile file = (VirtualFile) ((ParamActionEvent) e).getParam();
             changeDirectory(file.toPath());
+        } else if (e.getActionCommand().equals(EXECUTE_FILE)) {
+            VirtualFile virtualFile = (VirtualFile) ((ParamActionEvent) e).getParam();
+            Path path = virtualFile.toPath();
+            currentPathTextField.setText(path.toString());
+            fileTablePane.listFile((File)virtualFile.getBaseObject());
         } else if (e.getActionCommand().equals(NAVIGATE_PATH_UP)) {
             changeDirectory(new File("..").toPath());
         } else if (e.getActionCommand().equals(CHANGE_DRIVE)) {
@@ -148,11 +154,11 @@ public class NavigationPanel extends JPanel implements ActionListener {
 
     }
 
-    public List<File> getSelection() {
-        List<File> fileList = new ArrayList<>();
+    public List<VirtualFile> getSelection() {
+        List<VirtualFile> fileList = new ArrayList<>();
         for (int rowIndex : fileTablePane.getTable().getSelectedRows()) {
             int modelIndex = fileTablePane.getTable().getRowSorter().convertRowIndexToModel(rowIndex);
-            fileList.add((File) fileTablePane.getTable().getModel().getValueAt(modelIndex, 0));
+            fileList.add((VirtualFile) fileTablePane.getTable().getModel().getValueAt(modelIndex, 0));
         }
         return fileList;
     }

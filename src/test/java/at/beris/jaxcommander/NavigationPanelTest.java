@@ -33,13 +33,4 @@ public class NavigationPanelTest {
         FileTableStatusLabel statusLabel = new FileTableStatusLabel(fileTablePane.getTable());
         navPanel = new NavigationPanel(fileTablePane, driveComboBox, currentPathTextField, statusLabel);
     }
-
-    @Test
-    public void whenPanelGetsSelectedThenTableSelectionMustBeEmpty() throws Exception {
-        fileTablePane.getTable().getSelectionModel().addSelectionInterval(1, 3);
-        assertEquals(3, navPanel.getFileTablePane().getTable().getSelectedRowCount());
-
-        navPanel.setSelected(true);
-        assertEquals(0, navPanel.getFileTablePane().getTable().getSelectedRowCount());
-    }
 }

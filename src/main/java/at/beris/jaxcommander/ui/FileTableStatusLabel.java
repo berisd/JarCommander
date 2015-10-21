@@ -9,12 +9,12 @@
 
 package at.beris.jaxcommander.ui;
 
+import at.beris.jaxcommander.filesystem.file.VirtualFile;
 import at.beris.jaxcommander.ui.table.FileTable;
 
 import javax.swing.JLabel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import java.io.File;
 
 import static at.beris.jaxcommander.helper.Localization.numberFormat;
 
@@ -44,7 +44,7 @@ public class FileTableStatusLabel extends JLabel {
         long totalNoOfDirs = 0;
 
         for (int rowIndex = 0; rowIndex < fileTable.getRowCount(); rowIndex++) {
-            File file = (File) fileTable.getValueAt(rowIndex, 0);
+            VirtualFile file = (VirtualFile) fileTable.getValueAt(rowIndex, 0);
             boolean isCellSelected = fileTable.isCellSelected(rowIndex, 0);
 
             if (file.isDirectory()) {
@@ -57,9 +57,9 @@ public class FileTableStatusLabel extends JLabel {
                     selectedNoOfFiles++;
             }
 
-            totalSize += file.length();
+            totalSize += file.getSize();
             if (isCellSelected)
-                selectedSize += file.length();
+                selectedSize += file.getSize();
         }
 
         setText(numberFormat().format((double) selectedSize / 1024) + "K / " + numberFormat().format((double) totalSize / 1024)

@@ -9,6 +9,7 @@
 
 package at.beris.jaxcommander.ui.table;
 
+import at.beris.jaxcommander.filesystem.file.VirtualFile;
 import at.beris.jaxcommander.action.ParamActionEvent;
 import org.apache.log4j.Logger;
 
@@ -18,13 +19,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.File;
 
-import static at.beris.jaxcommander.action.ActionCommand.CHANGE_DIRECTORY;
-import static at.beris.jaxcommander.action.ActionCommand.SELECT_NAVIGATION_PANEL;
+import static at.beris.jaxcommander.action.ActionCommand.*;
 
 public class FileTableMouseListener extends MouseAdapter {
-
     private final static Logger LOGGER = Logger.getLogger(FileTableMouseListener.class);
 
     @Override
@@ -45,10 +43,12 @@ public class FileTableMouseListener extends MouseAdapter {
             LOGGER.debug("Double Clicked on row with index " + rowIndex);
 
             if (rowIndex != -1) {
-                File file = (File) table.getValueAt(rowIndex, 0);
+                VirtualFile file = (VirtualFile) table.getValueAt(rowIndex, 0);
 
                 if (file.isDirectory()) {
                     parent.actionPerformed(new ParamActionEvent(e.getSource(), e.getID(), CHANGE_DIRECTORY, file));
+                } else {
+                    parent.actionPerformed(new ParamActionEvent(e.getSource(), e.getID(), EXECUTE_FILE, file));
                 }
             }
         }

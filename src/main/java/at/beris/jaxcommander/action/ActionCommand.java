@@ -17,4 +17,5 @@ public interface ActionCommand {
     String KEY_PRESSED = "keyPressed";
     String NAVIGATE_PATH_UP = "navigatePathUp";
     String SELECT_NAVIGATION_PANEL = "selectNavigationPanel";
+    String EXECUTE_FILE = "executeFile";
 }

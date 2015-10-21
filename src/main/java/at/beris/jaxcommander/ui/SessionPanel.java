@@ -9,7 +9,7 @@
 
 package at.beris.jaxcommander.ui;
 
-import at.beris.jaxcommander.DriveInfo;
+import at.beris.jaxcommander.filesystem.DriveInfo;
 import at.beris.jaxcommander.ui.combobox.DriveComboBox;
 import at.beris.jaxcommander.ui.table.FileTablePane;
 import org.apache.log4j.Logger;

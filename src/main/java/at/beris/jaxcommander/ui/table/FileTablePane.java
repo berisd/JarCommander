@@ -56,6 +56,10 @@ public class FileTablePane extends JScrollPane implements ActionListener {
         table.setPath(path);
     }
 
+    public void listFile(File file) {
+        table.listFile(file);
+    }
+
     public void scrollToRow(int rowIndex) {
         Rectangle rect = table.getCellRect(rowIndex, 0, true);
         Point pt = getViewport().getViewPosition();

@@ -10,10 +10,10 @@
 package at.beris.jaxcommander;
 
 import at.beris.jaxcommander.action.ActionType;
+import at.beris.jaxcommander.filesystem.DriveInfo;
 import at.beris.jaxcommander.helper.ActionHelper;
 import at.beris.jaxcommander.ui.SessionPanel;
 import at.beris.jaxcommander.ui.button.ButtonFactory;
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 import javax.swing.JFrame;

@@ -10,7 +10,7 @@
 package at.beris.jaxcommander.ui.combobox;
 
 import at.beris.jaxcommander.Application;
-import at.beris.jaxcommander.DriveInfo;
+import at.beris.jaxcommander.filesystem.DriveInfo;
 import at.beris.jaxcommander.action.ActionCommand;
 import at.beris.jaxcommander.action.ParamActionEvent;
 import org.apache.log4j.Logger;

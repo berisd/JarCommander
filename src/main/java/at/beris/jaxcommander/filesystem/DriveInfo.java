@@ -7,7 +7,7 @@
  * Some rights reserved. See COPYING, AUTHORS.
  */
 
-package at.beris.jaxcommander;
+package at.beris.jaxcommander.filesystem;
 
 import java.nio.file.Path;
 

@@ -10,6 +10,7 @@
 package at.beris.jaxcommander.action;
 
 import at.beris.jaxcommander.Application;
+import at.beris.jaxcommander.filesystem.file.VirtualFile;
 import at.beris.jaxcommander.ui.NavigationPanel;
 import at.beris.jaxcommander.ui.SessionPanel;
 import org.apache.log4j.Logger;
@@ -52,7 +53,8 @@ public class DeleteAction extends CustomAction {
         } else {
             int deletion = JOptionPane.showConfirmDialog(application, "Delete " + sourcePanel.getSelection().size() + " items?", "Deletion", JOptionPane.YES_NO_OPTION);
             if (deletion == JOptionPane.YES_OPTION) {
-                for (File file : sourcePanel.getSelection()) {
+                for (VirtualFile virtualFile : sourcePanel.getSelection()) {
+                    File file = (File) virtualFile.getBaseObject();
                     file.delete();
                 }
                 sourcePanel.refreshDirectory();

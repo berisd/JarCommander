@@ -9,17 +9,18 @@
 
 package at.beris.jaxcommander.ui.table;
 
+import at.beris.jaxcommander.filesystem.file.VirtualFile;
+
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.table.TableCellRenderer;
 import java.awt.Color;
 import java.awt.Component;
-import java.io.File;
 
 public class FileRenderer extends JLabel implements TableCellRenderer {
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-        File file = (File) value;
+        VirtualFile file = (VirtualFile) value;
         setText(file.getName());
 
         if (isSelected) {

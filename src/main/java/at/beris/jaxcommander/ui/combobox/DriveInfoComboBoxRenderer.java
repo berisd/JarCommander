@@ -9,7 +9,7 @@
 
 package at.beris.jaxcommander.ui.combobox;
 
-import at.beris.jaxcommander.DriveInfo;
+import at.beris.jaxcommander.filesystem.DriveInfo;
 
 import javax.swing.JLabel;
 import javax.swing.JList;

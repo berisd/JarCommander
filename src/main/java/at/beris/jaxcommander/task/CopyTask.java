@@ -9,6 +9,7 @@
 
 package at.beris.jaxcommander.task;
 
+import at.beris.jaxcommander.filesystem.file.VirtualFile;
 import at.beris.jaxcommander.ui.NavigationPanel;
 
 import javax.swing.BorderFactory;
@@ -51,9 +52,9 @@ public class CopyTask extends JDialog implements ActionListener, PropertyChangeL
     private JLabel labelCopyStatus;
 
     private NavigationPanel targetPanel;
-    private List<File> fileList;
+    private List<VirtualFile> fileList;
 
-    public CopyTask(List<File> fileList, NavigationPanel targetPanel) {
+    public CopyTask(List<VirtualFile> fileList, NavigationPanel targetPanel) {
         this.fileList = fileList;
         this.targetPanel = targetPanel;
 
@@ -145,14 +146,14 @@ public class CopyTask extends JDialog implements ActionListener, PropertyChangeL
     }
 
     class CopyWorker extends SwingWorker<Void, Integer> {
-        private List<File> sourceList;
+        private List<VirtualFile> sourceList;
         private NavigationPanel targetPanel;
         private long bytesTotal = 0L;
         private long bytesCopied = 0L;
         private long totalCountFiles = 0;
         private long currentFileNumber = 0;
 
-        public CopyWorker(List<File> sourceList, NavigationPanel targetPanel) {
+        public CopyWorker(List<VirtualFile> sourceList, NavigationPanel targetPanel) {
             this.sourceList = sourceList;
             this.targetPanel = targetPanel;
             progressbarCurrent.setValue(0);
@@ -163,11 +164,13 @@ public class CopyTask extends JDialog implements ActionListener, PropertyChangeL
         public Void doInBackground() throws Exception {
             LOGGER.debug("doInBackground");
             try {
-                for (File file : sourceList) {
+                for (VirtualFile virtualFile : sourceList) {
+                    File file = (File)virtualFile.getBaseObject();
                     retrieveFileInfo(file);
                 }
 
-                for (File file : sourceList) {
+                for (VirtualFile virtualFile : sourceList) {
+                    File file = (File)virtualFile.getBaseObject();
                     copyFiles(file, new File(targetPanel.getCurrentPath().toFile(), file.getName()));
                 }
             } catch (Exception ex) {

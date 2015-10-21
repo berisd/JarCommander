@@ -104,6 +104,13 @@ public class FileTable extends JTable {
         repaint();
     }
 
+    public void listFile(File file) {
+        ((PathTableModel) getModel()).listFile(file);
+        rowSorter.sort();
+        getSelectionModel().clearSelection();
+        repaint();
+    }
+
     private class FileTableAction extends AbstractAction {
         public FileTableAction(String actionCommandKey) {
             putValue(Action.ACTION_COMMAND_KEY, actionCommandKey);

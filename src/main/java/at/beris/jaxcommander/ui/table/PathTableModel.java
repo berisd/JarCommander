@@ -9,44 +9,45 @@
 
 package at.beris.jaxcommander.ui.table;
 
+import at.beris.jaxcommander.filesystem.file.VirtualFile;
+import at.beris.jaxcommander.filesystem.file.VirtualFileFactory;
+import org.apache.commons.compress.archivers.ArchiveEntry;
+import org.apache.commons.compress.archivers.ArchiveException;
+import org.apache.commons.compress.archivers.ArchiveInputStream;
+import org.apache.commons.compress.archivers.ArchiveStreamFactory;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 
 import javax.swing.table.AbstractTableModel;
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.math.RoundingMode;
+import java.io.InputStream;
 import java.nio.file.DirectoryStream;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.text.DateFormat;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
+
+import static at.beris.jaxcommander.Application.logException;
 
 public class PathTableModel extends AbstractTableModel {
-    private static final int columnCount = 3;
-    private List<File> fileList;
+    private final static Logger LOGGER = Logger.getLogger(PathTableModel.class);
 
-    private DateFormat dateFormat;
-    private NumberFormat numberFormat;
+    private static final int columnCount = 3;
+    private List<VirtualFile> fileList;
+
+
     private Path path;
 
     public PathTableModel(Path path) {
         this.path = path;
-        dateFormat = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.MEDIUM, Locale.getDefault());
-        numberFormat = NumberFormat.getInstance(Locale.getDefault());
-        numberFormat.setMinimumFractionDigits(2);
-        numberFormat.setMaximumFractionDigits(2);
-        numberFormat.setRoundingMode(RoundingMode.HALF_UP);
         fileList = new ArrayList<>();
         setPath(path);
-    }
-
-    public Path getPath() {
-        return path;
     }
 
     public void setPath(Path path) {
@@ -60,12 +61,36 @@ public class PathTableModel extends AbstractTableModel {
             e.printStackTrace();
         }
 
-        if (!path.toString().toString().equals("/") && StringUtils.countMatches(path.toString(), FileSystems.getDefault().getSeparator()) >= 1) {
-            fileList.add(new File(".."));
+        if (!path.toString().equals("/") && StringUtils.countMatches(path.toString(), FileSystems.getDefault().getSeparator()) >= 1) {
+            fileList.add(VirtualFileFactory.newInstance(new File("..")));
         }
 
         for (Path childPath : directoryStream)
-            fileList.add(childPath.toFile());
+            fileList.add(VirtualFileFactory.newInstance(childPath.toFile()));
+    }
+
+    public void listFile(File file) {
+        LOGGER.debug("listFile " + file);
+        fileList.clear();
+        ArchiveStreamFactory factory = new ArchiveStreamFactory();
+
+        try {
+            InputStream fis = new BufferedInputStream(new FileInputStream(file));
+            ArchiveInputStream ais = factory.createArchiveInputStream(fis);
+
+            ArchiveEntry ae;
+            while ((ae = ais.getNextEntry()) != null) {
+                fileList.add(VirtualFileFactory.newInstance(ae));
+            }
+            ais.close();
+            fis.close();
+        } catch (FileNotFoundException e) {
+            logException(e);
+        } catch (ArchiveException e) {
+            logException(e);
+        } catch (IOException e) {
+            logException(e);
+        }
     }
 
     @Override
@@ -86,7 +111,7 @@ public class PathTableModel extends AbstractTableModel {
     public Class<?> getColumnClass(int columnIndex) {
         switch (columnIndex) {
             case 0:
-                return File.class;
+                return VirtualFile.class;
             case 1:
                 return Date.class;
             case 2:
@@ -108,15 +133,15 @@ public class PathTableModel extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        File file = fileList.get(rowIndex);
+        VirtualFile file = fileList.get(rowIndex);
 
         switch (columnIndex) {
             case 0:
                 return file;
             case 1:
-                return new java.util.Date(file.lastModified());
+                return file.getLastModified();
             case 2:
-                return file.length();
+                return file.getSize();
         }
         return null;
     }
