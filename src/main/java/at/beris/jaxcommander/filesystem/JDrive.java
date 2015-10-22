@@ -9,16 +9,16 @@
 
 package at.beris.jaxcommander.filesystem;
 
-import at.beris.jaxcommander.filesystem.path.VirtualPath;
+import at.beris.jaxcommander.filesystem.path.JPath;
 
 import java.nio.file.Path;
 
 public interface JDrive {
-    VirtualPath getPath();
+    JPath getPath();
     void setPath(Path path);
     long getSpaceTotal();
     void setSpaceTotal(long spaceTotal);
     long getSpaceLeft();
     void setSpaceLeft(long spaceLeft);
-    VirtualPath getPath(String path);
+    JPath getPath(String path);
 }

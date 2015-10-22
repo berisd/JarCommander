@@ -11,7 +11,7 @@ package at.beris.jaxcommander.ui.table;
 
 import at.beris.jaxcommander.filesystem.file.VirtualFile;
 import at.beris.jaxcommander.filesystem.file.VirtualFileFactory;
-import at.beris.jaxcommander.filesystem.path.VirtualPath;
+import at.beris.jaxcommander.filesystem.path.JPath;
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.ArchiveException;
 import org.apache.commons.compress.archivers.ArchiveInputStream;
@@ -40,15 +40,15 @@ public class PathTableModel extends AbstractTableModel {
     private List<VirtualFile> fileList;
 
 
-    private VirtualPath path;
+    private JPath path;
 
-    public PathTableModel(VirtualPath path) {
+    public PathTableModel(JPath path) {
         this.path = path;
         fileList = new ArrayList<>();
         setPath(path);
     }
 
-    public void setPath(VirtualPath path) {
+    public void setPath(JPath path) {
         this.path = path;
         fileList.clear();
 

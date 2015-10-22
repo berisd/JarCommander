@@ -15,7 +15,7 @@ import at.beris.jaxcommander.filesystem.LocalDrive;
 import at.beris.jaxcommander.filesystem.JFileSystem;
 import at.beris.jaxcommander.filesystem.file.VirtualFile;
 import at.beris.jaxcommander.filesystem.file.VirtualFileFactory;
-import at.beris.jaxcommander.filesystem.path.VirtualPath;
+import at.beris.jaxcommander.filesystem.path.JPath;
 import at.beris.jaxcommander.ui.combobox.DriveComboBox;
 import at.beris.jaxcommander.ui.table.FileTablePane;
 import org.apache.log4j.Logger;
@@ -46,7 +46,7 @@ public class NavigationPanel extends JPanel implements ActionListener {
     private boolean selected;
     private Border borderNormal;
     private Border borderSelected;
-    private VirtualPath currentPath;
+    private JPath currentPath;
     private JFileSystem fileSystem;
 
     private DriveComboBox driveComboBox;
@@ -134,7 +134,7 @@ public class NavigationPanel extends JPanel implements ActionListener {
             changeDirectory(file.toPath());
         } else if (e.getActionCommand().equals(EXECUTE_FILE)) {
             VirtualFile virtualFile = (VirtualFile) ((ParamActionEvent) e).getParam();
-            VirtualPath path = virtualFile.toPath();
+            JPath path = virtualFile.toPath();
             currentPathTextField.setText(path.toString());
             fileTablePane.listFile((File) virtualFile.getBaseObject());
         } else if (e.getActionCommand().equals(NAVIGATE_PATH_UP)) {
@@ -171,7 +171,7 @@ public class NavigationPanel extends JPanel implements ActionListener {
     }
 
 
-    public void changeDirectory(VirtualPath newPath) {
+    public void changeDirectory(JPath newPath) {
         if (newPath.toString().equals("..") && currentPath.equals(currentPath.getRoot()))
             return;
 
@@ -185,7 +185,7 @@ public class NavigationPanel extends JPanel implements ActionListener {
         fileTablePane.setPath(currentPath);
     }
 
-    public VirtualPath getCurrentPath() {
+    public JPath getCurrentPath() {
         return currentPath;
     }
 

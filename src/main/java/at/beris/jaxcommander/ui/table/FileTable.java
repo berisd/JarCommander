@@ -11,7 +11,7 @@ package at.beris.jaxcommander.ui.table;
 
 import at.beris.jaxcommander.FileDefaultComparator;
 import at.beris.jaxcommander.action.ParamActionEvent;
-import at.beris.jaxcommander.filesystem.path.VirtualPath;
+import at.beris.jaxcommander.filesystem.path.JPath;
 import org.apache.log4j.Logger;
 
 import javax.swing.AbstractAction;
@@ -41,13 +41,13 @@ public class FileTable extends JTable {
     private final static Logger LOGGER = Logger.getLogger(FileTablePane.class);
 
     private TableRowSorter<TableModel> rowSorter;
-    private VirtualPath path;
+    private JPath path;
 
     public FileTable() {
         super();
     }
 
-    public FileTable(VirtualPath path) {
+    public FileTable(JPath path) {
         super();
 
         this.path = path;
@@ -100,7 +100,7 @@ public class FileTable extends JTable {
         repaint();
     }
 
-    public void setPath(VirtualPath path) {
+    public void setPath(JPath path) {
         this.path = path;
         ((PathTableModel) getModel()).setPath(path);
         rowSorter.sort();

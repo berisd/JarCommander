@@ -13,14 +13,13 @@ import at.beris.jaxcommander.filesystem.file.VirtualFile;
 
 import java.util.List;
 
-public interface PathProvider<T> {
+public interface JPath<T> {
     T getBaseObject();
     List<VirtualFile> getEntries();
-    T normalize();
-    T getRoot();
-    T getParent();
+    JPath normalize();
+    JPath getRoot();
+    JPath getParent();
     VirtualFile toFile();
-    int compareTo(VirtualPath virtualPath);
-    PathProvider<T> newInstance(T object);
+    int compareTo(JPath jPath);
     String toString();
 }

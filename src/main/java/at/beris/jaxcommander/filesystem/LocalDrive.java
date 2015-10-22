@@ -9,23 +9,23 @@
 
 package at.beris.jaxcommander.filesystem;
 
-import at.beris.jaxcommander.filesystem.path.LocalPathProvider;
-import at.beris.jaxcommander.filesystem.path.VirtualPath;
+import at.beris.jaxcommander.filesystem.path.LocalPath;
+import at.beris.jaxcommander.filesystem.path.JPath;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class LocalDrive implements JDrive {
-    private VirtualPath path;
+    private JPath path;
     private long spaceTotal;
     private long spaceLeft;
 
-    public VirtualPath getPath() {
+    public JPath getPath() {
         return path;
     }
 
     public void setPath(Path path) {
-        this.path = new VirtualPath(new LocalPathProvider(path));
+        this.path = new LocalPath(path);
     }
 
     public long getSpaceTotal() {
@@ -44,7 +44,7 @@ public class LocalDrive implements JDrive {
         this.spaceLeft = spaceLeft;
     }
 
-    public VirtualPath getPath(String path) {
-        return new VirtualPath(new LocalPathProvider(Paths.get(path)));
+    public JPath getPath(String path) {
+        return new LocalPath(Paths.get(path));
     }
 }

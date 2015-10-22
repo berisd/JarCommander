@@ -12,7 +12,7 @@ package at.beris.jaxcommander.ui;
 import at.beris.jaxcommander.filesystem.LocalFileSystem;
 import at.beris.jaxcommander.filesystem.LocalDrive;
 import at.beris.jaxcommander.filesystem.JFileSystem;
-import at.beris.jaxcommander.filesystem.path.VirtualPath;
+import at.beris.jaxcommander.filesystem.path.JPath;
 import at.beris.jaxcommander.ui.combobox.DriveComboBox;
 import at.beris.jaxcommander.ui.table.FileTablePane;
 import org.apache.log4j.Logger;
@@ -55,7 +55,7 @@ public class SessionPanel extends JTabbedPane implements ActionListener {
     private NavigationPanel createNavigationPanel() {
         JFileSystem fileSystem = new LocalFileSystem();
         DriveComboBox driveComboBox = new DriveComboBox(fileSystem);
-        VirtualPath currentPath = ((LocalDrive) driveComboBox.getSelectedItem()).getPath();
+        JPath currentPath = ((LocalDrive) driveComboBox.getSelectedItem()).getPath();
         final FileTablePane fileTablePane = new FileTablePane(currentPath);
         JTextField currentPathTextField = new JTextField();
         currentPathTextField.setText(currentPath.toString());

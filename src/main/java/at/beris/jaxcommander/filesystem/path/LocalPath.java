@@ -19,10 +19,10 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LocalPathProvider implements PathProvider<Path> {
+public class LocalPath implements JPath<Path> {
     private Path path;
 
-    public LocalPathProvider(Path path) {
+    public LocalPath(Path path) {
         this.path = path;
     }
 
@@ -44,18 +44,18 @@ public class LocalPathProvider implements PathProvider<Path> {
     }
 
     @Override
-    public Path normalize() {
-        return path.normalize();
+    public JPath normalize() {
+        return new LocalPath(path.normalize());
     }
 
     @Override
-    public Path getRoot() {
-        return path.getRoot();
+    public JPath getRoot() {
+        return new LocalPath(path.getRoot());
     }
 
     @Override
-    public Path getParent() {
-        return path.getParent();
+    public JPath getParent() {
+        return new LocalPath(path.getParent());
     }
 
     @Override
@@ -69,12 +69,7 @@ public class LocalPathProvider implements PathProvider<Path> {
     }
 
     @Override
-    public int compareTo(VirtualPath virtualPath) {
-        return path.compareTo((Path) virtualPath.getBaseObject());
-    }
-
-    @Override
-    public PathProvider<Path> newInstance(Path object) {
-        return new LocalPathProvider(object);
+    public int compareTo(JPath jPath) {
+        return path.compareTo((Path) jPath.getBaseObject());
     }
 }

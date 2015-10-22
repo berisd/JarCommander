@@ -9,7 +9,7 @@
 
 package at.beris.jaxcommander.filesystem;
 
-import at.beris.jaxcommander.filesystem.path.VirtualPath;
+import at.beris.jaxcommander.filesystem.path.JPath;
 
 import java.io.File;
 import java.io.IOException;
@@ -72,8 +72,8 @@ public class LocalFileSystem implements JFileSystem {
     }
 
     @Override
-    public void delete(VirtualPath virtualPath) throws IOException {
-        Path path = (Path) virtualPath.getBaseObject();
+    public void delete(JPath jPath) throws IOException {
+        Path path = (Path) jPath.getBaseObject();
         Files.delete(path);
     }
 }

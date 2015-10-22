@@ -9,7 +9,7 @@
 
 package at.beris.jaxcommander.filesystem.file;
 
-import at.beris.jaxcommander.filesystem.path.VirtualPath;
+import at.beris.jaxcommander.filesystem.path.JPath;
 
 import java.util.Date;
 
@@ -22,7 +22,7 @@ public interface FileProvider<T> {
 
     boolean isDirectory();
 
-    VirtualPath toPath();
+    JPath toPath();
 
     boolean exists();
 

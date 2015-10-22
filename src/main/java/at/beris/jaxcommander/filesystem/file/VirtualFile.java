@@ -9,7 +9,7 @@
 
 package at.beris.jaxcommander.filesystem.file;
 
-import at.beris.jaxcommander.filesystem.path.VirtualPath;
+import at.beris.jaxcommander.filesystem.path.JPath;
 
 import java.util.Date;
 
@@ -66,7 +66,7 @@ public class VirtualFile<T> {
         return provider.getAbsolutePath();
     }
 
-    public VirtualPath toPath() {
+    public JPath toPath() {
         return provider.toPath();
     }
 }
