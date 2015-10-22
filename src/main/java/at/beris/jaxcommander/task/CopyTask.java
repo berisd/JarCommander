@@ -9,7 +9,7 @@
 
 package at.beris.jaxcommander.task;
 
-import at.beris.jaxcommander.filesystem.VirtualFileSystem;
+import at.beris.jaxcommander.filesystem.JFileSystem;
 import at.beris.jaxcommander.filesystem.file.VirtualFile;
 import at.beris.jaxcommander.filesystem.file.VirtualFileFactory;
 import at.beris.jaxcommander.ui.NavigationPanel;
@@ -35,7 +35,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
@@ -165,7 +164,7 @@ public class CopyTask extends JDialog implements ActionListener, PropertyChangeL
 
         @Override
         public Void doInBackground() throws Exception {
-            VirtualFileSystem fileSystem = targetPanel.getFileSystem();
+            JFileSystem fileSystem = targetPanel.getFileSystem();
 
 
             LOGGER.debug("doInBackground");
@@ -221,7 +220,7 @@ public class CopyTask extends JDialog implements ActionListener, PropertyChangeL
 
         private void copyFiles(VirtualFile sourceFile, VirtualFile targetFile) throws IOException {
             LOGGER.debug("CopyFile " + sourceFile);
-            VirtualFileSystem targetFileSystem = targetPanel.getFileSystem();
+            JFileSystem targetFileSystem = targetPanel.getFileSystem();
 
             if (sourceFile.isDirectory()) {
                 if (!targetFile.exists()) targetFile.mkdirs();

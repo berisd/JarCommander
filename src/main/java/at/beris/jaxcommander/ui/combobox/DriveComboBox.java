@@ -12,7 +12,7 @@ package at.beris.jaxcommander.ui.combobox;
 import at.beris.jaxcommander.action.ActionCommand;
 import at.beris.jaxcommander.action.ParamActionEvent;
 import at.beris.jaxcommander.filesystem.VirtualDrive;
-import at.beris.jaxcommander.filesystem.VirtualFileSystem;
+import at.beris.jaxcommander.filesystem.JFileSystem;
 import org.apache.log4j.Logger;
 
 import javax.swing.JComboBox;
@@ -31,7 +31,7 @@ public class DriveComboBox extends JComboBox<VirtualDrive> {
 
     private final static Logger LOGGER = Logger.getLogger(DriveComboBox.class.getName());
 
-    public DriveComboBox(VirtualFileSystem fileSystem) {
+    public DriveComboBox(JFileSystem fileSystem) {
         super();
 
         addItemListener(new

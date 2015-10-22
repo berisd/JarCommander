@@ -14,7 +14,7 @@ import at.beris.jaxcommander.filesystem.path.VirtualPath;
 import java.io.IOException;
 import java.util.List;
 
-public interface FileSystemProvider {
+public interface JFileSystem {
     List<VirtualDrive> getDriveList();
     void delete(VirtualPath virtualPath) throws IOException;
 }

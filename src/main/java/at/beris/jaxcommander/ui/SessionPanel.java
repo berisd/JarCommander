@@ -11,7 +11,7 @@ package at.beris.jaxcommander.ui;
 
 import at.beris.jaxcommander.filesystem.LocalFileSystem;
 import at.beris.jaxcommander.filesystem.VirtualDrive;
-import at.beris.jaxcommander.filesystem.VirtualFileSystem;
+import at.beris.jaxcommander.filesystem.JFileSystem;
 import at.beris.jaxcommander.filesystem.path.VirtualPath;
 import at.beris.jaxcommander.ui.combobox.DriveComboBox;
 import at.beris.jaxcommander.ui.table.FileTablePane;
@@ -26,7 +26,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.nio.file.Path;
 
 import static at.beris.jaxcommander.action.ActionCommand.SELECT_NAVIGATION_PANEL;
 
@@ -54,7 +53,7 @@ public class SessionPanel extends JTabbedPane implements ActionListener {
     }
 
     private NavigationPanel createNavigationPanel() {
-        VirtualFileSystem fileSystem = new VirtualFileSystem(new LocalFileSystem());
+        JFileSystem fileSystem = new LocalFileSystem();
         DriveComboBox driveComboBox = new DriveComboBox(fileSystem);
         VirtualPath currentPath = ((VirtualDrive) driveComboBox.getSelectedItem()).getPath();
         final FileTablePane fileTablePane = new FileTablePane(currentPath);

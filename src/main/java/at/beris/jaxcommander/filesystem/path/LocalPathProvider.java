@@ -10,7 +10,6 @@
 package at.beris.jaxcommander.filesystem.path;
 
 import at.beris.jaxcommander.Application;
-import at.beris.jaxcommander.filesystem.LocalFileSystem;
 import at.beris.jaxcommander.filesystem.file.VirtualFile;
 import at.beris.jaxcommander.filesystem.file.VirtualFileFactory;
 

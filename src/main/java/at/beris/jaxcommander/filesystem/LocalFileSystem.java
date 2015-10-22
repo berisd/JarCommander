@@ -23,7 +23,7 @@ import java.util.List;
 
 import static at.beris.jaxcommander.Application.logException;
 
-public class LocalFileSystem implements FileSystemProvider {
+public class LocalFileSystem implements JFileSystem {
     private List<VirtualDrive> driveList;
 
     public LocalFileSystem() {

@@ -10,7 +10,7 @@
 package at.beris.jaxcommander;
 
 import at.beris.jaxcommander.filesystem.LocalFileSystem;
-import at.beris.jaxcommander.filesystem.VirtualFileSystem;
+import at.beris.jaxcommander.filesystem.JFileSystem;
 import at.beris.jaxcommander.ui.FileTableStatusLabel;
 import at.beris.jaxcommander.ui.NavigationPanel;
 import at.beris.jaxcommander.ui.combobox.DriveComboBox;
@@ -26,7 +26,7 @@ public class NavigationPanelTest {
 
     @Before
     public void setUp() {
-        VirtualFileSystem fileSystem = new VirtualFileSystem(new LocalFileSystem());
+        JFileSystem fileSystem = new LocalFileSystem();
         fileTablePane = new FileTablePane();
         DriveComboBox driveComboBox = new DriveComboBox(fileSystem);
         JTextField currentPathTextField = new JTextField();

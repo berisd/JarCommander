@@ -12,7 +12,7 @@ package at.beris.jaxcommander.ui;
 import at.beris.jaxcommander.action.ActionCommand;
 import at.beris.jaxcommander.action.ParamActionEvent;
 import at.beris.jaxcommander.filesystem.VirtualDrive;
-import at.beris.jaxcommander.filesystem.VirtualFileSystem;
+import at.beris.jaxcommander.filesystem.JFileSystem;
 import at.beris.jaxcommander.filesystem.file.VirtualFile;
 import at.beris.jaxcommander.filesystem.file.VirtualFileFactory;
 import at.beris.jaxcommander.filesystem.path.VirtualPath;
@@ -47,13 +47,13 @@ public class NavigationPanel extends JPanel implements ActionListener {
     private Border borderNormal;
     private Border borderSelected;
     private VirtualPath currentPath;
-    private VirtualFileSystem fileSystem;
+    private JFileSystem fileSystem;
 
     private DriveComboBox driveComboBox;
     private JTextField currentPathTextField;
     private FileTablePane fileTablePane;
 
-    public NavigationPanel(VirtualFileSystem fileSystem, FileTablePane fileTablePane, DriveComboBox driveComboBox, JTextField currentPathTextField, FileTableStatusLabel statusLabel) {
+    public NavigationPanel(JFileSystem fileSystem, FileTablePane fileTablePane, DriveComboBox driveComboBox, JTextField currentPathTextField, FileTableStatusLabel statusLabel) {
         selected = false;
         this.fileTablePane = fileTablePane;
         this.driveComboBox = driveComboBox;
@@ -189,7 +189,7 @@ public class NavigationPanel extends JPanel implements ActionListener {
         return currentPath;
     }
 
-    public VirtualFileSystem getFileSystem() {
+    public JFileSystem getFileSystem() {
         return fileSystem;
     }
 }
