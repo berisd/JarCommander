@@ -11,8 +11,8 @@ package at.beris.jaxcommander.ui;
 
 import at.beris.jaxcommander.action.ActionCommand;
 import at.beris.jaxcommander.action.ParamActionEvent;
-import at.beris.jaxcommander.filesystem.LocalDrive;
 import at.beris.jaxcommander.filesystem.JFileSystem;
+import at.beris.jaxcommander.filesystem.LocalDrive;
 import at.beris.jaxcommander.filesystem.file.JFile;
 import at.beris.jaxcommander.filesystem.file.JFileFactory;
 import at.beris.jaxcommander.filesystem.path.JPath;
@@ -133,10 +133,10 @@ public class NavigationPanel extends JPanel implements ActionListener {
             JFile file = (JFile) ((ParamActionEvent) e).getParam();
             changeDirectory(file.toPath());
         } else if (e.getActionCommand().equals(EXECUTE_FILE)) {
-            JFile jFile = (JFile) ((ParamActionEvent) e).getParam();
-            JPath path = jFile.toPath();
+            JFile file = (JFile) ((ParamActionEvent) e).getParam();
+            JPath path = file.toPath();
             currentPathTextField.setText(path.toString());
-            fileTablePane.listFile((File) jFile.getBaseObject());
+            fileTablePane.listFile(file);
         } else if (e.getActionCommand().equals(NAVIGATE_PATH_UP)) {
             changeDirectory(JFileFactory.newInstance(new File("..")).toPath());
         } else if (e.getActionCommand().equals(CHANGE_DRIVE)) {
@@ -154,7 +154,6 @@ public class NavigationPanel extends JPanel implements ActionListener {
             SessionPanel sessionPanel = (SessionPanel) ((Component) e.getSource()).getParent().getParent();
             sessionPanel.dispatchEvent(e);
         }
-
     }
 
     public List<JFile> getSelection() {

@@ -11,6 +11,7 @@ package at.beris.jaxcommander.ui.table;
 
 import at.beris.jaxcommander.FileDefaultComparator;
 import at.beris.jaxcommander.action.ParamActionEvent;
+import at.beris.jaxcommander.filesystem.file.JFile;
 import at.beris.jaxcommander.filesystem.path.JPath;
 import org.apache.log4j.Logger;
 
@@ -109,7 +110,7 @@ public class FileTable extends JTable {
         repaint();
     }
 
-    public void listFile(File file) {
+    public void listFile(JFile file) {
         ((PathTableModel) getModel()).listFile(file);
         rowSorter.sort();
         getSelectionModel().clearSelection();

@@ -12,27 +12,16 @@ package at.beris.jaxcommander.ui.table;
 import at.beris.jaxcommander.filesystem.file.JFile;
 import at.beris.jaxcommander.filesystem.file.JFileFactory;
 import at.beris.jaxcommander.filesystem.path.JPath;
-import org.apache.commons.compress.archivers.ArchiveEntry;
-import org.apache.commons.compress.archivers.ArchiveException;
-import org.apache.commons.compress.archivers.ArchiveInputStream;
-import org.apache.commons.compress.archivers.ArchiveStreamFactory;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 import javax.swing.table.AbstractTableModel;
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.FileSystems;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
-
-import static at.beris.jaxcommander.Application.logException;
 
 public class PathTableModel extends AbstractTableModel {
     private final static Logger LOGGER = Logger.getLogger(PathTableModel.class);
@@ -58,28 +47,10 @@ public class PathTableModel extends AbstractTableModel {
         fileList.addAll(path.getEntries());
     }
 
-    public void listFile(File file) {
+    public void listFile(JFile file) {
         LOGGER.debug("listFile " + file);
         fileList.clear();
-        ArchiveStreamFactory factory = new ArchiveStreamFactory();
-
-        try {
-            InputStream fis = new BufferedInputStream(new FileInputStream(file));
-            ArchiveInputStream ais = factory.createArchiveInputStream(fis);
-
-            ArchiveEntry ae;
-            while ((ae = ais.getNextEntry()) != null) {
-                fileList.add(JFileFactory.newInstance(ae));
-            }
-            ais.close();
-            fis.close();
-        } catch (FileNotFoundException e) {
-            logException(e);
-        } catch (ArchiveException e) {
-            logException(e);
-        } catch (IOException e) {
-            logException(e);
-        }
+        fileList.addAll(file.list());
     }
 
     @Override

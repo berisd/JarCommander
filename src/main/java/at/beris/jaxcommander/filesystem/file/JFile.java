@@ -30,6 +30,8 @@ public interface JFile<T> {
 
     JFile getParentFile();
 
+    void addFile(Set<JFile> files);
+
     boolean exists();
 
     boolean mkdirs();

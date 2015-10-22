@@ -13,6 +13,7 @@ import at.beris.jaxcommander.Application;
 import at.beris.jaxcommander.filesystem.file.JFile;
 import at.beris.jaxcommander.filesystem.file.JFileFactory;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -35,8 +36,10 @@ public class LocalPath implements JPath<Path> {
     public List<JFile> getEntries() {
         List<JFile> entryList = new ArrayList<>();
         try {
-            for (Path childPath : Files.newDirectoryStream(path))
-                entryList.add(JFileFactory.newInstance(childPath.toFile()));
+            for (Path childPath : Files.newDirectoryStream(path)) {
+                File file = childPath.toFile();
+                entryList.add(JFileFactory.newInstance(file));
+            }
         } catch (IOException e) {
             Application.logException(e);
         }

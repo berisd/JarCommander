@@ -31,6 +31,8 @@ public class JFileFactory {
         return jFile;
     }
     public static JFile newInstance(ArchiveEntry archiveEntry) {
+        if (archiveEntry == null)
+            return null;
         return new CompressedFile(archiveEntry);
     }
 }

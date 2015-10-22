@@ -10,6 +10,7 @@
 package at.beris.jaxcommander.ui.table;
 
 import at.beris.jaxcommander.action.ParamActionEvent;
+import at.beris.jaxcommander.filesystem.file.JFile;
 import at.beris.jaxcommander.filesystem.path.JPath;
 import org.apache.log4j.Logger;
 
@@ -64,7 +65,7 @@ public class FileTablePane extends JScrollPane implements ActionListener {
         table.setPath(path);
     }
 
-    public void listFile(File file) {
+    public void listFile(JFile file) {
         table.listFile(file);
     }
 

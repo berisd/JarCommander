@@ -11,13 +11,28 @@ package at.beris.jaxcommander.filesystem.file;
 
 import at.beris.jaxcommander.filesystem.path.JPath;
 import at.beris.jaxcommander.filesystem.path.LocalPath;
+import org.apache.commons.compress.archivers.ArchiveEntry;
+import org.apache.commons.compress.archivers.ArchiveException;
+import org.apache.commons.compress.archivers.ArchiveInputStream;
+import org.apache.commons.compress.archivers.ArchiveStreamFactory;
+import org.apache.commons.io.FilenameUtils;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+
+import static at.beris.jaxcommander.Application.logException;
 
 public class LocalFile implements JFile<File> {
     private File file;
@@ -85,11 +100,71 @@ public class LocalFile implements JFile<File> {
     }
 
     @Override
+    public void addFile(Set<JFile> files) {
+        throw new NotImplementedException();
+    }
+
+    @Override
     public List<JFile> list() {
+
+        // if file is an archive that give back a list of archiveEntries
         List<JFile> fileList = new ArrayList<>();
 
-        for (File childFile : file.listFiles()) {
-            fileList.add(JFileFactory.newInstance(childFile));
+        if (file.isDirectory()) {
+            for (File childFile : file.listFiles()) {
+                fileList.add(JFileFactory.newInstance(childFile));
+            }
+        } else if (FilenameUtils.getExtension(file.toString()).toUpperCase().equals("ZIP")) {
+            try {
+                ArchiveStreamFactory factory = new ArchiveStreamFactory();
+                InputStream fis = new BufferedInputStream(new FileInputStream(file));
+                ArchiveInputStream ais = factory.createArchiveInputStream(fis);
+
+                ArchiveEntry ae;
+                Map<String, JFile> pathToArchiveEntryMap = new HashMap<>();
+                Map<String, Set<JFile>> archiveEntryToChildrenMap = new HashMap<>();
+
+                while ((ae = ais.getNextEntry()) != null) {
+                    JFile file = JFileFactory.newInstance(ae);
+
+                    String[] parts = ae.getName().split(File.separator);
+                    pathToArchiveEntryMap.put(parts[parts.length - 1], file);
+
+                    if (parts.length > 1) {
+                        for (int i = parts.length - 2; i >= 0; i--) {
+                            JFile parentFile = pathToArchiveEntryMap.get(parts[i]);
+                            file.setParentFile(parentFile);
+//                            file = parentFile;
+//                            break;
+                        }
+
+                        for (int i = 0; i < parts.length - 1; i++) {
+                            if (i + 1 < parts.length) {
+                                if (archiveEntryToChildrenMap.get(parts[i]) == null) {
+                                    archiveEntryToChildrenMap.put(parts[i], new LinkedHashSet<JFile>());
+                                }
+                                archiveEntryToChildrenMap.get(parts[i]).add(pathToArchiveEntryMap.get(parts[i + 1]));
+                            }
+                        }
+
+                        for (Map.Entry<String, Set<JFile>> entry : archiveEntryToChildrenMap.entrySet()) {
+                            Set<JFile> children = archiveEntryToChildrenMap.get(entry.getKey());
+                            pathToArchiveEntryMap.get(entry.getKey()).addFile(children);
+                        }
+
+                    } else {
+                        fileList.add(file);
+                    }
+                }
+                ais.close();
+                fis.close();
+            } catch (FileNotFoundException e) {
+                logException(e);
+            } catch (ArchiveException e) {
+                logException(e);
+            } catch (IOException e) {
+                logException(e);
+            }
         }
 
         return fileList;
