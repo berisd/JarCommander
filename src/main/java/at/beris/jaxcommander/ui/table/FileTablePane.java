@@ -19,6 +19,8 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
@@ -42,6 +44,12 @@ public class FileTablePane extends JScrollPane implements ActionListener {
         getViewport().add(table);
 
         addMouseListener(new MouseListener());
+        addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                table.layoutColumns();
+            }
+        });
     }
 
     public FileTable getTable() {

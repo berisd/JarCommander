@@ -20,6 +20,8 @@ import javax.swing.JTable;
 import javax.swing.KeyStroke;
 import javax.swing.RowSorter;
 import javax.swing.SortOrder;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 import java.awt.Component;
@@ -50,6 +52,7 @@ public class FileTable extends JTable {
 
         this.path = path;
 
+        setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         setModel(new PathTableModel(path));
         setSelectionModel(new FileTableSelectionModel(this));
 
@@ -88,6 +91,7 @@ public class FileTable extends JTable {
         sortKeys.add(new RowSorter.SortKey(0, SortOrder.ASCENDING));
         rowSorter.setSortKeys(sortKeys);
 
+        layoutColumns();
     }
 
     public void refresh() {
@@ -147,4 +151,41 @@ public class FileTable extends JTable {
             pane.actionPerformed(new ParamActionEvent<>(e.getSource(), e.getID(), KEY_PRESSED, e.getKeyCode()));
         }
     }
+
+    /**
+     * Layout columns to the width of their biggest value and make first column fill rest of the table width.
+     */
+    public void layoutColumns() {
+        LOGGER.debug("layoutColumns");
+        for (int column = 1; column < getColumnCount(); column++) {
+            TableColumn tableColumn = getColumnModel().getColumn(column);
+            int maxCellWidth = 0;
+            for (int row = 0; row < getRowCount(); row++) {
+                TableCellRenderer renderer = getCellRenderer(row, column);
+                Component comp = prepareRenderer(renderer, row, column);
+
+                int rendererWidth = comp.getPreferredSize().width;
+                int cellWidth = rendererWidth + getIntercellSpacing().width + 1 + 10;
+
+                maxCellWidth = cellWidth > maxCellWidth ? cellWidth : maxCellWidth;
+            }
+            tableColumn.setPreferredWidth(maxCellWidth);
+        }
+
+        if (this.getParent() != null) {
+            int columnsSizeWithOutFirst = 0;
+            for (int column = 1; column < getColumnCount(); column++) {
+                columnsSizeWithOutFirst += getColumnModel().getColumn(column).getWidth();
+            }
+
+            TableColumn tableColumn = getColumnModel().getColumn(0);
+
+            int viewportWidth = (int) this.getParent().getSize().getWidth();
+
+            int scrollBarSize = 14;
+            int width = (viewportWidth - columnsSizeWithOutFirst) - getIntercellSpacing().width - scrollBarSize;
+            tableColumn.setPreferredWidth(width);
+        }
+    }
 }
+
