@@ -13,6 +13,7 @@ import at.beris.jaxcommander.filesystem.path.JPath;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 public interface JFile<T> {
     T getBaseObject();
@@ -32,6 +33,8 @@ public interface JFile<T> {
     boolean exists();
 
     boolean mkdirs();
+
+    Set<Attribute> attributes();
 
     List<JFile> list();
 

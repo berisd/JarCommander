@@ -56,9 +56,10 @@ public class FileTable extends JTable {
         setModel(new PathTableModel(path));
         setSelectionModel(new FileTableSelectionModel(this));
 
-        getColumnModel().getColumn(0).setCellRenderer(new FileRenderer());
+        getColumnModel().getColumn(0).setCellRenderer(new FileNameRenderer());
         getColumnModel().getColumn(1).setCellRenderer(new DateRenderer());
         getColumnModel().getColumn(2).setCellRenderer(new FileSizeRenderer());
+        getColumnModel().getColumn(3).setCellRenderer(new FileAttributesRenderer());
 
         addMouseListener(new FileTableMouseListener());
         addKeyListener(new CustomerKeyListener());

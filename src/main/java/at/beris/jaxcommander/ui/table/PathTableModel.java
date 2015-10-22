@@ -29,6 +29,7 @@ import java.io.InputStream;
 import java.nio.file.FileSystems;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 
 import static at.beris.jaxcommander.Application.logException;
@@ -36,10 +37,8 @@ import static at.beris.jaxcommander.Application.logException;
 public class PathTableModel extends AbstractTableModel {
     private final static Logger LOGGER = Logger.getLogger(PathTableModel.class);
 
-    private static final int columnCount = 3;
+    private static final int columnCount = 4;
     private List<JFile> fileList;
-
-
     private JPath path;
 
     public PathTableModel(JPath path) {
@@ -92,6 +91,8 @@ public class PathTableModel extends AbstractTableModel {
                 return "Last Modified";
             case 2:
                 return "Size";
+            case 3:
+                return "Attr.";
 
         }
         return "";
@@ -106,6 +107,8 @@ public class PathTableModel extends AbstractTableModel {
                 return Date.class;
             case 2:
                 return Long.class;
+            case 3:
+                return HashSet.class;
             default:
                 return String.class;
         }
@@ -132,6 +135,8 @@ public class PathTableModel extends AbstractTableModel {
                 return file.getLastModified();
             case 2:
                 return file.getSize();
+            case 3:
+                return file.attributes();
         }
         return null;
     }

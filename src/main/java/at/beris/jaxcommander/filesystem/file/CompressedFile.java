@@ -15,6 +15,7 @@ import org.apache.commons.lang3.NotImplementedException;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 public class CompressedFile implements JFile<ArchiveEntry> {
     private ArchiveEntry archiveEntry;
@@ -65,6 +66,11 @@ public class CompressedFile implements JFile<ArchiveEntry> {
 
     @Override
     public boolean mkdirs() {
+        throw new NotImplementedException("");
+    }
+
+    @Override
+    public Set<Attribute> attributes() {
         throw new NotImplementedException("");
     }
 

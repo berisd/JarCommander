@@ -9,20 +9,24 @@
 
 package at.beris.jaxcommander.filesystem.file;
 
-import at.beris.jaxcommander.filesystem.path.LocalPath;
 import at.beris.jaxcommander.filesystem.path.JPath;
+import at.beris.jaxcommander.filesystem.path.LocalPath;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 public class LocalFile implements JFile<File> {
     private File file;
     private File parentFile;
+    private Set<Attribute> attributes;
 
     public LocalFile(File file) {
         this.file = file;
+        fillAttributes();
     }
 
     @Override
@@ -47,7 +51,7 @@ public class LocalFile implements JFile<File> {
 
     @Override
     public void setParentFile(JFile parentFile) {
-        this.parentFile = (File)parentFile.getBaseObject();
+        this.parentFile = (File) parentFile.getBaseObject();
     }
 
     @Override
@@ -71,6 +75,11 @@ public class LocalFile implements JFile<File> {
     }
 
     @Override
+    public Set<Attribute> attributes() {
+        return attributes;
+    }
+
+    @Override
     public String getAbsolutePath() {
         return file.getAbsolutePath();
     }
@@ -79,7 +88,7 @@ public class LocalFile implements JFile<File> {
     public List<JFile> list() {
         List<JFile> fileList = new ArrayList<>();
 
-        for(File childFile : file.listFiles()) {
+        for (File childFile : file.listFiles()) {
             fileList.add(JFileFactory.newInstance(childFile));
         }
 
@@ -89,5 +98,21 @@ public class LocalFile implements JFile<File> {
     @Override
     public File getBaseObject() {
         return file;
+    }
+
+    private void fillAttributes() {
+        attributes = new LinkedHashSet<>();
+        if (file.canRead()) {
+            attributes.add(Attribute.READ);
+        }
+        if (file.canWrite()) {
+            attributes.add(Attribute.WRITE);
+        }
+        if (file.canExecute()) {
+            attributes.add(Attribute.EXECUTE);
+        }
+        if (file.isHidden()) {
+            attributes.add(Attribute.HIDDEN);
+        }
     }
 }
