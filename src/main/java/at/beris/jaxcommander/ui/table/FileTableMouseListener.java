@@ -9,8 +9,8 @@
 
 package at.beris.jaxcommander.ui.table;
 
-import at.beris.jaxcommander.filesystem.file.JFile;
 import at.beris.jaxcommander.action.ParamActionEvent;
+import at.beris.jaxcommander.filesystem.file.JFile;
 import org.apache.log4j.Logger;
 
 import javax.swing.JTable;
@@ -20,7 +20,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-import static at.beris.jaxcommander.action.ActionCommand.*;
+import static at.beris.jaxcommander.action.ActionCommand.EXECUTE_FILE;
+import static at.beris.jaxcommander.action.ActionCommand.SELECT_NAVIGATION_PANEL;
 
 public class FileTableMouseListener extends MouseAdapter {
     private final static Logger LOGGER = Logger.getLogger(FileTableMouseListener.class);
@@ -44,12 +45,7 @@ public class FileTableMouseListener extends MouseAdapter {
 
             if (rowIndex != -1) {
                 JFile file = (JFile) table.getValueAt(rowIndex, 0);
-
-                if (file.isDirectory()) {
-                    parent.actionPerformed(new ParamActionEvent(e.getSource(), e.getID(), CHANGE_DIRECTORY, file));
-                } else {
-                    parent.actionPerformed(new ParamActionEvent(e.getSource(), e.getID(), EXECUTE_FILE, file));
-                }
+                parent.actionPerformed(new ParamActionEvent(e.getSource(), e.getID(), EXECUTE_FILE, file));
             }
         }
     }

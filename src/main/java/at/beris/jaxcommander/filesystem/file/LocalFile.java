@@ -125,17 +125,17 @@ public class LocalFile implements JFile<File> {
                 Map<String, Set<JFile>> archiveEntryToChildrenMap = new HashMap<>();
 
                 while ((ae = ais.getNextEntry()) != null) {
-                    JFile file = JFileFactory.newInstance(ae);
+                    JFile file = JFileFactory.newInstance(ae, this.file);
 
                     String[] parts = ae.getName().split(File.separator);
                     pathToArchiveEntryMap.put(parts[parts.length - 1], file);
 
                     if (parts.length > 1) {
+                        JFile currentFile = file;
                         for (int i = parts.length - 2; i >= 0; i--) {
                             JFile parentFile = pathToArchiveEntryMap.get(parts[i]);
-                            file.setParentFile(parentFile);
-//                            file = parentFile;
-//                            break;
+                            currentFile.setParentFile(parentFile);
+                            currentFile = parentFile;
                         }
 
                         for (int i = 0; i < parts.length - 1; i++) {
@@ -153,6 +153,7 @@ public class LocalFile implements JFile<File> {
                         }
 
                     } else {
+                        file.setParentFile(JFileFactory.newInstance(this.file));
                         fileList.add(file);
                     }
                 }
@@ -173,6 +174,11 @@ public class LocalFile implements JFile<File> {
     @Override
     public File getBaseObject() {
         return file;
+    }
+
+    @Override
+    public String toString() {
+        return file.toString();
     }
 
     private void fillAttributes() {

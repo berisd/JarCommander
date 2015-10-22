@@ -30,9 +30,16 @@ public class JFileFactory {
         }
         return jFile;
     }
-    public static JFile newInstance(ArchiveEntry archiveEntry) {
+
+    public static JFile newInstance(ArchiveEntry archiveEntry, File archiveFile) {
         if (archiveEntry == null)
             return null;
-        return new CompressedFile(archiveEntry);
+        return newInstance(archiveEntry, JFileFactory.newInstance(archiveFile));
+    }
+
+    public static JFile newInstance(ArchiveEntry archiveEntry, JFile archiveFile) {
+        if (archiveEntry == null)
+            return null;
+        return new CompressedFile(archiveEntry, archiveFile);
     }
 }

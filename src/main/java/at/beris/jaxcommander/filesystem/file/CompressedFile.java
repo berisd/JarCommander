@@ -21,11 +21,17 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class CompressedFile implements JFile<ArchiveEntry> {
+public class CompressedFile implements JFile<ArchiveEntry>, Archivable {
     private ArchiveEntry archiveEntry;
-    private ArchiveEntry parentFile;
+    private JFile parentFile;
     private Set<Attribute> attributes;
-    private Set<ArchiveEntry> children;
+    private Set<JFile> children;
+    private JFile archiveFile;
+
+    public CompressedFile(ArchiveEntry archiveEntry, JFile archiveFile) {
+        this(archiveEntry);
+        this.archiveFile = archiveFile;
+    }
 
     public CompressedFile(ArchiveEntry archiveEntry) {
         this.archiveEntry = archiveEntry;
@@ -56,12 +62,12 @@ public class CompressedFile implements JFile<ArchiveEntry> {
 
     @Override
     public void setParentFile(JFile parentFile) {
-        this.parentFile = (ArchiveEntry) parentFile.getBaseObject();
+        this.parentFile = parentFile;
     }
 
     @Override
     public JFile getParentFile() {
-        return JFileFactory.newInstance(parentFile);
+        return parentFile;
     }
 
     @Override
@@ -87,8 +93,8 @@ public class CompressedFile implements JFile<ArchiveEntry> {
     @Override
     public List<JFile> list() {
         List<JFile> files = new ArrayList<>();
-        for (ArchiveEntry archiveEntry : children) {
-            files.add(JFileFactory.newInstance(archiveEntry));
+        for (JFile childFile : children) {
+            files.add(childFile);
         }
 
         return files;
@@ -106,8 +112,11 @@ public class CompressedFile implements JFile<ArchiveEntry> {
 
     @Override
     public void addFile(Set<JFile> files) {
-        for (JFile file : files) {
-            this.children.add((ArchiveEntry) file.getBaseObject());
-        }
+        children.addAll(files);
+    }
+
+    @Override
+    public JFile getArchive() {
+        return archiveFile;
     }
 }

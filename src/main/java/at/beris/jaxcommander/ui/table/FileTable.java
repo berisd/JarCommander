@@ -32,7 +32,6 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -77,8 +76,8 @@ public class FileTable extends JTable {
         getActionMap().put(SCROLL_TO_TOP, new FileTableAction(SCROLL_TO_TOP));
         getInputMap(WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_END, 0), SCROLL_TO_BOTTOM);
         getActionMap().put(SCROLL_TO_BOTTOM, new FileTableAction(SCROLL_TO_BOTTOM));
-        getInputMap(WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), CHANGE_DIRECTORY);
-        getActionMap().put(CHANGE_DIRECTORY, new FileTableAction(CHANGE_DIRECTORY));
+        getInputMap(WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), EXECUTE_FILE);
+        getActionMap().put(EXECUTE_FILE, new FileTableAction(EXECUTE_FILE));
         getInputMap(WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, 0), NAVIGATE_PATH_UP);
         getActionMap().put(NAVIGATE_PATH_UP, new FileTableAction(NAVIGATE_PATH_UP));
 
@@ -126,19 +125,7 @@ public class FileTable extends JTable {
         public void actionPerformed(ActionEvent e) {
             LOGGER.debug("actionPerformed");
             FileTable table = (FileTable) e.getSource();
-
-            if (e.getActionCommand().equals(CHANGE_DIRECTORY)) {
-                int rowIndex = table.getSelectedRow();
-                if (rowIndex != -1) {
-                    File file = (File) table.getValueAt(rowIndex, 0);
-                    if (file.isDirectory()) {
-                        e = new ParamActionEvent<>(e.getSource(), e.getID(), e.getActionCommand(), file);
-                        ((ActionListener) table.getParent().getParent()).actionPerformed(e);
-                    }
-                }
-            } else {
-                ((ActionListener) table.getParent().getParent()).actionPerformed(e);
-            }
+            ((ActionListener) table.getParent().getParent()).actionPerformed(e);
         }
     }
 

@@ -50,6 +50,13 @@ public class PathTableModel extends AbstractTableModel {
     public void listFile(JFile file) {
         LOGGER.debug("listFile " + file);
         fileList.clear();
+
+        if (!path.toString().equals("/") && StringUtils.countMatches(path.toString(), FileSystems.getDefault().getSeparator()) >= 1) {
+            JFile backFile = JFileFactory.newInstance(new File(".."));
+            backFile.setParentFile(file);
+            fileList.add(backFile);
+        }
+
         fileList.addAll(file.list());
     }
 

@@ -11,7 +11,6 @@ package at.beris.jaxcommander.action;
 
 public interface ActionCommand {
     String CHANGE_DRIVE = "changeDrive";
-    String CHANGE_DIRECTORY = "changeDirectory";
     String SCROLL_TO_TOP = "scrollToTop";
     String SCROLL_TO_BOTTOM = "scrollToBottom";
     String KEY_PRESSED = "keyPressed";

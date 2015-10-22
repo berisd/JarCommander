@@ -9,10 +9,14 @@
 
 package at.beris.jaxcommander.filesystem.path;
 
+import at.beris.jaxcommander.filesystem.file.Archivable;
 import at.beris.jaxcommander.filesystem.file.JFile;
+import at.beris.jaxcommander.filesystem.file.JFileFactory;
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.lang3.NotImplementedException;
 
+import java.io.File;
+import java.util.Date;
 import java.util.List;
 
 public class CompressedPath implements JPath<ArchiveEntry> {
@@ -39,12 +43,43 @@ public class CompressedPath implements JPath<ArchiveEntry> {
 
     @Override
     public JPath getRoot() {
-        throw new NotImplementedException("");
+        if (file instanceof Archivable) {
+            return new CompressedPath(JFileFactory.newInstance(new ArchiveEntry() {
+                @Override
+                public String getName() {
+                    return "";
+                }
+
+                @Override
+                public long getSize() {
+                    return 0;
+                }
+
+                @Override
+                public boolean isDirectory() {
+                    return false;
+                }
+
+                @Override
+                public Date getLastModifiedDate() {
+                    return null;
+                }
+            }, ((Archivable) file).getArchive()));
+        } else {
+            return new LocalPath(new File(File.separator).toPath());
+        }
     }
 
     @Override
     public JPath getParent() {
-        throw new NotImplementedException("");
+        JFile parentFile = file.getParentFile();
+
+        if (parentFile == null) {
+            JFile archivefile = ((Archivable) file).getArchive();
+            return archivefile.toPath();
+        }
+
+        return new CompressedPath(file.getParentFile());
     }
 
     @Override
@@ -54,7 +89,14 @@ public class CompressedPath implements JPath<ArchiveEntry> {
 
     @Override
     public String toString() {
-        return file.getName();
+        if (file instanceof Archivable) {
+            Archivable archive = ((Archivable) file);
+            JFile archiveFile = archive.getArchive();
+
+            return archiveFile.getAbsolutePath() + File.separator + file.getName();
+        } else {
+            return file.toString();
+        }
     }
 
     @Override

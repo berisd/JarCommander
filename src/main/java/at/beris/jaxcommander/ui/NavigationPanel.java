@@ -18,6 +18,7 @@ import at.beris.jaxcommander.filesystem.file.JFileFactory;
 import at.beris.jaxcommander.filesystem.path.JPath;
 import at.beris.jaxcommander.ui.combobox.DriveComboBox;
 import at.beris.jaxcommander.ui.table.FileTablePane;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 
 import javax.swing.BorderFactory;
@@ -129,20 +130,31 @@ public class NavigationPanel extends JPanel implements ActionListener {
         if (e.getActionCommand().equals(ActionCommand.SELECT_NAVIGATION_PANEL)) {
             e.setSource(this);
             ((ActionListener) this.getParent().getParent()).actionPerformed(e);
-        } else if (e.getActionCommand().equals(CHANGE_DIRECTORY)) {
-            JFile file = (JFile) ((ParamActionEvent) e).getParam();
-            changeDirectory(file.toPath());
         } else if (e.getActionCommand().equals(EXECUTE_FILE)) {
             JFile file = (JFile) ((ParamActionEvent) e).getParam();
-            JPath path = file.toPath();
-            currentPathTextField.setText(path.toString());
-            fileTablePane.listFile(file);
+            if (file.isDirectory()) {
+                changeDirectory(file.toPath());
+            } else {
+                executeFile(file);
+            }
         } else if (e.getActionCommand().equals(NAVIGATE_PATH_UP)) {
             changeDirectory(JFileFactory.newInstance(new File("..")).toPath());
         } else if (e.getActionCommand().equals(CHANGE_DRIVE)) {
             LocalDrive driveInfo = (LocalDrive) ((ParamActionEvent) e).getParam();
             changeDirectory(driveInfo.getPath());
         }
+    }
+
+    private void executeFile(JFile file) {
+        JPath path = file.toPath();
+
+        boolean isArchive = FilenameUtils.getExtension(file.toString()).toUpperCase().equals("ZIP");
+        if (isArchive) {
+            currentPath = path;
+        }
+
+        currentPathTextField.setText(path.toString());
+        fileTablePane.listFile(file);
     }
 
     private class MouseListener extends MouseAdapter {
