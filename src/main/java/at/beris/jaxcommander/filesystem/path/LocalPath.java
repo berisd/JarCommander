@@ -10,8 +10,8 @@
 package at.beris.jaxcommander.filesystem.path;
 
 import at.beris.jaxcommander.Application;
-import at.beris.jaxcommander.filesystem.file.VirtualFile;
-import at.beris.jaxcommander.filesystem.file.VirtualFileFactory;
+import at.beris.jaxcommander.filesystem.file.JFile;
+import at.beris.jaxcommander.filesystem.file.JFileFactory;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -32,11 +32,11 @@ public class LocalPath implements JPath<Path> {
     }
 
     @Override
-    public List<VirtualFile> getEntries() {
-        List<VirtualFile> entryList = new ArrayList<>();
+    public List<JFile> getEntries() {
+        List<JFile> entryList = new ArrayList<>();
         try {
             for (Path childPath : Files.newDirectoryStream(path))
-                entryList.add(VirtualFileFactory.newInstance(childPath.toFile()));
+                entryList.add(JFileFactory.newInstance(childPath.toFile()));
         } catch (IOException e) {
             Application.logException(e);
         }
@@ -59,8 +59,8 @@ public class LocalPath implements JPath<Path> {
     }
 
     @Override
-    public VirtualFile toFile() {
-        return VirtualFileFactory.newInstance(path.toFile());
+    public JFile toFile() {
+        return JFileFactory.newInstance(path.toFile());
     }
 
     @Override

@@ -13,21 +13,24 @@ import org.apache.commons.compress.archivers.ArchiveEntry;
 
 import java.io.File;
 
-public class VirtualFileFactory {
-    public static VirtualFile newInstance(File file) {
-        VirtualFile<File>  virtualFile = new VirtualFile<>(new LocalFileProvider(file));
+public class JFileFactory {
+    public static JFile newInstance(File file) {
+        if (file == null)
+            return null;
+
+        JFile<File> jFile = new LocalFile(file);
 
         File parent = file.getParentFile();
-        VirtualFile virtualChild = virtualFile;
+        JFile virtualChild = jFile;
         while (parent != null) {
-            VirtualFile virtualParent = newInstance(parent);
+            JFile virtualParent = newInstance(parent);
             virtualChild.setParentFile(virtualParent);
             virtualChild = virtualParent;
             parent = parent.getParentFile();
         }
-        return virtualFile;
+        return jFile;
     }
-    public static VirtualFile newInstance(ArchiveEntry archiveEntry) {
-        return new VirtualFile<>(new ArchiveEntryProvider(archiveEntry));
+    public static JFile newInstance(ArchiveEntry archiveEntry) {
+        return new CompressedFile(archiveEntry);
     }
 }

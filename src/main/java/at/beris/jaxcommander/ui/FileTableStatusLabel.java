@@ -9,7 +9,7 @@
 
 package at.beris.jaxcommander.ui;
 
-import at.beris.jaxcommander.filesystem.file.VirtualFile;
+import at.beris.jaxcommander.filesystem.file.JFile;
 import at.beris.jaxcommander.ui.table.FileTable;
 
 import javax.swing.JLabel;
@@ -44,7 +44,7 @@ public class FileTableStatusLabel extends JLabel {
         long totalNoOfDirs = 0;
 
         for (int rowIndex = 0; rowIndex < fileTable.getRowCount(); rowIndex++) {
-            VirtualFile file = (VirtualFile) fileTable.getValueAt(rowIndex, 0);
+            JFile file = (JFile) fileTable.getValueAt(rowIndex, 0);
             boolean isCellSelected = fileTable.isCellSelected(rowIndex, 0);
 
             if (file.isDirectory()) {

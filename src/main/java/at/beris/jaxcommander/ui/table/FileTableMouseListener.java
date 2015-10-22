@@ -9,7 +9,7 @@
 
 package at.beris.jaxcommander.ui.table;
 
-import at.beris.jaxcommander.filesystem.file.VirtualFile;
+import at.beris.jaxcommander.filesystem.file.JFile;
 import at.beris.jaxcommander.action.ParamActionEvent;
 import org.apache.log4j.Logger;
 
@@ -43,7 +43,7 @@ public class FileTableMouseListener extends MouseAdapter {
             LOGGER.debug("Double Clicked on row with index " + rowIndex);
 
             if (rowIndex != -1) {
-                VirtualFile file = (VirtualFile) table.getValueAt(rowIndex, 0);
+                JFile file = (JFile) table.getValueAt(rowIndex, 0);
 
                 if (file.isDirectory()) {
                     parent.actionPerformed(new ParamActionEvent(e.getSource(), e.getID(), CHANGE_DIRECTORY, file));

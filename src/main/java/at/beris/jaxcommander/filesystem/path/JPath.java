@@ -9,17 +9,17 @@
 
 package at.beris.jaxcommander.filesystem.path;
 
-import at.beris.jaxcommander.filesystem.file.VirtualFile;
+import at.beris.jaxcommander.filesystem.file.JFile;
 
 import java.util.List;
 
 public interface JPath<T> {
     T getBaseObject();
-    List<VirtualFile> getEntries();
+    List<JFile> getEntries();
     JPath normalize();
     JPath getRoot();
     JPath getParent();
-    VirtualFile toFile();
+    JFile toFile();
     int compareTo(JPath jPath);
     String toString();
 }

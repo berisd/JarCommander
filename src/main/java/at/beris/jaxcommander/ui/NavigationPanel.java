@@ -13,8 +13,8 @@ import at.beris.jaxcommander.action.ActionCommand;
 import at.beris.jaxcommander.action.ParamActionEvent;
 import at.beris.jaxcommander.filesystem.LocalDrive;
 import at.beris.jaxcommander.filesystem.JFileSystem;
-import at.beris.jaxcommander.filesystem.file.VirtualFile;
-import at.beris.jaxcommander.filesystem.file.VirtualFileFactory;
+import at.beris.jaxcommander.filesystem.file.JFile;
+import at.beris.jaxcommander.filesystem.file.JFileFactory;
 import at.beris.jaxcommander.filesystem.path.JPath;
 import at.beris.jaxcommander.ui.combobox.DriveComboBox;
 import at.beris.jaxcommander.ui.table.FileTablePane;
@@ -130,15 +130,15 @@ public class NavigationPanel extends JPanel implements ActionListener {
             e.setSource(this);
             ((ActionListener) this.getParent().getParent()).actionPerformed(e);
         } else if (e.getActionCommand().equals(CHANGE_DIRECTORY)) {
-            VirtualFile file = (VirtualFile) ((ParamActionEvent) e).getParam();
+            JFile file = (JFile) ((ParamActionEvent) e).getParam();
             changeDirectory(file.toPath());
         } else if (e.getActionCommand().equals(EXECUTE_FILE)) {
-            VirtualFile virtualFile = (VirtualFile) ((ParamActionEvent) e).getParam();
-            JPath path = virtualFile.toPath();
+            JFile jFile = (JFile) ((ParamActionEvent) e).getParam();
+            JPath path = jFile.toPath();
             currentPathTextField.setText(path.toString());
-            fileTablePane.listFile((File) virtualFile.getBaseObject());
+            fileTablePane.listFile((File) jFile.getBaseObject());
         } else if (e.getActionCommand().equals(NAVIGATE_PATH_UP)) {
-            changeDirectory(VirtualFileFactory.newInstance(new File("..")).toPath());
+            changeDirectory(JFileFactory.newInstance(new File("..")).toPath());
         } else if (e.getActionCommand().equals(CHANGE_DRIVE)) {
             LocalDrive driveInfo = (LocalDrive) ((ParamActionEvent) e).getParam();
             changeDirectory(driveInfo.getPath());
@@ -157,11 +157,11 @@ public class NavigationPanel extends JPanel implements ActionListener {
 
     }
 
-    public List<VirtualFile> getSelection() {
-        List<VirtualFile> fileList = new ArrayList<>();
+    public List<JFile> getSelection() {
+        List<JFile> fileList = new ArrayList<>();
         for (int rowIndex : fileTablePane.getTable().getSelectedRows()) {
             int modelIndex = fileTablePane.getTable().getRowSorter().convertRowIndexToModel(rowIndex);
-            fileList.add((VirtualFile) fileTablePane.getTable().getModel().getValueAt(modelIndex, 0));
+            fileList.add((JFile) fileTablePane.getTable().getModel().getValueAt(modelIndex, 0));
         }
         return fileList;
     }

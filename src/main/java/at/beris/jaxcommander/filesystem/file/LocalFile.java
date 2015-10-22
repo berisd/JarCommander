@@ -13,12 +13,15 @@ import at.beris.jaxcommander.filesystem.path.LocalPath;
 import at.beris.jaxcommander.filesystem.path.JPath;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
-public class LocalFileProvider implements FileProvider<File> {
+public class LocalFile implements JFile<File> {
     private File file;
+    private File parentFile;
 
-    public LocalFileProvider(File file) {
+    public LocalFile(File file) {
         this.file = file;
     }
 
@@ -43,6 +46,16 @@ public class LocalFileProvider implements FileProvider<File> {
     }
 
     @Override
+    public void setParentFile(JFile parentFile) {
+        this.parentFile = (File)parentFile.getBaseObject();
+    }
+
+    @Override
+    public JFile getParentFile() {
+        return JFileFactory.newInstance(parentFile);
+    }
+
+    @Override
     public JPath toPath() {
         return new LocalPath(file.toPath());
     }
@@ -58,18 +71,19 @@ public class LocalFileProvider implements FileProvider<File> {
     }
 
     @Override
-    public String[] list() {
-        return file.list();
-    }
-
-    @Override
     public String getAbsolutePath() {
         return file.getAbsolutePath();
     }
 
     @Override
-    public File[] listFiles() {
-        return file.listFiles();
+    public List<JFile> list() {
+        List<JFile> fileList = new ArrayList<>();
+
+        for(File childFile : file.listFiles()) {
+            fileList.add(JFileFactory.newInstance(childFile));
+        }
+
+        return fileList;
     }
 
     @Override

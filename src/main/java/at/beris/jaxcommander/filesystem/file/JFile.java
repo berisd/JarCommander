@@ -12,8 +12,11 @@ package at.beris.jaxcommander.filesystem.file;
 import at.beris.jaxcommander.filesystem.path.JPath;
 
 import java.util.Date;
+import java.util.List;
 
-public interface FileProvider<T> {
+public interface JFile<T> {
+    T getBaseObject();
+
     String getName();
 
     Date getLastModified();
@@ -22,17 +25,17 @@ public interface FileProvider<T> {
 
     boolean isDirectory();
 
-    JPath toPath();
+    void setParentFile(JFile parentFile);
+
+    JFile getParentFile();
 
     boolean exists();
 
     boolean mkdirs();
 
-    String[] list();
+    List<JFile> list();
 
     String getAbsolutePath();
 
-    T[] listFiles();
-
-    T getBaseObject();
+    JPath toPath();
 }

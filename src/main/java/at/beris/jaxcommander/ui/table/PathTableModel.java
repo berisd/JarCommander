@@ -9,8 +9,8 @@
 
 package at.beris.jaxcommander.ui.table;
 
-import at.beris.jaxcommander.filesystem.file.VirtualFile;
-import at.beris.jaxcommander.filesystem.file.VirtualFileFactory;
+import at.beris.jaxcommander.filesystem.file.JFile;
+import at.beris.jaxcommander.filesystem.file.JFileFactory;
 import at.beris.jaxcommander.filesystem.path.JPath;
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.ArchiveException;
@@ -37,7 +37,7 @@ public class PathTableModel extends AbstractTableModel {
     private final static Logger LOGGER = Logger.getLogger(PathTableModel.class);
 
     private static final int columnCount = 3;
-    private List<VirtualFile> fileList;
+    private List<JFile> fileList;
 
 
     private JPath path;
@@ -53,7 +53,7 @@ public class PathTableModel extends AbstractTableModel {
         fileList.clear();
 
         if (!path.toString().equals("/") && StringUtils.countMatches(path.toString(), FileSystems.getDefault().getSeparator()) >= 1) {
-            fileList.add(VirtualFileFactory.newInstance(new File("..")));
+            fileList.add(JFileFactory.newInstance(new File("..")));
         }
 
         fileList.addAll(path.getEntries());
@@ -70,7 +70,7 @@ public class PathTableModel extends AbstractTableModel {
 
             ArchiveEntry ae;
             while ((ae = ais.getNextEntry()) != null) {
-                fileList.add(VirtualFileFactory.newInstance(ae));
+                fileList.add(JFileFactory.newInstance(ae));
             }
             ais.close();
             fis.close();
@@ -101,7 +101,7 @@ public class PathTableModel extends AbstractTableModel {
     public Class<?> getColumnClass(int columnIndex) {
         switch (columnIndex) {
             case 0:
-                return VirtualFile.class;
+                return JFile.class;
             case 1:
                 return Date.class;
             case 2:
@@ -123,7 +123,7 @@ public class PathTableModel extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        VirtualFile file = fileList.get(rowIndex);
+        JFile file = fileList.get(rowIndex);
 
         switch (columnIndex) {
             case 0:

@@ -9,17 +9,17 @@
 
 package at.beris.jaxcommander;
 
-import at.beris.jaxcommander.filesystem.file.VirtualFile;
+import at.beris.jaxcommander.filesystem.file.JFile;
 
 import java.util.Comparator;
 
-public class FileDefaultComparator implements Comparator<VirtualFile> {
+public class FileDefaultComparator implements Comparator<JFile> {
     @Override
-    public int compare(VirtualFile o1, VirtualFile o2) {
+    public int compare(JFile o1, JFile o2) {
         return compareTo(o1, o2);
     }
 
-    public int compareTo(VirtualFile file1, VirtualFile file2) {
+    public int compareTo(JFile file1, JFile file2) {
         if (file1 == null && file2 == null) {
             return 0;
         } else if (file1 == null || file2 == null) {

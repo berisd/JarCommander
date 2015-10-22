@@ -10,8 +10,8 @@
 package at.beris.jaxcommander.task;
 
 import at.beris.jaxcommander.filesystem.JFileSystem;
-import at.beris.jaxcommander.filesystem.file.VirtualFile;
-import at.beris.jaxcommander.filesystem.file.VirtualFileFactory;
+import at.beris.jaxcommander.filesystem.file.JFile;
+import at.beris.jaxcommander.filesystem.file.JFileFactory;
 import at.beris.jaxcommander.ui.NavigationPanel;
 
 import javax.swing.BorderFactory;
@@ -54,9 +54,9 @@ public class CopyTask extends JDialog implements ActionListener, PropertyChangeL
     private JLabel labelCopyStatus;
 
     private NavigationPanel targetPanel;
-    private List<VirtualFile> fileList;
+    private List<JFile> fileList;
 
-    public CopyTask(List<VirtualFile> fileList, NavigationPanel targetPanel) {
+    public CopyTask(List<JFile> fileList, NavigationPanel targetPanel) {
         this.fileList = fileList;
         this.targetPanel = targetPanel;
 
@@ -148,14 +148,14 @@ public class CopyTask extends JDialog implements ActionListener, PropertyChangeL
     }
 
     class CopyWorker extends SwingWorker<Void, Integer> {
-        private List<VirtualFile> sourceList;
+        private List<JFile> sourceList;
         private NavigationPanel targetPanel;
         private long bytesTotal = 0L;
         private long bytesCopied = 0L;
         private long totalCountFiles = 0;
         private long currentFileNumber = 0;
 
-        public CopyWorker(List<VirtualFile> sourceList, NavigationPanel targetPanel) {
+        public CopyWorker(List<JFile> sourceList, NavigationPanel targetPanel) {
             this.sourceList = sourceList;
             this.targetPanel = targetPanel;
             progressbarCurrent.setValue(0);
@@ -169,13 +169,13 @@ public class CopyTask extends JDialog implements ActionListener, PropertyChangeL
 
             LOGGER.debug("doInBackground");
             try {
-                for (VirtualFile virtualFile : sourceList) {
-                    File file = (File)virtualFile.getBaseObject();
+                for (JFile jFile : sourceList) {
+                    File file = (File) jFile.getBaseObject();
                     retrieveFileInfo(file);
                 }
 
-                for (VirtualFile virtualFile : sourceList) {
-                    copyFiles(virtualFile, VirtualFileFactory.newInstance(new File(((Path) targetPanel.getCurrentPath().getBaseObject()).toFile(), virtualFile.getName())));
+                for (JFile jFile : sourceList) {
+                    copyFiles(jFile, JFileFactory.newInstance(new File(((Path) targetPanel.getCurrentPath().getBaseObject()).toFile(), jFile.getName())));
                 }
             } catch (Exception ex) {
                 logException(ex);
@@ -218,19 +218,16 @@ public class CopyTask extends JDialog implements ActionListener, PropertyChangeL
             }
         }
 
-        private void copyFiles(VirtualFile sourceFile, VirtualFile targetFile) throws IOException {
+        private void copyFiles(JFile sourceFile, JFile targetFile) throws IOException {
             LOGGER.debug("CopyFile " + sourceFile);
             JFileSystem targetFileSystem = targetPanel.getFileSystem();
 
             if (sourceFile.isDirectory()) {
                 if (!targetFile.exists()) targetFile.mkdirs();
 
-                String[] filePaths = sourceFile.list();
-
-                for (String filePath : filePaths) {
-                    VirtualFile srcFile = VirtualFileFactory.newInstance(new File((File)sourceFile.getBaseObject(), filePath));
-                    VirtualFile destFile = VirtualFileFactory.newInstance(new File((File)targetFile.getBaseObject(), filePath));
-
+                for (JFile file : (List<JFile>)sourceFile.list()) {
+                    JFile srcFile = JFileFactory.newInstance(new File((File) sourceFile.getBaseObject(), file.toString()));
+                    JFile destFile = JFileFactory.newInstance(new File((File) targetFile.getBaseObject(), file.toString()));
                     copyFiles(srcFile, destFile);
                 }
             } else {

@@ -9,7 +9,7 @@
 
 package at.beris.jaxcommander.ui.table;
 
-import at.beris.jaxcommander.filesystem.file.VirtualFile;
+import at.beris.jaxcommander.filesystem.file.JFile;
 
 import javax.swing.JLabel;
 import javax.swing.JTable;
@@ -20,7 +20,7 @@ import java.awt.Component;
 public class FileRenderer extends JLabel implements TableCellRenderer {
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-        VirtualFile file = (VirtualFile) value;
+        JFile file = (JFile) value;
         setText(file.getName());
         setToolTipText(file.getName());
 

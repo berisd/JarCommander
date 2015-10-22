@@ -14,11 +14,12 @@ import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.lang3.NotImplementedException;
 
 import java.util.Date;
+import java.util.List;
 
-public class ArchiveEntryProvider implements FileProvider<ArchiveEntry> {
+public class CompressedFile implements JFile<ArchiveEntry> {
     private ArchiveEntry archiveEntry;
 
-    public ArchiveEntryProvider(ArchiveEntry archiveEntry) {
+    public CompressedFile(ArchiveEntry archiveEntry) {
         this.archiveEntry = archiveEntry;
     }
 
@@ -43,6 +44,16 @@ public class ArchiveEntryProvider implements FileProvider<ArchiveEntry> {
     }
 
     @Override
+    public void setParentFile(JFile parentFile) {
+        throw new NotImplementedException("");
+    }
+
+    @Override
+    public JFile getParentFile() {
+        throw new NotImplementedException("");
+    }
+
+    @Override
     public JPath toPath() {
         throw new NotImplementedException("");
     }
@@ -58,17 +69,12 @@ public class ArchiveEntryProvider implements FileProvider<ArchiveEntry> {
     }
 
     @Override
-    public String[] list() {
+    public List<JFile> list() {
         throw new NotImplementedException("");
     }
 
     @Override
     public String getAbsolutePath() {
-        throw new NotImplementedException("");
-    }
-
-    @Override
-    public ArchiveEntry[] listFiles() {
         throw new NotImplementedException("");
     }
 
