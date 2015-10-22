@@ -24,14 +24,14 @@ import java.util.List;
 import static at.beris.jaxcommander.Application.logException;
 
 public class LocalFileSystem implements JFileSystem {
-    private List<VirtualDrive> driveList;
+    private List<LocalDrive> driveList;
 
     public LocalFileSystem() {
         driveList = createDriveList();
     }
 
-    public List<VirtualDrive> createDriveList() {
-        List<VirtualDrive> driveList = new ArrayList<VirtualDrive>();
+    public List<LocalDrive> createDriveList() {
+        List<LocalDrive> driveList = new ArrayList<LocalDrive>();
         if (driveList.size() > 0)
             return driveList;
 
@@ -45,7 +45,7 @@ public class LocalFileSystem implements JFileSystem {
                 String[] parts = fileStore.toString().split(" ");
                 Path path = new File(parts[0]).toPath();
 
-                VirtualDrive driveInfo = new VirtualDrive();
+                LocalDrive driveInfo = new LocalDrive();
                 driveInfo.setPath(path);
                 driveInfo.setSpaceTotal(fileStore.getTotalSpace());
                 driveInfo.setSpaceLeft(fileStore.getUsableSpace());
@@ -56,9 +56,9 @@ public class LocalFileSystem implements JFileSystem {
             logException(e);
         }
 
-        driveList.sort(new Comparator<VirtualDrive>() {
+        driveList.sort(new Comparator<LocalDrive>() {
             @Override
-            public int compare(VirtualDrive o1, VirtualDrive o2) {
+            public int compare(LocalDrive o1, LocalDrive o2) {
                 return o1.getPath().compareTo(o2.getPath());
             }
         });
@@ -67,7 +67,7 @@ public class LocalFileSystem implements JFileSystem {
     }
 
     @Override
-    public List<VirtualDrive> getDriveList() {
+    public List<LocalDrive> getDriveList() {
         return driveList;
     }
 

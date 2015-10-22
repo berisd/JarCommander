@@ -11,10 +11,14 @@ package at.beris.jaxcommander.filesystem;
 
 import at.beris.jaxcommander.filesystem.path.VirtualPath;
 
-import java.io.IOException;
-import java.util.List;
+import java.nio.file.Path;
 
-public interface JFileSystem {
-    List<LocalDrive> getDriveList();
-    void delete(VirtualPath virtualPath) throws IOException;
+public interface JDrive {
+    VirtualPath getPath();
+    void setPath(Path path);
+    long getSpaceTotal();
+    void setSpaceTotal(long spaceTotal);
+    long getSpaceLeft();
+    void setSpaceLeft(long spaceLeft);
+    VirtualPath getPath(String path);
 }

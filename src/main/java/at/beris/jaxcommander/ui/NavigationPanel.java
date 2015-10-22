@@ -11,7 +11,7 @@ package at.beris.jaxcommander.ui;
 
 import at.beris.jaxcommander.action.ActionCommand;
 import at.beris.jaxcommander.action.ParamActionEvent;
-import at.beris.jaxcommander.filesystem.VirtualDrive;
+import at.beris.jaxcommander.filesystem.LocalDrive;
 import at.beris.jaxcommander.filesystem.JFileSystem;
 import at.beris.jaxcommander.filesystem.file.VirtualFile;
 import at.beris.jaxcommander.filesystem.file.VirtualFileFactory;
@@ -61,7 +61,7 @@ public class NavigationPanel extends JPanel implements ActionListener {
 
         addMouseListener(new MouseListener());
 
-        final VirtualDrive currentDrive = (VirtualDrive) driveComboBox.getSelectedItem();
+        final LocalDrive currentDrive = (LocalDrive) driveComboBox.getSelectedItem();
         currentPath = currentDrive.getPath();
 
         currentPathTextField.addKeyListener(new
@@ -140,7 +140,7 @@ public class NavigationPanel extends JPanel implements ActionListener {
         } else if (e.getActionCommand().equals(NAVIGATE_PATH_UP)) {
             changeDirectory(VirtualFileFactory.newInstance(new File("..")).toPath());
         } else if (e.getActionCommand().equals(CHANGE_DRIVE)) {
-            VirtualDrive driveInfo = (VirtualDrive) ((ParamActionEvent) e).getParam();
+            LocalDrive driveInfo = (LocalDrive) ((ParamActionEvent) e).getParam();
             changeDirectory(driveInfo.getPath());
         }
     }

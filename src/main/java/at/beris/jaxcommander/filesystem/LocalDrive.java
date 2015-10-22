@@ -15,7 +15,7 @@ import at.beris.jaxcommander.filesystem.path.VirtualPath;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public class VirtualDrive {
+public class LocalDrive implements JDrive {
     private VirtualPath path;
     private long spaceTotal;
     private long spaceLeft;

@@ -11,7 +11,7 @@ package at.beris.jaxcommander.ui.combobox;
 
 import at.beris.jaxcommander.action.ActionCommand;
 import at.beris.jaxcommander.action.ParamActionEvent;
-import at.beris.jaxcommander.filesystem.VirtualDrive;
+import at.beris.jaxcommander.filesystem.LocalDrive;
 import at.beris.jaxcommander.filesystem.JFileSystem;
 import org.apache.log4j.Logger;
 
@@ -27,7 +27,7 @@ import java.awt.event.MouseEvent;
 
 import static at.beris.jaxcommander.action.ActionCommand.SELECT_NAVIGATION_PANEL;
 
-public class DriveComboBox extends JComboBox<VirtualDrive> {
+public class DriveComboBox extends JComboBox<LocalDrive> {
 
     private final static Logger LOGGER = Logger.getLogger(DriveComboBox.class.getName());
 
@@ -40,11 +40,11 @@ public class DriveComboBox extends JComboBox<VirtualDrive> {
                                     @Override
                                     public void itemStateChanged(ItemEvent e) {
                                         LOGGER.debug("drivecombo itemStateChanged " + e.getItem().getClass());
-                                        VirtualDrive driveInfo = (VirtualDrive) e.getItem();
+                                        LocalDrive driveInfo = (LocalDrive) e.getItem();
                                         ActionListener parent = (ActionListener) ((JComponent) e.getSource()).getParent();
 
                                         if (parent != null) {
-                                            ParamActionEvent<VirtualDrive> event = new ParamActionEvent<>(e.getSource(), e.getID(), ActionCommand.CHANGE_DRIVE, driveInfo);
+                                            ParamActionEvent<LocalDrive> event = new ParamActionEvent<>(e.getSource(), e.getID(), ActionCommand.CHANGE_DRIVE, driveInfo);
                                             parent.actionPerformed(event);
                                         }
                                     }
@@ -54,7 +54,7 @@ public class DriveComboBox extends JComboBox<VirtualDrive> {
 
         setRenderer(new DriveInfoComboBoxRenderer());
 
-        for (VirtualDrive driveInfo : fileSystem.getDriveList()) {
+        for (LocalDrive driveInfo : fileSystem.getDriveList()) {
             addItem(driveInfo);
         }
     }
