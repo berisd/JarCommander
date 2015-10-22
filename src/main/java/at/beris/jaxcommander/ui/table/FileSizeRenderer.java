@@ -16,7 +16,10 @@ public class FileSizeRenderer extends JLabel implements TableCellRenderer {
         Long size = (Long) value;
         VirtualFile file = (VirtualFile) table.getValueAt(row, 0);
 
-        setText(file.isDirectory() ? "<DIR>" : numberFormat().format((double) size / 1024) + "K");
+        String text = file.isDirectory() ? "<DIR>" : numberFormat().format((double) size / 1024) + "K";
+
+        setText(text);
+        setToolTipText(text);
 
         if (isSelected) {
             setForeground(Color.RED);

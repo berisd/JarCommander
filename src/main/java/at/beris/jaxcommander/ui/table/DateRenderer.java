@@ -22,14 +22,13 @@ public class DateRenderer extends JLabel implements TableCellRenderer {
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         Date date = (Date) value;
-        setText(dateFormat().format(date));
+        String text = dateFormat().format(date);
+        setText(text);
+        setToolTipText(text);
 
-        if (isSelected)
-        {
+        if (isSelected) {
             setForeground(Color.RED);
-        }
-        else
-        {
+        } else {
             setForeground(table.getForeground());
         }
 

@@ -22,6 +22,7 @@ public class FileRenderer extends JLabel implements TableCellRenderer {
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         VirtualFile file = (VirtualFile) value;
         setText(file.getName());
+        setToolTipText(file.getName());
 
         if (isSelected) {
             setForeground(Color.RED);
