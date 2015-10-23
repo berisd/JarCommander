@@ -26,6 +26,8 @@ import java.io.IOException;
 import java.nio.file.AccessDeniedException;
 import java.nio.file.Files;
 
+import static at.beris.jaxcommander.Application.logException;
+
 public class MakeDirAction extends CustomAction {
     private final static Logger LOGGER = Logger.getLogger(MakeDirAction.class);
     public static final ActionType KEY = ActionType.MAKE_DIR;
@@ -56,11 +58,11 @@ public class MakeDirAction extends CustomAction {
 
             try {
                 Files.createDirectory(newDirectory.toPath());
-                sourcePanel.refreshDirectory();
+                sourcePanel.refresh();
             } catch (AccessDeniedException ex) {
                 JOptionPane.showMessageDialog(application, "Access Denied!" + System.lineSeparator() + "(No permissions?)", "Error", JOptionPane.ERROR_MESSAGE);
             } catch (IOException ex) {
-                ex.printStackTrace();
+                logException(ex);
             }
         }
     }

@@ -13,6 +13,7 @@ import at.beris.jaxcommander.action.ActionType;
 import at.beris.jaxcommander.action.CustomAction;
 import at.beris.jaxcommander.helper.ActionHelper;
 
+import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 
@@ -25,6 +26,19 @@ public final class ButtonFactory {
         button.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(action.getKeyStroke(), action.getKey());
         button.getActionMap().put(action.getKey(), action);
         button.setText(action.getKeyStrokeString() + " " + action.getName());
+
+        return button;
+    }
+
+    public static JButton createIconButton(ActionType actionType, Icon icon) {
+        JButton button = new JButton();
+        CustomAction action = ActionHelper.getAction(actionType);
+
+        button.setAction(action);
+        button.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(action.getKeyStroke(), action.getKey());
+        button.getActionMap().put(action.getKey(), action);
+        button.setText("");
+        button.setIcon(icon);
 
         return button;
     }

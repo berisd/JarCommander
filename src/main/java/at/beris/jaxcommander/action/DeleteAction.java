@@ -57,7 +57,7 @@ public class DeleteAction extends CustomAction {
                     File file = (File) jFile.getBaseObject();
                     file.delete();
                 }
-                sourcePanel.refreshDirectory();
+                sourcePanel.refresh();
             }
         }
     }

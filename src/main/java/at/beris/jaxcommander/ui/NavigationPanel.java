@@ -177,7 +177,8 @@ public class NavigationPanel extends JPanel implements ActionListener {
         return fileList;
     }
 
-    public void refreshDirectory() {
+    public void refresh() {
+        //TODO Refresh the whole Panel
         fileTablePane.refresh();
     }
 

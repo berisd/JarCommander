@@ -16,5 +16,6 @@ public enum ActionType {
     DELETE,
     RENAME,
     QUIT,
-    SHOW_ABOUT_DIALOG
+    SHOW_ABOUT_DIALOG,
+    REFRESH
 }

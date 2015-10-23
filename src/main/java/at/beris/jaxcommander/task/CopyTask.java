@@ -135,7 +135,7 @@ public class CopyTask extends JDialog implements ActionListener, PropertyChangeL
             buttonAction.setText("Cancel");
         } else if ("Cancel".equals(buttonAction.getText())) {
             copyWorker.cancel(true);
-            targetPanel.refreshDirectory();
+            targetPanel.refresh();
             this.dispose();
         }
     }
@@ -195,7 +195,7 @@ public class CopyTask extends JDialog implements ActionListener, PropertyChangeL
             try {
                 LOGGER.debug("done");
                 setProgress(100);
-                targetPanel.refreshDirectory();
+                targetPanel.refresh();
                 CopyTask.this.dispose();
             } catch (Exception ex) {
                 LOGGER.debug(ex.getMessage());
@@ -225,7 +225,7 @@ public class CopyTask extends JDialog implements ActionListener, PropertyChangeL
             if (sourceFile.isDirectory()) {
                 if (!targetFile.exists()) targetFile.mkdirs();
 
-                for (JFile file : (List<JFile>)sourceFile.list()) {
+                for (JFile file : (List<JFile>) sourceFile.list()) {
                     JFile srcFile = JFileFactory.newInstance(new File((File) sourceFile.getBaseObject(), file.toString()));
                     JFile destFile = JFileFactory.newInstance(new File((File) targetFile.getBaseObject(), file.toString()));
                     copyFiles(srcFile, destFile);
@@ -241,8 +241,8 @@ public class CopyTask extends JDialog implements ActionListener, PropertyChangeL
                 labelCopyStatus.setText(statusText);
                 labelCopyStatus.setToolTipText(statusText);
 
-                FileChannel bis = new FileInputStream((File)sourceFile.getBaseObject()).getChannel();
-                FileChannel bos = new FileOutputStream((File)targetFile.getBaseObject()).getChannel();
+                FileChannel bis = new FileInputStream((File) sourceFile.getBaseObject()).getChannel();
+                FileChannel bos = new FileOutputStream((File) targetFile.getBaseObject()).getChannel();
 
                 ByteBuffer buffer = ByteBuffer.allocate(COPY_BUFFER_SIZE);
 

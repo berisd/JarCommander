@@ -15,6 +15,8 @@ import at.beris.jaxcommander.ui.SessionPanel;
 import at.beris.jaxcommander.ui.button.ButtonFactory;
 import org.apache.log4j.Logger;
 
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -22,9 +24,9 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.WindowConstants;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.GridBagConstraints;
@@ -54,14 +56,9 @@ public class Application extends JFrame implements Runnable {
         GridBagConstraints c = new GridBagConstraints();
         setLayout(gridBagLayout);
 
-        c.fill = GridBagConstraints.NONE;
+        c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
         c.gridy = 0;
-        c.weightx = 0;
-        c.weighty = 0;
-        c.gridwidth = 1;
-        c.anchor = GridBagConstraints.NORTHWEST;
-
         add(createHeaderPanel(), c);
 
         c.fill = GridBagConstraints.BOTH;
@@ -72,7 +69,6 @@ public class Application extends JFrame implements Runnable {
         add(sessionPanel, c);
 
         c.fill = GridBagConstraints.HORIZONTAL;
-        c.anchor = GridBagConstraints.SOUTHWEST;
         c.weightx = 0;
         c.weighty = 0;
         c.gridy++;
@@ -84,17 +80,22 @@ public class Application extends JFrame implements Runnable {
 
     private JPanel createHeaderPanel() {
         JPanel panel = new JPanel();
-        GridLayout layout = new GridLayout(1, 1);
-
-        panel.setBackground(Color.BLUE);
+        GridLayout layout = new GridLayout(2, 1);
         panel.setLayout(layout);
-        panel.setMaximumSize(new Dimension(10000, 30));
-        panel.setPreferredSize(new Dimension(600, 30));
-        panel.setMinimumSize(new Dimension(1, 30));
 
         panel.add(createMenuBar());
-
+        panel.add(createToolBar());
         return panel;
+    }
+
+    private JToolBar createToolBar() {
+        JToolBar toolbar = new JToolBar();
+        toolbar.setFloatable(false);
+
+        JButton buttonRefresh = ButtonFactory.createIconButton(ActionType.REFRESH, new ImageIcon(this.getClass().getClassLoader().getResource("images/arrow_refresh.png")));
+
+        toolbar.add(buttonRefresh);
+        return toolbar;
     }
 
     private JPanel createFooterPanel() {
