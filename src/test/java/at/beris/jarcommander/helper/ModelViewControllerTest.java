@@ -14,8 +14,10 @@ import org.junit.Before;
 import org.junit.Test;
 
 import javax.swing.JDialog;
+import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
 public class ModelViewControllerTest {
@@ -32,48 +34,63 @@ public class ModelViewControllerTest {
         mvc.registerObjectWithModelProperty(view.getStringField(), "stringField", false);
         mvc.registerObjectWithModelProperty(view.getIntegerField(), "integerField", false);
         mvc.registerObjectWithModelProperty(view.getEnumField(), "enumField", false);
+        mvc.registerObjectWithModelProperty(view.getCharArrayField(), "charArrayField", false);
     }
 
     @Test
-    public void stringPropertyModelUpdatesView() {
+    public void modelStringPropertyUpdatesViewTextFieldProperty() {
         String expectedValue = "stringfieldtestvalue";
         model.setStringField(expectedValue);
         assertEquals(expectedValue, view.getStringField().getText());
     }
 
     @Test
-    public void integerPropertyModelUpdatesView() {
+    public void modelIntegerPropertyUpdatesViewTextFieldProperty() {
         Integer expectedValue = 12345;
         model.setIntegerField(12345);
         assertEquals(String.valueOf(expectedValue), view.getIntegerField().getText());
     }
 
     @Test
-    public void stringPropertyViewUpdatesModel() {
+    public void modelEnumPropertyUpdatesViewTextFieldProperty() {
+        TestEnum expectedValue = TestEnum.TEST_ENUM_1;
+        model.setEnumField(expectedValue);
+        assertEquals(expectedValue.toString(), view.getEnumField().getText());
+    }
+
+    @Test
+    public void modelCharArrayPropertyUpdatesViewPasswordFieldProperty() {
+        char[] expectedValue = new char[]{'t', 'e', 's', 't', '1'};
+        model.setCharArrayField(expectedValue);
+        assertArrayEquals(expectedValue, view.getCharArrayField().getPassword());
+    }
+
+    @Test
+    public void viewTextFieldPropertyUpdatesModelStringProperty() {
         String expectedValue = "stringfieldtestvalue";
         view.getStringField().setText(expectedValue);
         assertEquals(expectedValue, model.getStringField());
     }
 
     @Test
-    public void integerPropertyViewUpdatesModel() {
+    public void viewTextFieldPropertyUpdatesModelIntegerProperty() {
         Integer expectedValue = 12345;
         view.getIntegerField().setText(expectedValue.toString());
         assertEquals(expectedValue, model.getIntegerField());
     }
 
     @Test
-    public void enumPropertyViewUpdatesModel() {
+    public void viewTextFieldPropertyUpdatesModelEnumProperty() {
         TestEnum expectedValue = TestEnum.TEST_ENUM_1;
         view.getEnumField().setText(expectedValue.toString());
         assertEquals(expectedValue, model.getEnumField());
     }
 
     @Test
-    public void enumPropertyModelUpdatesView() {
-        TestEnum expectedValue = TestEnum.TEST_ENUM_1;
-        model.setEnumField(expectedValue);
-        assertEquals(expectedValue.toString(), view.getEnumField().getText());
+    public void viewPasswordFieldPropertyUpdatesModelCharArrayProperty() {
+        char[] expectedValue = new char[]{'t', 'e', 's', 't', '1'};
+        view.getCharArrayField().setText(String.valueOf(expectedValue));
+        assertArrayEquals(expectedValue, model.getCharArrayField());
     }
 
     private enum TestEnum {
@@ -94,6 +111,7 @@ public class ModelViewControllerTest {
         private String stringField;
         private Integer integerField;
         private TestEnum enumField;
+        private char[] charArrayField;
 
         public Integer getIntegerField() {
             return integerField;
@@ -124,17 +142,29 @@ public class ModelViewControllerTest {
             this.enumField = newValue;
             firePropertyChange("setEnumField", oldValue, newValue);
         }
+
+        public char[] getCharArrayField() {
+            return charArrayField;
+        }
+
+        public void setCharArrayField(char[] newValue) {
+            char[] oldValue = this.charArrayField;
+            this.charArrayField = newValue;
+            firePropertyChange("setCharArrayField", oldValue, newValue);
+        }
     }
 
     private class TestDialog extends JDialog {
         private JTextField stringField;
         private JTextField integerField;
         private JTextField enumField;
+        private JPasswordField charArrayField;
 
         public TestDialog() {
             stringField = new JTextField();
             integerField = new JTextField();
             enumField = new JTextField();
+            charArrayField = new JPasswordField();
         }
 
         public JTextField getStringField() {
@@ -147,6 +177,10 @@ public class ModelViewControllerTest {
 
         public JTextField getEnumField() {
             return enumField;
+        }
+
+        public JPasswordField getCharArrayField() {
+            return charArrayField;
         }
     }
 }

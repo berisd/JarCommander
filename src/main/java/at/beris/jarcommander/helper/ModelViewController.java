@@ -13,6 +13,7 @@ import at.beris.jarcommander.model.AbstractModel;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
+import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
@@ -114,8 +115,11 @@ public class ModelViewController {
             try {
                 final String viewPropertyValue = e.getDocument().getText(0, e.getDocument().getLength());
 
-
-                if (modelPropertyValue != null && StringUtils.equals(modelPropertyValue.toString(), viewPropertyValue))
+                if (modelPropertyValue instanceof char[]) {
+                    if (modelPropertyValue != null && StringUtils.equals(String.valueOf((char[])modelPropertyValue), viewPropertyValue))
+                        return;
+                }
+                else if (modelPropertyValue != null && StringUtils.equals(modelPropertyValue.toString(), viewPropertyValue))
                     return;
 
                 SwingUtilities.invokeAndWait(new Runnable() {
@@ -168,9 +172,19 @@ public class ModelViewController {
     public void setViewPropertyValue(Component viewProperty, Object newValue) {
         if (viewProperty instanceof JTextField) {
             JTextField textfield = (JTextField) viewProperty;
-            String oldValue = textfield.getText();
-            if (!StringUtils.equals(oldValue, newValue.toString())) {
-                ((JTextField) viewProperty).setText(String.valueOf(newValue));
+
+            String oldValue = null;
+            if (viewProperty instanceof JPasswordField) {
+                oldValue = String.valueOf(((JPasswordField) textfield).getPassword());
+                if (!StringUtils.equals(oldValue, String.valueOf((char[])newValue))) {
+                    ((JTextField) viewProperty).setText(String.valueOf((char[])newValue));
+                }
+
+            } else {
+                oldValue = textfield.getText();
+                if (!StringUtils.equals(oldValue, String.valueOf(newValue))) {
+                    ((JTextField) viewProperty).setText(String.valueOf(newValue));
+                }
             }
         }
     }
@@ -188,7 +202,8 @@ public class ModelViewController {
                     modelPropertySetter.invoke(model, Integer.valueOf((String) newValue));
                 } else if (modelPropertyType.getSuperclass().getSimpleName().equals("Enum")) {
                     modelPropertySetter.invoke(model, Enum.valueOf((Class<? extends Enum>) Class.forName(modelPropertyType.getName()), (String) newValue));
-
+                } else if (modelPropertyType.getSimpleName().equals("char[]")) {
+                    modelPropertySetter.invoke(model, ((String)newValue).toCharArray());
                 } else {
                     modelPropertySetter.invoke(model, modelPropertyType.cast(newValue));
                 }
