@@ -39,20 +39,17 @@ public class ModelViewController {
     private AbstractModel model;
     private Container view;
     private Map<Method, List<Component>> modelGetPropertyMethodToViewFieldsMap;
-    private Map<Method, Boolean> modelPropertyReadOnlyMap;
 
     public ModelViewController(AbstractModel model, Container view) {
         this.model = model;
         this.view = view;
         this.modelGetPropertyMethodToViewFieldsMap = new HashMap<>();
-        this.modelPropertyReadOnlyMap = new HashMap<>();
         model.addPropertyChangeListener(new ModelPropertyChangeListener());
     }
 
-    public void registerObjectWithModelProperty(Component component, String modelPropertyName, Boolean readOnly) {
+    public void registerObjectWithModelProperty(Component component, String modelPropertyName) {
         Method modelGetPropertyMethod = getPropertyGetter(model, modelPropertyName);
         List<Component> componentList = modelGetPropertyMethodToViewFieldsMap.get(modelGetPropertyMethod);
-        modelPropertyReadOnlyMap.put(modelGetPropertyMethod, readOnly);
 
         if (componentList == null) {
             componentList = new ArrayList<>();
@@ -61,11 +58,9 @@ public class ModelViewController {
 
         componentList.add(component);
 
-        if (!readOnly) {
-            // Update from Model to View (=read), additionally Update from View to Model (=write)
-            if (component instanceof JTextField) {
-                ((JTextField) component).getDocument().addDocumentListener(new TextFieldDocumentListener(model, modelPropertyName));
-            }
+        // Update from Model to View (=read), additionally Update from View to Model (=write)
+        if (component instanceof JTextField) {
+            ((JTextField) component).getDocument().addDocumentListener(new TextFieldDocumentListener(model, modelPropertyName));
         }
     }
 
@@ -116,10 +111,9 @@ public class ModelViewController {
                 final String viewPropertyValue = e.getDocument().getText(0, e.getDocument().getLength());
 
                 if (modelPropertyValue instanceof char[]) {
-                    if (modelPropertyValue != null && StringUtils.equals(String.valueOf((char[])modelPropertyValue), viewPropertyValue))
+                    if (modelPropertyValue != null && StringUtils.equals(String.valueOf((char[]) modelPropertyValue), viewPropertyValue))
                         return;
-                }
-                else if (modelPropertyValue != null && StringUtils.equals(modelPropertyValue.toString(), viewPropertyValue))
+                } else if (modelPropertyValue != null && StringUtils.equals(modelPropertyValue.toString(), viewPropertyValue))
                     return;
 
                 SwingUtilities.invokeAndWait(new Runnable() {
@@ -176,8 +170,8 @@ public class ModelViewController {
             String oldValue = null;
             if (viewProperty instanceof JPasswordField) {
                 oldValue = String.valueOf(((JPasswordField) textfield).getPassword());
-                if (!StringUtils.equals(oldValue, String.valueOf((char[])newValue))) {
-                    ((JTextField) viewProperty).setText(String.valueOf((char[])newValue));
+                if (!StringUtils.equals(oldValue, String.valueOf((char[]) newValue))) {
+                    ((JTextField) viewProperty).setText(String.valueOf((char[]) newValue));
                 }
 
             } else {
@@ -203,7 +197,7 @@ public class ModelViewController {
                 } else if (modelPropertyType.getSuperclass().getSimpleName().equals("Enum")) {
                     modelPropertySetter.invoke(model, Enum.valueOf((Class<? extends Enum>) Class.forName(modelPropertyType.getName()), (String) newValue));
                 } else if (modelPropertyType.getSimpleName().equals("char[]")) {
-                    modelPropertySetter.invoke(model, ((String)newValue).toCharArray());
+                    modelPropertySetter.invoke(model, ((String) newValue).toCharArray());
                 } else {
                     modelPropertySetter.invoke(model, modelPropertyType.cast(newValue));
                 }

@@ -31,65 +31,65 @@ public class ModelViewControllerTest {
         view = createView();
         model = createModel();
         mvc = new ModelViewController(model, view);
-        mvc.registerObjectWithModelProperty(view.getStringField(), "stringField", false);
-        mvc.registerObjectWithModelProperty(view.getIntegerField(), "integerField", false);
-        mvc.registerObjectWithModelProperty(view.getEnumField(), "enumField", false);
-        mvc.registerObjectWithModelProperty(view.getCharArrayField(), "charArrayField", false);
+        mvc.registerObjectWithModelProperty(view.getTestStringField(), "stringField");
+        mvc.registerObjectWithModelProperty(view.getTestIntegerField(), "integerField");
+        mvc.registerObjectWithModelProperty(view.getTestEnumField(), "enumField");
+        mvc.registerObjectWithModelProperty(view.getTestCharArrayField(), "charArrayField");
     }
 
     @Test
     public void modelStringPropertyUpdatesViewTextFieldProperty() {
         String expectedValue = "stringfieldtestvalue";
         model.setStringField(expectedValue);
-        assertEquals(expectedValue, view.getStringField().getText());
+        assertEquals(expectedValue, view.getTestStringField().getText());
     }
 
     @Test
     public void modelIntegerPropertyUpdatesViewTextFieldProperty() {
         Integer expectedValue = 12345;
         model.setIntegerField(12345);
-        assertEquals(String.valueOf(expectedValue), view.getIntegerField().getText());
+        assertEquals(String.valueOf(expectedValue), view.getTestIntegerField().getText());
     }
 
     @Test
     public void modelEnumPropertyUpdatesViewTextFieldProperty() {
         TestEnum expectedValue = TestEnum.TEST_ENUM_1;
         model.setEnumField(expectedValue);
-        assertEquals(expectedValue.toString(), view.getEnumField().getText());
+        assertEquals(expectedValue.toString(), view.getTestEnumField().getText());
     }
 
     @Test
     public void modelCharArrayPropertyUpdatesViewPasswordFieldProperty() {
         char[] expectedValue = new char[]{'t', 'e', 's', 't', '1'};
         model.setCharArrayField(expectedValue);
-        assertArrayEquals(expectedValue, view.getCharArrayField().getPassword());
+        assertArrayEquals(expectedValue, view.getTestCharArrayField().getPassword());
     }
 
     @Test
     public void viewTextFieldPropertyUpdatesModelStringProperty() {
         String expectedValue = "stringfieldtestvalue";
-        view.getStringField().setText(expectedValue);
+        view.getTestStringField().setText(expectedValue);
         assertEquals(expectedValue, model.getStringField());
     }
 
     @Test
     public void viewTextFieldPropertyUpdatesModelIntegerProperty() {
         Integer expectedValue = 12345;
-        view.getIntegerField().setText(expectedValue.toString());
+        view.getTestIntegerField().setText(expectedValue.toString());
         assertEquals(expectedValue, model.getIntegerField());
     }
 
     @Test
     public void viewTextFieldPropertyUpdatesModelEnumProperty() {
         TestEnum expectedValue = TestEnum.TEST_ENUM_1;
-        view.getEnumField().setText(expectedValue.toString());
+        view.getTestEnumField().setText(expectedValue.toString());
         assertEquals(expectedValue, model.getEnumField());
     }
 
     @Test
     public void viewPasswordFieldPropertyUpdatesModelCharArrayProperty() {
         char[] expectedValue = new char[]{'t', 'e', 's', 't', '1'};
-        view.getCharArrayField().setText(String.valueOf(expectedValue));
+        view.getTestCharArrayField().setText(String.valueOf(expectedValue));
         assertArrayEquals(expectedValue, model.getCharArrayField());
     }
 
@@ -155,32 +155,32 @@ public class ModelViewControllerTest {
     }
 
     private class TestDialog extends JDialog {
-        private JTextField stringField;
-        private JTextField integerField;
-        private JTextField enumField;
-        private JPasswordField charArrayField;
+        private JTextField testStringField;
+        private JTextField testIntegerField;
+        private JTextField testEnumField;
+        private JPasswordField testCharArrayField;
 
         public TestDialog() {
-            stringField = new JTextField();
-            integerField = new JTextField();
-            enumField = new JTextField();
-            charArrayField = new JPasswordField();
+            testStringField = new JTextField();
+            testIntegerField = new JTextField();
+            testEnumField = new JTextField();
+            testCharArrayField = new JPasswordField();
         }
 
-        public JTextField getStringField() {
-            return stringField;
+        public JTextField getTestStringField() {
+            return testStringField;
         }
 
-        public JTextField getIntegerField() {
-            return integerField;
+        public JTextField getTestIntegerField() {
+            return testIntegerField;
         }
 
-        public JTextField getEnumField() {
-            return enumField;
+        public JTextField getTestEnumField() {
+            return testEnumField;
         }
 
-        public JPasswordField getCharArrayField() {
-            return charArrayField;
+        public JPasswordField getTestCharArrayField() {
+            return testCharArrayField;
         }
     }
 }
