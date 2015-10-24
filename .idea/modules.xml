@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/JaxCommander.iml" filepath="$PROJECT_DIR$/JaxCommander.iml" />
+      <module fileurl="file://$PROJECT_DIR$/JarCommander.iml" filepath="$PROJECT_DIR$/JarCommander.iml" />
     </modules>
   </component>
 </project>
