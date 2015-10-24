@@ -14,7 +14,6 @@ import at.beris.jarcommander.helper.ModelViewController;
 import at.beris.jarcommander.model.SiteModel;
 import at.beris.jarcommander.ui.list.SiteCellRenderer;
 import at.beris.jarcommander.ui.list.SiteListModel;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 import javax.swing.BorderFactory;
@@ -23,44 +22,41 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
-import javax.swing.SwingUtilities;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.text.BadLocationException;
 import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 
-import static at.beris.jarcommander.Application.logException;
-
-public class SiteManagerDialog extends JDialog implements PropertyChangeListener {
+public class SiteManagerDialog extends JDialog {
     private final static Logger LOGGER = Logger.getLogger(SiteManagerDialog.class);
 
     private SiteModel currentSite;
-    private ModelViewController controller;
+    private ModelViewController modelViewcontroller;
 
     private JTextField siteProtocol;
     private JTextField siteHostname;
     private JTextField sitePortNumber;
     private JTextField siteUsername;
-    private JTextField sitePassword;
+    private JPasswordField sitePassword;
 
     private List<SiteModel> siteModelList;
 
     public SiteManagerDialog(Frame owner, boolean modal) {
         super(owner, modal);
 
+        createComponents();
+        currentSite = new SiteModel();
 
+        modelViewcontroller = new ModelViewController(currentSite, this);
+        registerMVCComponents();
 
         setSize(640, 480);
         setLocationRelativeTo(null);
@@ -80,7 +76,6 @@ public class SiteManagerDialog extends JDialog implements PropertyChangeListener
         c.gridy++;
         add(createFooterPanel(), c);
 
-        controller = new ModelViewController(currentSite, this);
         pack();
     }
 
@@ -150,7 +145,6 @@ public class SiteManagerDialog extends JDialog implements PropertyChangeListener
         panel.add(labelFileProtocol, c);
 
         c.gridy++;
-        siteProtocol = new JTextField();
         panel.add(siteProtocol, c);
 
         c.gridy++;
@@ -163,11 +157,9 @@ public class SiteManagerDialog extends JDialog implements PropertyChangeListener
 
         c.gridx = 0;
         c.gridy++;
-        siteHostname = new JTextField();
         panel.add(siteHostname, c);
 
         c.gridx++;
-        sitePortNumber = new JTextField();
         panel.add(sitePortNumber, c);
 
         c.gridx = 0;
@@ -181,84 +173,48 @@ public class SiteManagerDialog extends JDialog implements PropertyChangeListener
 
         c.gridx = 0;
         c.gridy++;
-        siteUsername = new JTextField();
         panel.add(siteUsername, c);
 
         c.gridx++;
-        sitePassword = new JTextField();
         panel.add(sitePassword, c);
 
         return panel;
     }
 
-    private class TextFieldDocumentListener implements DocumentListener {
-        @Override
-        public void insertUpdate(DocumentEvent e) {
-            LOGGER.info("insertUpdate");
-            if (currentSite == null)
-                return;
-            try {
-                final String newText = e.getDocument().getText(0, e.getDocument().getLength());
-                String oldText = currentSite.getHostname();
-
-                if (!StringUtils.equals(oldText, newText)) {
-                    SwingUtilities.invokeLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            currentSite.setHostname(newText);
-                        }
-                    });
-                }
-            } catch (BadLocationException ex) {
-                logException(ex);
-            }
-        }
-
-        @Override
-        public void removeUpdate(DocumentEvent e) {
-            LOGGER.info("removeUpdate");
-        }
-
-        @Override
-        public void changedUpdate(DocumentEvent e) {
-            LOGGER.info("changedUpdate");
-        }
-    }
-
     private List<SiteModel> createSiteDataList() {
         siteModelList = new ArrayList<>();
 
-        SiteModel siteModel = new SiteModel();
-        siteModel.setHostname("www.beris.at");
-        siteModel.setPortNumber(22);
-        siteModel.setProtocol(Protocol.SSH.toString());
-        siteModel.setUsername("briedl");
-        siteModel.setPassword("mypassword");
+        currentSite.setHostname("www.beris.at");
+        currentSite.setPortNumber(22);
+        currentSite.setProtocol(Protocol.SSH.toString());
+        currentSite.setUsername("briedl");
+        currentSite.setPassword("mypassword".toCharArray());
 
-        currentSite = siteModel;
-        siteModelList.add(siteModel);
+        siteModelList.add(currentSite);
         return siteModelList;
     }
 
-    @Override
-    public void propertyChange(PropertyChangeEvent evt) {
-        LOGGER.debug("propertyChange");
-        if (evt.getSource() instanceof SiteModel) {
-            if (StringUtils.equalsIgnoreCase(evt.getPropertyName(), "sethostname")) {
-                String newValue = (String) evt.getNewValue();
-                String oldValue = (String) evt.getOldValue();
-                if (!StringUtils.equals(oldValue, newValue)) {
-                    siteHostname.setText(newValue);
-                }
-            }
-        }
+    private void createComponents() {
+        siteProtocol = new JTextField();
+        siteHostname = new JTextField();
+        sitePortNumber = new JTextField();
+        siteUsername = new JTextField();
+        sitePassword = new JPasswordField();
+    }
+
+    private void registerMVCComponents() {
+        modelViewcontroller.registerObjectWithModelProperty(this.getSiteHostname(), "hostname");
+        modelViewcontroller.registerObjectWithModelProperty(this.getSiteProtocol(), "protocol");
+        modelViewcontroller.registerObjectWithModelProperty(this.getSitePortNumber(), "portNumber");
+        modelViewcontroller.registerObjectWithModelProperty(this.getSiteUsername(), "username");
+        modelViewcontroller.registerObjectWithModelProperty(this.getSitePassword(), "password");
     }
 
     public JTextField getSiteHostname() {
         return siteHostname;
     }
 
-    public JTextField getSitePassword() {
+    public JPasswordField getSitePassword() {
         return sitePassword;
     }
 

@@ -14,7 +14,7 @@ public class SiteModel extends AbstractModel {
     private String hostname;
     private int portNumber;
     private String username;
-    private String password;
+    private char[] password;
 
     public String getHostname() {
         return hostname;
@@ -24,15 +24,14 @@ public class SiteModel extends AbstractModel {
         String oldHostname = this.hostname;
         this.hostname = hostname;
         firePropertyChange("setHostname", oldHostname, hostname);
-
     }
 
-    public String getPassword() {
+    public char[] getPassword() {
         return password;
     }
 
-    public void setPassword(String password) {
-        String oldPassword = this.password;
+    public void setPassword(char[] password) {
+        char[] oldPassword = this.password;
         this.password = password;
         firePropertyChange("setPassword", oldPassword, password);
     }
