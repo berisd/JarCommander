@@ -19,6 +19,7 @@ import at.beris.jaxcommander.action.QuitAction;
 import at.beris.jaxcommander.action.RefreshAction;
 import at.beris.jaxcommander.action.RenameAction;
 import at.beris.jaxcommander.action.ShowAboutDialogAction;
+import at.beris.jaxcommander.action.ShowSiteDialogAction;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -50,5 +51,6 @@ public final class ActionHelper {
         actionMap.put(ActionType.QUIT, new QuitAction());
         actionMap.put(ActionType.SHOW_ABOUT_DIALOG, new ShowAboutDialogAction());
         actionMap.put(ActionType.REFRESH, new RefreshAction());
+        actionMap.put(ActionType.SHOW_SITE_DIALOG, new ShowSiteDialogAction());
     }
 }

@@ -16,7 +16,7 @@ import org.apache.commons.compress.archivers.ArchiveException;
 import org.apache.commons.compress.archivers.ArchiveInputStream;
 import org.apache.commons.compress.archivers.ArchiveStreamFactory;
 import org.apache.commons.io.FilenameUtils;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+import org.apache.commons.lang3.NotImplementedException;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -101,7 +101,7 @@ public class LocalFile implements JFile<File> {
 
     @Override
     public void addFile(Set<JFile> files) {
-        throw new NotImplementedException();
+        throw new NotImplementedException("");
     }
 
     @Override

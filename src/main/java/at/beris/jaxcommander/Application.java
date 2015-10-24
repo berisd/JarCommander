@@ -93,8 +93,10 @@ public class Application extends JFrame implements Runnable {
         toolbar.setFloatable(false);
 
         JButton buttonRefresh = ButtonFactory.createIconButton(ActionType.REFRESH, new ImageIcon(this.getClass().getClassLoader().getResource("images/arrow_refresh.png")));
+        JButton buttonServerManager = ButtonFactory.createIconButton(ActionType.SHOW_SITE_DIALOG, new ImageIcon(this.getClass().getClassLoader().getResource("images/server_connect.png")));
 
         toolbar.add(buttonRefresh);
+        toolbar.add(buttonServerManager);
         return toolbar;
     }
 
@@ -116,20 +118,20 @@ public class Application extends JFrame implements Runnable {
     private JPanel createCommandBar() {
         GridLayout gridLayout = new GridLayout(1, 1);
 
-        JPanel toolBar = new JPanel();
+        JPanel panel = new JPanel();
 
-        toolBar.setMaximumSize(new Dimension(10000, 40));
-        toolBar.setPreferredSize(new Dimension(600, 40));
-        toolBar.setMinimumSize(new Dimension(1, 40));
+        panel.setMaximumSize(new Dimension(10000, 40));
+        panel.setPreferredSize(new Dimension(600, 40));
+        panel.setMinimumSize(new Dimension(1, 40));
 
-        toolBar.setLayout(gridLayout);
-        toolBar.add(ButtonFactory.createButton(ActionType.COPY));
-        toolBar.add(ButtonFactory.createButton(ActionType.MOVE));
-        toolBar.add(ButtonFactory.createButton(ActionType.MAKE_DIR));
-        toolBar.add(ButtonFactory.createButton(ActionType.DELETE));
-        toolBar.add(ButtonFactory.createButton(ActionType.RENAME));
+        panel.setLayout(gridLayout);
+        panel.add(ButtonFactory.createButton(ActionType.COPY));
+        panel.add(ButtonFactory.createButton(ActionType.MOVE));
+        panel.add(ButtonFactory.createButton(ActionType.MAKE_DIR));
+        panel.add(ButtonFactory.createButton(ActionType.DELETE));
+        panel.add(ButtonFactory.createButton(ActionType.RENAME));
 
-        return toolBar;
+        return panel;
     }
 
     private JMenuBar createMenuBar() {

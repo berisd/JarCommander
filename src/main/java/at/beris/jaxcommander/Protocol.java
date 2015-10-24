@@ -7,16 +7,8 @@
  * Some rights reserved. See COPYING, AUTHORS.
  */
 
-package at.beris.jaxcommander.action;
+package at.beris.jaxcommander;
 
-public enum ActionType {
-    COPY,
-    MOVE,
-    MAKE_DIR,
-    DELETE,
-    RENAME,
-    QUIT,
-    SHOW_ABOUT_DIALOG,
-    REFRESH,
-    SHOW_SITE_DIALOG,
+public enum Protocol {
+    SSH
 }

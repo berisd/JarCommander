@@ -12,7 +12,7 @@ package at.beris.jaxcommander.filesystem.file;
 import at.beris.jaxcommander.filesystem.path.CompressedPath;
 import at.beris.jaxcommander.filesystem.path.JPath;
 import org.apache.commons.compress.archivers.ArchiveEntry;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+import org.apache.commons.lang3.NotImplementedException;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -77,12 +77,12 @@ public class CompressedFile implements JFile<ArchiveEntry>, Archivable {
 
     @Override
     public boolean exists() {
-        throw new NotImplementedException();
+        throw new NotImplementedException("");
     }
 
     @Override
     public boolean mkdirs() {
-        throw new NotImplementedException();
+        throw new NotImplementedException("");
     }
 
     @Override
@@ -102,7 +102,7 @@ public class CompressedFile implements JFile<ArchiveEntry>, Archivable {
 
     @Override
     public String getAbsolutePath() {
-        throw new NotImplementedException();
+        throw new NotImplementedException("");
     }
 
     @Override
