@@ -102,9 +102,9 @@ public class ModelViewController {
         public void insertUpdate(DocumentEvent e) {
             LOGGER.info("insertUpdate");
 
-            String modelPropertyValue = null;
+            Object modelPropertyValue = null;
             try {
-                modelPropertyValue = (String) getPropertyGetter(model, propertyName).invoke(model);
+                modelPropertyValue = getPropertyGetter(model, propertyName).invoke(model);
             } catch (IllegalAccessException ex) {
                 logException(ex);
             } catch (InvocationTargetException ex) {
@@ -114,7 +114,8 @@ public class ModelViewController {
             try {
                 final String viewPropertyValue = e.getDocument().getText(0, e.getDocument().getLength());
 
-                if (Objects.equals(modelPropertyValue, viewPropertyValue))
+
+                if (modelPropertyValue != null && StringUtils.equals(modelPropertyValue.toString(), viewPropertyValue))
                     return;
 
                 SwingUtilities.invokeAndWait(new Runnable() {
@@ -168,7 +169,7 @@ public class ModelViewController {
         if (viewProperty instanceof JTextField) {
             JTextField textfield = (JTextField) viewProperty;
             String oldValue = textfield.getText();
-            if (!Objects.equals(oldValue, newValue)) {
+            if (!StringUtils.equals(oldValue, newValue.toString())) {
                 ((JTextField) viewProperty).setText(String.valueOf(newValue));
             }
         }
@@ -182,14 +183,23 @@ public class ModelViewController {
 
             Object oldValue = modelPropertyGetter.invoke(model);
 
-            if (!Objects.equals(oldValue, newValue)) {
-                modelPropertySetter.invoke(model, newValue);
+            if ((oldValue != null && newValue == null) || (oldValue == null && newValue != null) || (!StringUtils.equals(oldValue.toString(), newValue.toString()))) {
+                if (modelPropertyType.getSimpleName().equals("Integer")) {
+                    modelPropertySetter.invoke(model, Integer.valueOf((String) newValue));
+                } else if (modelPropertyType.getSuperclass().getSimpleName().equals("Enum")) {
+                    modelPropertySetter.invoke(model, Enum.valueOf((Class<? extends Enum>) Class.forName(modelPropertyType.getName()), (String) newValue));
+
+                } else {
+                    modelPropertySetter.invoke(model, modelPropertyType.cast(newValue));
+                }
             }
         } catch (IllegalAccessException e) {
             logException(e);
         } catch (InvocationTargetException e) {
             logException(e);
         } catch (NoSuchFieldException e) {
+            logException(e);
+        } catch (ClassNotFoundException e) {
             logException(e);
         }
     }
