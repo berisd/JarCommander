@@ -1,5 +1,5 @@
 /*
- * This file is part of JaxCommander.
+ * This file is part of JarCommander.
  *
  * Copyright 2015 by Bernd Riedl <bernd.riedl@gmail.com>
  *
@@ -31,7 +31,7 @@ public class ShowAboutDialogAction extends CustomAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        JOptionPane.showMessageDialog((JMenuItem) e.getSource(), "Jax Commander" + System.lineSeparator() + "(C) 2015 Bernd Riedl", "About", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog((JMenuItem) e.getSource(), "Jar Commander" + System.lineSeparator() + "(C) 2015 Bernd Riedl", "About", JOptionPane.INFORMATION_MESSAGE);
     }
 
     @Override

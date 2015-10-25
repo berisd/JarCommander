@@ -1,5 +1,5 @@
 /*
- * This file is part of JaxCommander.
+ * This file is part of JarCommander.
  *
  * Copyright 2015 by Bernd Riedl <bernd.riedl@gmail.com>
  *
@@ -44,7 +44,7 @@ public class Application extends JFrame implements Runnable {
     public Application() {
         setSize(1024, 768);
         setLocationRelativeTo(null);
-        setTitle("Jax Commander");
+        setTitle("Jar Commander");
 
         setFocusable(true);
         setPreferredSize(new Dimension(1024, 768));
@@ -199,7 +199,7 @@ public class Application extends JFrame implements Runnable {
 
     public void quit() {
         if (JOptionPane.showConfirmDialog(null,
-                "Are you sure to quit?", "Quit Jax Commander",
+                "Are you sure to quit?", "Quit Jar Commander",
                 JOptionPane.YES_NO_OPTION,
                 JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
             System.exit(0);
