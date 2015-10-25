@@ -7,18 +7,22 @@
  * Some rights reserved. See COPYING, AUTHORS.
  */
 
-package at.beris.jarcommander.filesystem;
+package at.beris.jarcommander.filesystem.drive;
 
 import at.beris.jarcommander.filesystem.path.JPath;
 
-import java.nio.file.Path;
-
 public interface JDrive {
     JPath getPath();
-    void setPath(Path path);
+
+    void setPath(JPath path);
+
     long getSpaceTotal();
+
     void setSpaceTotal(long spaceTotal);
+
     long getSpaceLeft();
+
     void setSpaceLeft(long spaceLeft);
+
     JPath getPath(String path);
 }

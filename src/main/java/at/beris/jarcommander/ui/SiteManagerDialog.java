@@ -9,7 +9,10 @@
 
 package at.beris.jarcommander.ui;
 
+import at.beris.jarcommander.ApplicationContext;
 import at.beris.jarcommander.Protocol;
+import at.beris.jarcommander.filesystem.SshContext;
+import at.beris.jarcommander.filesystem.SshFileSystem;
 import at.beris.jarcommander.helper.ModelViewController;
 import at.beris.jarcommander.model.SiteModel;
 import at.beris.jarcommander.model.SitesModel;
@@ -25,6 +28,7 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.xml.bind.JAXBContext;
@@ -112,6 +116,22 @@ public class SiteManagerDialog extends JDialog {
         footerPanel.add(buttonSave);
 
         JButton buttonConnect = new JButton("Connect");
+        buttonConnect.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                SshContext context = new SshContext();
+                context.setHost(currentSite.getHostname());
+                context.setPort(currentSite.getPortNumber());
+                context.setUsername(currentSite.getUsername());
+                context.setPassword(String.valueOf(currentSite.getPassword()));
+
+                SessionPanel sessionPanel = ApplicationContext.createSessionPanel(new SshFileSystem(context));
+                JTabbedPane sessionsPanel = ApplicationContext.getSessionsPanel();
+                sessionsPanel.addTab(currentSite.getHostname(), sessionPanel);
+                sessionsPanel.setSelectedIndex(sessionsPanel.getTabCount() - 1);
+                SiteManagerDialog.this.dispose();
+            }
+        });
         footerPanel.add(buttonConnect);
 
         JButton buttonClose = new JButton("Close");

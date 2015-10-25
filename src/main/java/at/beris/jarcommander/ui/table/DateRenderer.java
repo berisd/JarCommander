@@ -22,10 +22,15 @@ public class DateRenderer extends JLabel implements TableCellRenderer {
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         Date date = (Date) value;
-        String text = dateFormat().format(date);
-        setText(text);
-        setToolTipText(text);
 
+        if (value != null) {
+            String text = dateFormat().format(date);
+            setText(text);
+            setToolTipText(text);
+        } else {
+            setText("");
+            setToolTipText("");
+        }
         if (isSelected) {
             setForeground(Color.RED);
         } else {

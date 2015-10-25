@@ -181,6 +181,21 @@ public class LocalFile implements JFile<File> {
         return file.toString();
     }
 
+    @Override
+    public void setLastModified(Date date) {
+        throw new NotImplementedException("");
+    }
+
+    @Override
+    public void setName(String name) {
+        throw new NotImplementedException("");
+    }
+
+    @Override
+    public void setSize(long size) {
+        throw new NotImplementedException("");
+    }
+
     private void fillAttributes() {
         attributes = new LinkedHashSet<>();
         if (file.canRead()) {

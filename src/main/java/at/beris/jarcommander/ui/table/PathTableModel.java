@@ -37,6 +37,7 @@ public class PathTableModel extends AbstractTableModel {
     }
 
     public void setPath(JPath path) {
+        LOGGER.debug("setPath");
         this.path = path;
         fileList.clear();
 

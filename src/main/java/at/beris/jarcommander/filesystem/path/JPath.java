@@ -15,11 +15,18 @@ import java.util.List;
 
 public interface JPath<T> {
     T getBaseObject();
+
     List<JFile> getEntries();
+
     JPath normalize();
+
     JPath getRoot();
+
     JPath getParent();
-    JFile toFile();
-    int compareTo(JPath jPath);
+
     String toString();
+
+    JFile toFile();
+
+    int compareTo(JPath jPath);
 }

@@ -10,6 +10,7 @@
 package at.beris.jarcommander.action;
 
 import at.beris.jarcommander.Application;
+import at.beris.jarcommander.ApplicationContext;
 import at.beris.jarcommander.ui.SessionPanel;
 import org.apache.log4j.Logger;
 
@@ -41,7 +42,7 @@ public class RefreshAction extends CustomAction {
         LOGGER.debug("Refresh");
         Application application = (Application) SwingUtilities.getRoot((Component) e.getSource());
 
-        SessionPanel sessionPanel = application.getSessionPanel();
+        SessionPanel sessionPanel = (SessionPanel) ApplicationContext.getSessionsPanel().getTabComponentAt(0);
         sessionPanel.getSelectedNavigationPanel().refresh();
     }
 

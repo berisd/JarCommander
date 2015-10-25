@@ -10,6 +10,7 @@
 package at.beris.jarcommander.action;
 
 import at.beris.jarcommander.Application;
+import at.beris.jarcommander.ApplicationContext;
 import at.beris.jarcommander.ui.NavigationPanel;
 import at.beris.jarcommander.ui.SessionPanel;
 import org.apache.log4j.Logger;
@@ -48,7 +49,7 @@ public class MakeDirAction extends CustomAction {
     public void actionPerformed(ActionEvent event) {
         LOGGER.debug("MkDir");
         Application application = (Application) SwingUtilities.getRoot((Component) event.getSource());
-        SessionPanel sessionPanel = application.getSessionPanel();
+        SessionPanel sessionPanel = (SessionPanel) ApplicationContext.getSessionsPanel().getTabComponentAt(0);
         NavigationPanel sourcePanel = sessionPanel.getSelectedNavigationPanel();
 
         String newDirectoryMame = JOptionPane.showInputDialog("New directory name");

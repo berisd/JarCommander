@@ -11,7 +11,6 @@ package at.beris.jarcommander;
 
 import at.beris.jarcommander.action.ActionType;
 import at.beris.jarcommander.helper.ActionHelper;
-import at.beris.jarcommander.ui.SessionPanel;
 import at.beris.jarcommander.ui.button.ButtonFactory;
 import org.apache.log4j.Logger;
 
@@ -39,8 +38,6 @@ import java.awt.event.WindowAdapter;
 public class Application extends JFrame implements Runnable {
     private final static Logger LOGGER = Logger.getLogger(Application.class);
 
-    private SessionPanel sessionPanel;
-
     public Application() {
         setSize(1024, 768);
         setLocationRelativeTo(null);
@@ -65,8 +62,7 @@ public class Application extends JFrame implements Runnable {
         c.weightx = 1;
         c.weighty = 1;
         c.gridy++;
-        sessionPanel = new SessionPanel();
-        add(sessionPanel, c);
+        add(ApplicationContext.createSessionsPanel(), c);
 
         c.fill = GridBagConstraints.HORIZONTAL;
         c.weightx = 0;
@@ -215,6 +211,7 @@ public class Application extends JFrame implements Runnable {
 
     public static void logException(Throwable throwable) {
         StringBuilder sb = new StringBuilder(throwable.getClass().getName());
+        sb.append(": " + throwable.getMessage());
 
         for (StackTraceElement element : throwable.getStackTrace()) {
             sb.append(System.lineSeparator());
@@ -222,10 +219,5 @@ public class Application extends JFrame implements Runnable {
         }
 
         LOGGER.warn(sb.toString());
-    }
-
-
-    public SessionPanel getSessionPanel() {
-        return sessionPanel;
     }
 }

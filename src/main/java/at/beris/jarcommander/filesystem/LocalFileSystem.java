@@ -9,7 +9,10 @@
 
 package at.beris.jarcommander.filesystem;
 
+import at.beris.jarcommander.filesystem.drive.JDrive;
+import at.beris.jarcommander.filesystem.drive.LocalDrive;
 import at.beris.jarcommander.filesystem.path.JPath;
+import at.beris.jarcommander.filesystem.path.LocalPath;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,14 +27,14 @@ import java.util.List;
 import static at.beris.jarcommander.Application.logException;
 
 public class LocalFileSystem implements JFileSystem {
-    private List<LocalDrive> driveList;
+    private List<JDrive> driveList;
 
     public LocalFileSystem() {
         driveList = createDriveList();
     }
 
-    public List<LocalDrive> createDriveList() {
-        List<LocalDrive> driveList = new ArrayList<LocalDrive>();
+    public List<JDrive> createDriveList() {
+        List<JDrive> driveList = new ArrayList<>();
         if (driveList.size() > 0)
             return driveList;
 
@@ -46,7 +49,7 @@ public class LocalFileSystem implements JFileSystem {
                 Path path = new File(parts[0]).toPath();
 
                 LocalDrive driveInfo = new LocalDrive();
-                driveInfo.setPath(path);
+                driveInfo.setPath(new LocalPath(path));
                 driveInfo.setSpaceTotal(fileStore.getTotalSpace());
                 driveInfo.setSpaceLeft(fileStore.getUsableSpace());
 
@@ -56,9 +59,9 @@ public class LocalFileSystem implements JFileSystem {
             logException(e);
         }
 
-        driveList.sort(new Comparator<LocalDrive>() {
+        driveList.sort(new Comparator<JDrive>() {
             @Override
-            public int compare(LocalDrive o1, LocalDrive o2) {
+            public int compare(JDrive o1, JDrive o2) {
                 return o1.getPath().compareTo(o2.getPath());
             }
         });
@@ -67,7 +70,15 @@ public class LocalFileSystem implements JFileSystem {
     }
 
     @Override
-    public List<LocalDrive> getDriveList() {
+    public void open() {
+    }
+
+    @Override
+    public void close() {
+    }
+
+    @Override
+    public List<JDrive> getDriveList() {
         return driveList;
     }
 

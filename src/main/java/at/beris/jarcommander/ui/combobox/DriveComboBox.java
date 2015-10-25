@@ -11,8 +11,8 @@ package at.beris.jarcommander.ui.combobox;
 
 import at.beris.jarcommander.action.ActionCommand;
 import at.beris.jarcommander.action.ParamActionEvent;
-import at.beris.jarcommander.filesystem.LocalDrive;
 import at.beris.jarcommander.filesystem.JFileSystem;
+import at.beris.jarcommander.filesystem.drive.JDrive;
 import org.apache.log4j.Logger;
 
 import javax.swing.JComboBox;
@@ -27,7 +27,7 @@ import java.awt.event.MouseEvent;
 
 import static at.beris.jarcommander.action.ActionCommand.SELECT_NAVIGATION_PANEL;
 
-public class DriveComboBox extends JComboBox<LocalDrive> {
+public class DriveComboBox extends JComboBox<JDrive> {
 
     private final static Logger LOGGER = Logger.getLogger(DriveComboBox.class.getName());
 
@@ -40,11 +40,11 @@ public class DriveComboBox extends JComboBox<LocalDrive> {
                                     @Override
                                     public void itemStateChanged(ItemEvent e) {
                                         LOGGER.debug("drivecombo itemStateChanged " + e.getItem().getClass());
-                                        LocalDrive driveInfo = (LocalDrive) e.getItem();
+                                        JDrive driveInfo = (JDrive) e.getItem();
                                         ActionListener parent = (ActionListener) ((JComponent) e.getSource()).getParent();
 
                                         if (parent != null) {
-                                            ParamActionEvent<LocalDrive> event = new ParamActionEvent<>(e.getSource(), e.getID(), ActionCommand.CHANGE_DRIVE, driveInfo);
+                                            ParamActionEvent<JDrive> event = new ParamActionEvent<>(e.getSource(), e.getID(), ActionCommand.CHANGE_DRIVE, driveInfo);
                                             parent.actionPerformed(event);
                                         }
                                     }
@@ -54,7 +54,7 @@ public class DriveComboBox extends JComboBox<LocalDrive> {
 
         setRenderer(new DriveInfoComboBoxRenderer());
 
-        for (LocalDrive driveInfo : fileSystem.getDriveList()) {
+        for (JDrive driveInfo : fileSystem.getDriveList()) {
             addItem(driveInfo);
         }
     }

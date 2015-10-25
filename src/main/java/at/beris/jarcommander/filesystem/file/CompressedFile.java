@@ -46,13 +46,28 @@ public class CompressedFile implements JFile<ArchiveEntry>, Archivable {
     }
 
     @Override
+    public void setName(String name) {
+        throw new NotImplementedException("");
+    }
+
+    @Override
     public Date getLastModified() {
         return archiveEntry.getLastModifiedDate();
     }
 
     @Override
+    public void setLastModified(Date date) {
+        throw new NotImplementedException("");
+    }
+
+    @Override
     public long getSize() {
         return archiveEntry.getSize();
+    }
+
+    @Override
+    public void setSize(long size) {
+        throw new NotImplementedException("");
     }
 
     @Override

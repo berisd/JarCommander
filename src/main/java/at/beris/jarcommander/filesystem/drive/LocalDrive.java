@@ -7,12 +7,11 @@
  * Some rights reserved. See COPYING, AUTHORS.
  */
 
-package at.beris.jarcommander.filesystem;
+package at.beris.jarcommander.filesystem.drive;
 
-import at.beris.jarcommander.filesystem.path.LocalPath;
 import at.beris.jarcommander.filesystem.path.JPath;
+import at.beris.jarcommander.filesystem.path.LocalPath;
 
-import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class LocalDrive implements JDrive {
@@ -24,8 +23,8 @@ public class LocalDrive implements JDrive {
         return path;
     }
 
-    public void setPath(Path path) {
-        this.path = new LocalPath(path);
+    public void setPath(JPath path) {
+        this.path = path;
     }
 
     public long getSpaceTotal() {

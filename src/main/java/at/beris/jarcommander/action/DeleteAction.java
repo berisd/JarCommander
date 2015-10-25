@@ -10,6 +10,7 @@
 package at.beris.jarcommander.action;
 
 import at.beris.jarcommander.Application;
+import at.beris.jarcommander.ApplicationContext;
 import at.beris.jarcommander.filesystem.file.JFile;
 import at.beris.jarcommander.ui.NavigationPanel;
 import at.beris.jarcommander.ui.SessionPanel;
@@ -45,7 +46,7 @@ public class DeleteAction extends CustomAction {
         LOGGER.debug("Delete");
 
         Application application = (Application) SwingUtilities.getRoot((Component) event.getSource());
-        SessionPanel sessionPanel = application.getSessionPanel();
+        SessionPanel sessionPanel = (SessionPanel) ApplicationContext.getSessionsPanel().getTabComponentAt(0);
         NavigationPanel sourcePanel = sessionPanel.getSelectedNavigationPanel();
 
         if (sourcePanel.getSelection().size() == 0) {

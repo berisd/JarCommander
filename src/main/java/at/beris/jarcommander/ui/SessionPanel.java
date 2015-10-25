@@ -9,69 +9,30 @@
 
 package at.beris.jarcommander.ui;
 
-import at.beris.jarcommander.filesystem.LocalFileSystem;
-import at.beris.jarcommander.filesystem.LocalDrive;
-import at.beris.jarcommander.filesystem.JFileSystem;
-import at.beris.jarcommander.filesystem.path.JPath;
-import at.beris.jarcommander.ui.combobox.DriveComboBox;
-import at.beris.jarcommander.ui.table.FileTablePane;
 import org.apache.log4j.Logger;
 
 import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
-import javax.swing.JTextField;
-import java.awt.Component;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 
-import static at.beris.jarcommander.action.ActionCommand.SELECT_NAVIGATION_PANEL;
-
-public class SessionPanel extends JTabbedPane implements ActionListener {
+public class SessionPanel extends JPanel implements ActionListener {
     private final static Logger LOGGER = Logger.getLogger(SessionPanel.class);
 
     private NavigationPanel leftNavigationPanel;
     private NavigationPanel rightNavigationPanel;
 
-    public SessionPanel() {
+    public SessionPanel(NavigationPanel leftNavigationPanel, NavigationPanel rightNavigationPanel) {
         super();
 
-        JPanel panel = new JPanel();
-        GridLayout layout = new GridLayout(1, 2);
+        this.leftNavigationPanel = leftNavigationPanel;
+        this.rightNavigationPanel = rightNavigationPanel;
 
-        panel.setLayout(layout);
-        leftNavigationPanel = createNavigationPanel();
+        setLayout(new GridLayout(1, 2));
         leftNavigationPanel.setSelected(true);
-        panel.add(leftNavigationPanel);
-        rightNavigationPanel = createNavigationPanel();
+        add(leftNavigationPanel);
         rightNavigationPanel.setSelected(false);
-        panel.add(rightNavigationPanel);
-
-        addTab("Local", panel);
-    }
-
-    private NavigationPanel createNavigationPanel() {
-        JFileSystem fileSystem = new LocalFileSystem();
-        DriveComboBox driveComboBox = new DriveComboBox(fileSystem);
-        JPath currentPath = ((LocalDrive) driveComboBox.getSelectedItem()).getPath();
-        final FileTablePane fileTablePane = new FileTablePane(currentPath);
-        JTextField currentPathTextField = new JTextField();
-        currentPathTextField.setText(currentPath.toString());
-        FileTableStatusLabel statusLabel = new FileTableStatusLabel(fileTablePane.getTable());
-
-        for (Component component : new Component[]{currentPathTextField, statusLabel}) {
-            component.addMouseListener(new MouseAdapter() {
-                @Override
-                public void mousePressed(MouseEvent e) {
-                    ActionListener parent = (ActionListener) ((Component) e.getSource()).getParent();
-                    parent.actionPerformed(new ActionEvent(e.getSource(), e.getID(), SELECT_NAVIGATION_PANEL));
-                }
-            });
-        }
-
-        return new NavigationPanel(fileSystem, fileTablePane, driveComboBox, currentPathTextField, statusLabel);
+        add(rightNavigationPanel);
     }
 
     @Override

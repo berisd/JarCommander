@@ -10,6 +10,7 @@
 package at.beris.jarcommander.action;
 
 import at.beris.jarcommander.Application;
+import at.beris.jarcommander.ApplicationContext;
 import at.beris.jarcommander.task.CopyTask;
 import at.beris.jarcommander.ui.NavigationPanel;
 import at.beris.jarcommander.ui.SessionPanel;
@@ -44,7 +45,7 @@ public class CopyAction extends CustomAction {
         LOGGER.debug("Copy");
         Application application = (Application) SwingUtilities.getRoot((Component) e.getSource());
 
-        SessionPanel sessionPanel = application.getSessionPanel();
+        SessionPanel sessionPanel = (SessionPanel) ApplicationContext.getSessionsPanel().getTabComponentAt(0);
         final NavigationPanel sourcePanel = sessionPanel.getSelectedNavigationPanel();
         final NavigationPanel targetPanel;
         if (sessionPanel.getLeftNavigationPanel().equals(sourcePanel))

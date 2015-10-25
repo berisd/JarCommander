@@ -9,6 +9,7 @@
 
 package at.beris.jarcommander.filesystem.file;
 
+import com.jcraft.jsch.ChannelSftp;
 import org.apache.commons.compress.archivers.ArchiveEntry;
 
 import java.io.File;
@@ -41,5 +42,11 @@ public class JFileFactory {
         if (archiveEntry == null)
             return null;
         return new CompressedFile(archiveEntry, archiveFile);
+    }
+
+    public static JFile newSshFileInstance(ChannelSftp.LsEntry file) {
+        if (file == null)
+            return null;
+        return new SshFile(file);
     }
 }

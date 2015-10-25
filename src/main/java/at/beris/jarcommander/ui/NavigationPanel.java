@@ -12,7 +12,7 @@ package at.beris.jarcommander.ui;
 import at.beris.jarcommander.action.ActionCommand;
 import at.beris.jarcommander.action.ParamActionEvent;
 import at.beris.jarcommander.filesystem.JFileSystem;
-import at.beris.jarcommander.filesystem.LocalDrive;
+import at.beris.jarcommander.filesystem.drive.JDrive;
 import at.beris.jarcommander.filesystem.file.JFile;
 import at.beris.jarcommander.filesystem.file.JFileFactory;
 import at.beris.jarcommander.filesystem.path.JPath;
@@ -62,7 +62,7 @@ public class NavigationPanel extends JPanel implements ActionListener {
 
         addMouseListener(new MouseListener());
 
-        final LocalDrive currentDrive = (LocalDrive) driveComboBox.getSelectedItem();
+        final JDrive currentDrive = (JDrive) driveComboBox.getSelectedItem();
         currentPath = currentDrive.getPath();
 
         currentPathTextField.addKeyListener(new
@@ -129,7 +129,7 @@ public class NavigationPanel extends JPanel implements ActionListener {
         LOGGER.debug("actionPerformed " + e.getClass().getName());
         if (e.getActionCommand().equals(ActionCommand.SELECT_NAVIGATION_PANEL)) {
             e.setSource(this);
-            ((ActionListener) this.getParent().getParent()).actionPerformed(e);
+            ((ActionListener) this.getParent()).actionPerformed(e);
         } else if (e.getActionCommand().equals(EXECUTE_FILE)) {
             JFile file = (JFile) ((ParamActionEvent) e).getParam();
             if (file.isDirectory()) {
@@ -140,7 +140,7 @@ public class NavigationPanel extends JPanel implements ActionListener {
         } else if (e.getActionCommand().equals(NAVIGATE_PATH_UP)) {
             changeDirectory(JFileFactory.newInstance(new File("..")).toPath());
         } else if (e.getActionCommand().equals(CHANGE_DRIVE)) {
-            LocalDrive driveInfo = (LocalDrive) ((ParamActionEvent) e).getParam();
+            JDrive driveInfo = (JDrive) ((ParamActionEvent) e).getParam();
             changeDirectory(driveInfo.getPath());
         }
     }
