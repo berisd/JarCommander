@@ -12,6 +12,7 @@ package at.beris.jarcommander.ui;
 import at.beris.jarcommander.Protocol;
 import at.beris.jarcommander.helper.ModelViewController;
 import at.beris.jarcommander.model.SiteModel;
+import at.beris.jarcommander.model.SitesModel;
 import at.beris.jarcommander.ui.list.SiteCellRenderer;
 import at.beris.jarcommander.ui.list.SiteListModel;
 import org.apache.log4j.Logger;
@@ -26,14 +27,22 @@ import javax.swing.JPasswordField;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
 import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
+
+import static at.beris.jarcommander.Application.logException;
 
 public class SiteManagerDialog extends JDialog {
     private final static Logger LOGGER = Logger.getLogger(SiteManagerDialog.class);
@@ -47,16 +56,19 @@ public class SiteManagerDialog extends JDialog {
     private JTextField siteUsername;
     private JPasswordField sitePassword;
 
-    private List<SiteModel> siteModelList;
+    private SitesModel sitesModel;
 
     public SiteManagerDialog(Frame owner, boolean modal) {
         super(owner, modal);
 
-        createComponents();
         currentSite = new SiteModel();
+        loadSiteDataList();
+//        saveSiteDataList();
 
+        createComponents();
         modelViewcontroller = new ModelViewController(currentSite, this);
         registerMVCComponents();
+        initCurrentSite();
 
         setSize(640, 480);
         setLocationRelativeTo(null);
@@ -77,6 +89,14 @@ public class SiteManagerDialog extends JDialog {
         add(createFooterPanel(), c);
 
         pack();
+    }
+
+    private void initCurrentSite() {
+        currentSite.setProtocol(sitesModel.getSites().get(0).getProtocol());
+        currentSite.setHostname(sitesModel.getSites().get(0).getHostname());
+        currentSite.setPortNumber(sitesModel.getSites().get(0).getPortNumber());
+        currentSite.setUsername(sitesModel.getSites().get(0).getUsername());
+        currentSite.setPassword(sitesModel.getSites().get(0).getPassword());
     }
 
     private JPanel createFooterPanel() {
@@ -116,7 +136,7 @@ public class SiteManagerDialog extends JDialog {
         panel.add(scrollPane);
         panel.add(createSiteDetailPanel());
 
-        siteList.setModel(new SiteListModel(createSiteDataList()));
+        siteList.setModel(new SiteListModel(sitesModel.getSites()));
         siteList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         siteList.setSelectedIndex(0);
 
@@ -182,7 +202,10 @@ public class SiteManagerDialog extends JDialog {
     }
 
     private List<SiteModel> createSiteDataList() {
-        siteModelList = new ArrayList<>();
+        sitesModel = new SitesModel();
+
+        List<SiteModel> siteList = new ArrayList<>();
+        sitesModel.setSites(siteList);
 
         currentSite.setHostname("www.beris.at");
         currentSite.setPortNumber(22);
@@ -190,8 +213,39 @@ public class SiteManagerDialog extends JDialog {
         currentSite.setUsername("briedl");
         currentSite.setPassword("mypassword".toCharArray());
 
-        siteModelList.add(currentSite);
-        return siteModelList;
+        siteList.add(currentSite);
+        return siteList;
+    }
+
+    private void saveSiteDataList() {
+        JAXBContext jaxbContext = null;
+        try {
+            jaxbContext = JAXBContext.newInstance(SitesModel.class);
+            Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+            jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+            jaxbMarshaller.marshal(sitesModel, System.out);
+            jaxbMarshaller.marshal(sitesModel, new File("sites.xml"));
+        } catch (JAXBException e) {
+            logException(e);
+        }
+
+    }
+
+    private void loadSiteDataList() {
+        File sitesFile = new File("sites.xml");
+        if (!Files.exists(sitesFile.toPath())) {
+            createSiteDataList();
+            saveSiteDataList();
+        } else {
+            JAXBContext jaxbContext = null;
+            try {
+                jaxbContext = JAXBContext.newInstance(SitesModel.class);
+                Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+                sitesModel = (SitesModel) jaxbUnmarshaller.unmarshal(sitesFile);
+            } catch (JAXBException e) {
+                logException(e);
+            }
+        }
     }
 
     private void createComponents() {
