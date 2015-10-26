@@ -23,10 +23,20 @@ public class SiteCellRenderer extends JLabel implements ListCellRenderer<SiteMod
 
     @Override
     public Component getListCellRendererComponent(JList<? extends SiteModel> list, SiteModel value, int index, boolean isSelected, boolean cellHasFocus) {
-        if (value.getUsername() == null && value.getHostname() == null)
-            setText("<New site>");
+        String username;
+        String hostname;
+
+        if (value.getUsername() == null)
+            username = "<empty>";
         else
-            setText(value.getUsername() + "@" + value.getHostname());
+            username = value.getUsername();
+
+        if (value.getHostname() == null)
+            hostname = "<empty>";
+        else
+            hostname = value.getHostname();
+
+        setText(username + "@" + hostname);
 
         setForeground(isSelected ? SELECTION_FOREGROUND_COLOR : Color.BLACK);
 

@@ -51,4 +51,17 @@ public class SiteListModel extends AbstractListModel<SiteModel> {
     public SiteModel getElementAt(int index) {
         return sites.get(index);
     }
+
+    public void setElementAt(int index, SiteModel site) {
+        sites.set(index, site);
+        fireContentsChanged(this, index, index);
+    }
+
+    public SiteModel remove(int index) {
+        SiteModel site = sites.get(index);
+        site.removePropertyChangeListeners();
+        sites.remove(index);
+        fireIntervalRemoved(this, index, index);
+        return site;
+    }
 }

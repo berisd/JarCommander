@@ -41,6 +41,8 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.nio.file.Files;
 
@@ -69,6 +71,12 @@ public class SiteManagerDialog extends JDialog {
         currentSite = createSiteModel();
         loadSiteDataList();
 
+        if (siteListModel.getSize() > 0) {
+            currentSite = siteListModel.getElementAt(0);
+        } else {
+            currentSite = createSiteModel();
+            siteListModel.addElement(currentSite);
+        }
 
         createComponents();
         modelViewcontroller = new ModelViewController(currentSite, this);
@@ -98,21 +106,27 @@ public class SiteManagerDialog extends JDialog {
     }
 
     private void selectSite(int listItemIndex) {
-        currentSite.setProtocol(siteList.getModel().getElementAt(listItemIndex).getProtocol());
-        currentSite.setHostname(siteList.getModel().getElementAt(listItemIndex).getHostname());
-        currentSite.setPortNumber(siteList.getModel().getElementAt(listItemIndex).getPortNumber());
-        currentSite.setUsername(siteList.getModel().getElementAt(listItemIndex).getUsername());
-        currentSite.setPassword(siteList.getModel().getElementAt(listItemIndex).getPassword());
-    }
+        if (listItemIndex < 0)
+            return;
 
-    private void updateSiteModel(int listItemIndex) {
-        siteList.getModel().getElementAt(listItemIndex).setProtocol(currentSite.getProtocol());
-        siteList.getModel().getElementAt(listItemIndex).setHostname(currentSite.getHostname());
-        siteList.getModel().getElementAt(listItemIndex).setPortNumber(currentSite.getPortNumber());
-        siteList.getModel().getElementAt(listItemIndex).setUsername(currentSite.getUsername());
-        siteList.getModel().getElementAt(listItemIndex).setPassword(currentSite.getPassword());
-    }
+        LOGGER.debug("selectSite for listIndex " + listItemIndex);
 
+        modelViewcontroller.setModel(siteList.getModel().getElementAt(listItemIndex));
+
+        String newProtocol = siteList.getModel().getElementAt(listItemIndex).getProtocol();
+        this.getSiteProtocol().setText(newProtocol != null ? newProtocol : "");
+
+        String newHostname = siteList.getModel().getElementAt(listItemIndex).getHostname();
+        this.getSiteHostname().setText(newHostname != null ? newHostname : "");
+
+        this.getSitePortNumber().setText(String.valueOf(siteList.getModel().getElementAt(listItemIndex).getPortNumber()));
+
+        String newUsername = siteList.getModel().getElementAt(listItemIndex).getUsername();
+        this.getSiteUsername().setText(newUsername != null ? newUsername : "");
+
+        char[] newPassword = siteList.getModel().getElementAt(listItemIndex).getPassword();
+        this.getSitePassword().setText(String.valueOf(newPassword != null ? String.valueOf(newPassword) : ""));
+    }
 
     private JPanel createFooterPanel() {
         JPanel footerPanel = new JPanel();
@@ -122,18 +136,34 @@ public class SiteManagerDialog extends JDialog {
             @Override
             public void actionPerformed(ActionEvent e) {
                 addSite();
+                selectSite(siteList.getSelectedIndex());
             }
         });
         footerPanel.add(buttonNew);
 
         JButton buttonDelete = new JButton("Delete");
+        buttonDelete.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int selectedItemIndex = siteList.getSelectedIndex();
+                int newItemIndex = 0;
+
+                if (selectedItemIndex + 1 < siteListModel.getSize()) {
+                    newItemIndex = selectedItemIndex + 1;
+                } else {
+                    newItemIndex = selectedItemIndex - 1;
+                }
+
+                siteListModel.remove(selectedItemIndex);
+                siteList.setSelectedIndex(newItemIndex);
+            }
+        });
         footerPanel.add(buttonDelete);
 
         JButton buttonSave = new JButton("Save");
         buttonSave.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                updateSiteModel(siteList.getSelectedIndex());
                 saveSiteDataList();
             }
         });
@@ -170,7 +200,21 @@ public class SiteManagerDialog extends JDialog {
     private SiteModel createSiteModel() {
         SiteModel site = new SiteModel();
         site.setProtocol("SSH");
+        site.addPropertyChangeListener(createSiteModelPropertyChangeListener());
         return site;
+    }
+
+    private PropertyChangeListener createSiteModelPropertyChangeListener() {
+        return new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                LOGGER.debug("propertyChange");
+                if (siteList != null) {
+                    int selectedIndex = siteList.getSelectedIndex();
+                    ((SiteListModel) siteList.getModel()).setElementAt(selectedIndex, siteList.getModel().getElementAt(selectedIndex));
+                }
+            }
+        };
     }
 
     private void connectToSite() {
@@ -302,6 +346,11 @@ public class SiteManagerDialog extends JDialog {
             } catch (JAXBException e) {
                 logException(e);
             }
+        }
+
+        for (int i = 0; i < siteListModel.getSize(); i++) {
+            SiteModel site = siteListModel.getElementAt(i);
+            site.addPropertyChangeListener(createSiteModelPropertyChangeListener());
         }
     }
 

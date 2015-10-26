@@ -40,11 +40,13 @@ public class ModelViewController {
     private AbstractModel model;
     private Container view;
     private Map<Method, List<Component>> modelGetPropertyMethodToViewFieldsMap;
+    private Map<Component, DocumentListener> documentListenerMap;
 
     public ModelViewController(AbstractModel model, Container view) {
         this.model = model;
         this.view = view;
         this.modelGetPropertyMethodToViewFieldsMap = new HashMap<>();
+        documentListenerMap = new HashMap<>();
         model.addPropertyChangeListener(new ModelPropertyChangeListener());
     }
 
@@ -60,8 +62,31 @@ public class ModelViewController {
         componentList.add(component);
 
         if (component instanceof JTextField) {
-            ((JTextField) component).getDocument().addDocumentListener(new TextFieldDocumentListener(model, modelPropertyName));
+            DocumentListener documentListener = new TextFieldDocumentListener(model, modelPropertyName);
+            documentListenerMap.put(component, documentListener);
+            ((JTextField) component).getDocument().addDocumentListener(documentListener);
         }
+    }
+
+    public void setModel(AbstractModel model) {
+        this.model = model;
+    }
+
+    public void unregisterObjectWithModelProperty(Component component, String modelPropertyName) {
+        Method modelGetPropertyMethod = getPropertyGetter(model, modelPropertyName);
+        List<Component> componentList = modelGetPropertyMethodToViewFieldsMap.get(modelGetPropertyMethod);
+
+        while (componentList.size() > 0) {
+            component = componentList.get(componentList.size() - 1);
+            if (component instanceof JTextField) {
+                JTextField textField = (JTextField) component;
+                textField.getDocument().removeDocumentListener(documentListenerMap.get(component));
+                documentListenerMap.remove(component);
+            }
+            componentList.remove(componentList.size() - 1);
+        }
+
+        modelGetPropertyMethodToViewFieldsMap.remove(modelGetPropertyMethod);
     }
 
     private class ModelPropertyChangeListener implements PropertyChangeListener {
