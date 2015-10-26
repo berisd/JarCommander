@@ -25,7 +25,6 @@ import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.Border;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -39,6 +38,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import static at.beris.jarcommander.ApplicationContext.SELECTION_FOREGROUND_COLOR;
 import static at.beris.jarcommander.action.ActionCommand.*;
 
 public class NavigationPanel extends JPanel implements ActionListener {
@@ -79,7 +79,7 @@ public class NavigationPanel extends JPanel implements ActionListener {
         );
 
         borderNormal = BorderFactory.createEtchedBorder();
-        borderSelected = BorderFactory.createLineBorder(Color.RED, 2);
+        borderSelected = BorderFactory.createLineBorder(SELECTION_FOREGROUND_COLOR, 2);
 
         GridBagConstraints c = new GridBagConstraints();
 

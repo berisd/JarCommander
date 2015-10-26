@@ -36,7 +36,7 @@ public class ShowSiteDialogAction extends CustomAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        Application application = (Application) SwingUtilities.getRoot((Component) e.getSource());
+        final Application application = (Application) SwingUtilities.getRoot((Component) e.getSource());
         new SiteManagerDialog(application, true).setVisible(true);
     }
 

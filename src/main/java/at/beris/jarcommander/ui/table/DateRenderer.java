@@ -12,10 +12,10 @@ package at.beris.jarcommander.ui.table;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.table.TableCellRenderer;
-import java.awt.Color;
 import java.awt.Component;
 import java.util.Date;
 
+import static at.beris.jarcommander.ApplicationContext.SELECTION_FOREGROUND_COLOR;
 import static at.beris.jarcommander.helper.Localization.dateFormat;
 
 public class DateRenderer extends JLabel implements TableCellRenderer {
@@ -32,7 +32,7 @@ public class DateRenderer extends JLabel implements TableCellRenderer {
             setToolTipText("");
         }
         if (isSelected) {
-            setForeground(Color.RED);
+            setForeground(SELECTION_FOREGROUND_COLOR);
         } else {
             setForeground(table.getForeground());
         }

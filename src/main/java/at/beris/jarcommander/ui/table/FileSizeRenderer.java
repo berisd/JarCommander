@@ -5,9 +5,9 @@ import at.beris.jarcommander.filesystem.file.JFile;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.table.TableCellRenderer;
-import java.awt.Color;
 import java.awt.Component;
 
+import static at.beris.jarcommander.ApplicationContext.SELECTION_FOREGROUND_COLOR;
 import static at.beris.jarcommander.helper.Localization.numberFormat;
 
 public class FileSizeRenderer extends JLabel implements TableCellRenderer {
@@ -22,7 +22,7 @@ public class FileSizeRenderer extends JLabel implements TableCellRenderer {
         setToolTipText(text);
 
         if (isSelected) {
-            setForeground(Color.RED);
+            setForeground(SELECTION_FOREGROUND_COLOR);
         } else {
             setForeground(table.getForeground());
         }

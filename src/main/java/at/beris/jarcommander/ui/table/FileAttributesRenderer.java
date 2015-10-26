@@ -14,9 +14,10 @@ import at.beris.jarcommander.filesystem.file.Attribute;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.table.TableCellRenderer;
-import java.awt.Color;
 import java.awt.Component;
 import java.util.Set;
+
+import static at.beris.jarcommander.ApplicationContext.SELECTION_FOREGROUND_COLOR;
 
 public class FileAttributesRenderer extends JLabel implements TableCellRenderer {
     @Override
@@ -39,7 +40,7 @@ public class FileAttributesRenderer extends JLabel implements TableCellRenderer 
         setToolTipText(longText);
 
         if (isSelected) {
-            setForeground(Color.RED);
+            setForeground(SELECTION_FOREGROUND_COLOR);
         } else {
             setForeground(table.getForeground());
         }

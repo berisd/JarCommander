@@ -21,15 +21,20 @@ import at.beris.jarcommander.ui.table.FileTablePane;
 
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
 
 import static at.beris.jarcommander.action.ActionCommand.SELECT_NAVIGATION_PANEL;
 
 public class ApplicationContext {
+    public final static String HOME_DIRECTORY = System.getProperty("user.home") + File.separator + ".JarCommander";
+    public final static Color SELECTION_FOREGROUND_COLOR = Color.BLUE;
+
     private static JTabbedPane sessionsPanel;
 
     private ApplicationContext() {

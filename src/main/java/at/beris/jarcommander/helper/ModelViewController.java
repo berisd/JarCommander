@@ -26,6 +26,7 @@ import java.beans.PropertyChangeListener;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -58,7 +59,6 @@ public class ModelViewController {
 
         componentList.add(component);
 
-        // Update from Model to View (=read), additionally Update from View to Model (=write)
         if (component instanceof JTextField) {
             ((JTextField) component).getDocument().addDocumentListener(new TextFieldDocumentListener(model, modelPropertyName));
         }
@@ -116,13 +116,16 @@ public class ModelViewController {
                 } else if (modelPropertyValue != null && StringUtils.equals(modelPropertyValue.toString(), viewPropertyValue))
                     return;
 
-                SwingUtilities.invokeAndWait(new Runnable() {
-                    @Override
-                    public void run() {
-                        LOGGER.info("insertUpdate run");
-                        setModelPropertyValue(propertyName, viewPropertyValue);
-                    }
-                });
+                if (!SwingUtilities.isEventDispatchThread()) {
+                    SwingUtilities.invokeAndWait(new Runnable() {
+                        @Override
+                        public void run() {
+                            setModelPropertyValue(propertyName, viewPropertyValue);
+                        }
+                    });
+                } else {
+                    setModelPropertyValue(propertyName, viewPropertyValue);
+                }
 
             } catch (BadLocationException ex) {
                 logException(ex);
@@ -169,13 +172,19 @@ public class ModelViewController {
 
             String oldValue = null;
             if (viewProperty instanceof JPasswordField) {
+                if (newValue == null)
+                    newValue = new char[0];
+
                 oldValue = String.valueOf(((JPasswordField) textfield).getPassword());
+
                 if (!StringUtils.equals(oldValue, String.valueOf((char[]) newValue))) {
                     ((JTextField) viewProperty).setText(String.valueOf((char[]) newValue));
                 }
 
             } else {
                 oldValue = textfield.getText();
+                if (newValue == null)
+                    newValue = "";
                 if (!StringUtils.equals(oldValue, String.valueOf(newValue))) {
                     ((JTextField) viewProperty).setText(String.valueOf(newValue));
                 }
@@ -192,7 +201,7 @@ public class ModelViewController {
             Object oldValue = modelPropertyGetter.invoke(model);
 
             if ((oldValue != null && newValue == null) || (oldValue == null && newValue != null) || (!StringUtils.equals(oldValue.toString(), newValue.toString()))) {
-                if (modelPropertyType.getSimpleName().equals("Integer")) {
+                if (Arrays.asList(new String[]{"Integer", "int"}).contains(modelPropertyType.getSimpleName())) {
                     modelPropertySetter.invoke(model, Integer.valueOf((String) newValue));
                 } else if (modelPropertyType.getSuperclass().getSimpleName().equals("Enum")) {
                     modelPropertySetter.invoke(model, Enum.valueOf((Class<? extends Enum>) Class.forName(modelPropertyType.getName()), (String) newValue));
