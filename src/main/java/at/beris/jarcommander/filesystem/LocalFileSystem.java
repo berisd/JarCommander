@@ -38,22 +38,28 @@ public class LocalFileSystem implements JFileSystem {
         if (driveList.size() > 0)
             return driveList;
 
+        boolean isOsWindows = System.getProperty("os.name").toLowerCase().indexOf("windows") >= 0;
         try {
-            for (FileStore fileStore : FileSystems.getDefault().getFileStores()) {
-//                long total = fileStore.getTotalSpace() / 1024;
-//                long used = (fileStore.getTotalSpace() - fileStore.getUnallocatedSpace()) / 1024;
-//                long avail = fileStore.getUsableSpace() / 1024;
-//                System.out.format("%-20s %12d %12d %12d%n", fileStore, total, used, avail);
+            if (isOsWindows) {
+                for (Path path : FileSystems.getDefault().getRootDirectories()) {
+                    FileStore fileStore = Files.getFileStore(path);
+                    LocalDrive driveInfo = new LocalDrive();
+                    driveInfo.setPath(new LocalPath(path));
+                    driveInfo.setSpaceTotal(fileStore.getTotalSpace());
+                    driveInfo.setSpaceLeft(fileStore.getUsableSpace());
+                    driveList.add(driveInfo);
+                }
+            } else {
+                for (FileStore fileStore : FileSystems.getDefault().getFileStores()) {
+                    String[] parts = fileStore.toString().split(" ");
+                    Path path = new File(parts[0]).toPath();
 
-                String[] parts = fileStore.toString().split(" ");
-                Path path = new File(parts[0]).toPath();
-
-                LocalDrive driveInfo = new LocalDrive();
-                driveInfo.setPath(new LocalPath(path));
-                driveInfo.setSpaceTotal(fileStore.getTotalSpace());
-                driveInfo.setSpaceLeft(fileStore.getUsableSpace());
-
-                driveList.add(driveInfo);
+                    LocalDrive driveInfo = new LocalDrive();
+                    driveInfo.setPath(new LocalPath(path));
+                    driveInfo.setSpaceTotal(fileStore.getTotalSpace());
+                    driveInfo.setSpaceLeft(fileStore.getUsableSpace());
+                    driveList.add(driveInfo);
+                }
             }
         } catch (IOException e) {
             logException(e);
