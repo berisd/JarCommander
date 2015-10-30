@@ -11,6 +11,7 @@ package at.beris.jarcommander;
 
 import at.beris.jarcommander.action.ActionType;
 import at.beris.jarcommander.helper.ActionHelper;
+import at.beris.jarcommander.ui.SessionPanel;
 import at.beris.jarcommander.ui.button.ButtonFactory;
 import org.apache.log4j.Logger;
 
@@ -23,6 +24,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.WindowConstants;
@@ -62,7 +64,8 @@ public class Application extends JFrame implements Runnable {
         c.weightx = 1;
         c.weighty = 1;
         c.gridy++;
-        add(ApplicationContext.createSessionsPanel(), c);
+        JTabbedPane sessionsPanel = ApplicationContext.createSessionsPanel();
+        add(sessionsPanel, c);
 
         c.fill = GridBagConstraints.HORIZONTAL;
         c.weightx = 0;
@@ -72,6 +75,7 @@ public class Application extends JFrame implements Runnable {
         add(footerPanel, c);
 
         pack();
+        ((SessionPanel)sessionsPanel.getSelectedComponent()).getSelectedNavigationPanel().getFileTablePane().getTable().requestFocusInWindow();
     }
 
     private JPanel createHeaderPanel() {

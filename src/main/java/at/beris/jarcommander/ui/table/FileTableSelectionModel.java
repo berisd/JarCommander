@@ -12,6 +12,7 @@ package at.beris.jarcommander.ui.table;
 import at.beris.jarcommander.ui.NavigationPanel;
 
 import javax.swing.DefaultListSelectionModel;
+import javax.swing.JComponent;
 
 public class FileTableSelectionModel extends DefaultListSelectionModel {
     private FileTable fileTable;
@@ -22,10 +23,19 @@ public class FileTableSelectionModel extends DefaultListSelectionModel {
 
     @Override
     public void setSelectionInterval(int index0, int index1) {
-        NavigationPanel navigationPanel = (NavigationPanel) fileTable.getParent().getParent().getParent();
+        NavigationPanel navigationPanel = null;
+        JComponent parent = (JComponent) fileTable.getParent();
 
-        if (!navigationPanel.isSelected())
-            return;
+        if (parent != null)
+            parent = (JComponent) parent.getParent();
+        if (parent != null)
+            parent = (JComponent) parent.getParent();
+        if (parent != null) {
+            navigationPanel = (NavigationPanel) parent;
+
+            if (navigationPanel != null && !navigationPanel.isSelected())
+                return;
+        }
 
         super.setSelectionInterval(index0, index1);
     }

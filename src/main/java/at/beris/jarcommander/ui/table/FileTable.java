@@ -46,12 +46,11 @@ public class FileTable extends JTable {
     private TableRowSorter<TableModel> rowSorter;
     private JPath path;
 
-    public FileTable(JPath path) {
+    public FileTable() {
         super();
-        this.path = path;
 
         setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-        setModel(new PathTableModel(path));
+        setModel(new PathTableModel());
         setSelectionModel(new FileTableSelectionModel(this));
 
         getColumnModel().getColumn(0).setCellRenderer(new FileNameRenderer());
@@ -89,8 +88,6 @@ public class FileTable extends JTable {
 
         sortKeys.add(new RowSorter.SortKey(0, SortOrder.ASCENDING));
         rowSorter.setSortKeys(sortKeys);
-
-        layoutColumns();
     }
 
     public void refresh() {
@@ -104,7 +101,8 @@ public class FileTable extends JTable {
         ((PathTableModel) getModel()).setPath(path);
         rowSorter.sort();
         getSelectionModel().clearSelection();
-        repaint();
+        getSelectionModel().setSelectionInterval(0, 0);
+        requestFocusInWindow();
     }
 
     public void listFile(JFile file) {

@@ -31,17 +31,11 @@ import static at.beris.jarcommander.action.ActionCommand.*;
 public class FileTablePane extends JScrollPane implements ActionListener {
     private final static Logger LOGGER = Logger.getLogger(FileTablePane.class);
 
-    private JPath path;
     private FileTable table;
 
     public FileTablePane() {
         super();
-    }
-
-    public FileTablePane(JPath path) {
-        super();
-        this.path = path;
-        table = new FileTable(path);
+        table = new FileTable();
         getViewport().add(table);
 
         addMouseListener(new MouseListener());
@@ -55,18 +49,6 @@ public class FileTablePane extends JScrollPane implements ActionListener {
 
     public FileTable getTable() {
         return table;
-    }
-
-    public void refresh() {
-        table.refresh();
-    }
-
-    public void setPath(JPath path) {
-        table.setPath(path);
-    }
-
-    public void listFile(JFile file) {
-        table.listFile(file);
     }
 
     public void scrollToRow(int rowIndex) {

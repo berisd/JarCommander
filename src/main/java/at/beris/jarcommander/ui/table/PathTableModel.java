@@ -30,10 +30,8 @@ public class PathTableModel extends AbstractTableModel {
     private List<JFile> fileList;
     private JPath path;
 
-    public PathTableModel(JPath path) {
-        this.path = path;
+    public PathTableModel() {
         fileList = new ArrayList<>();
-        setPath(path);
     }
 
     public void setPath(JPath path) {

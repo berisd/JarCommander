@@ -60,7 +60,7 @@ public class ApplicationContext {
         fileSystem.open();
         DriveComboBox driveComboBox = new DriveComboBox(fileSystem);
         JPath currentPath = ((JDrive) driveComboBox.getSelectedItem()).getPath();
-        final FileTablePane fileTablePane = new FileTablePane(currentPath);
+        final FileTablePane fileTablePane = new FileTablePane();
         JTextField currentPathTextField = new JTextField();
         currentPathTextField.setText(currentPath.toString());
         FileTableStatusLabel statusLabel = new FileTableStatusLabel(fileTablePane.getTable());
@@ -75,6 +75,8 @@ public class ApplicationContext {
             });
         }
 
-        return new NavigationPanel(fileSystem, fileTablePane, driveComboBox, currentPathTextField, statusLabel);
+        fileTablePane.getTable().setPath(currentPath);
+
+        return new NavigationPanel(fileTablePane, driveComboBox, currentPathTextField, statusLabel);
     }
 }

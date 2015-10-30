@@ -35,7 +35,8 @@ public class FileTableTest {
     @Before
     public void setup() throws AWTException {
         parentComponent = new ParentComponent();
-        fileTable = new FileTable(new LocalPath(new File("/").toPath()));
+        fileTable = new FileTable();
+        fileTable.setPath(new LocalPath(new File("/").toPath()));
 
         fileTable.setSelectionModel(new DefaultListSelectionModel());
 

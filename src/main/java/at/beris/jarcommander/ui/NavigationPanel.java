@@ -17,6 +17,7 @@ import at.beris.jarcommander.filesystem.file.JFile;
 import at.beris.jarcommander.filesystem.file.JFileFactory;
 import at.beris.jarcommander.filesystem.path.JPath;
 import at.beris.jarcommander.ui.combobox.DriveComboBox;
+import at.beris.jarcommander.ui.table.FileTable;
 import at.beris.jarcommander.ui.table.FileTablePane;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
@@ -48,15 +49,16 @@ public class NavigationPanel extends JPanel implements ActionListener {
     private Border borderNormal;
     private Border borderSelected;
     private JPath currentPath;
-    private JFileSystem fileSystem;
 
     private DriveComboBox driveComboBox;
     private JTextField currentPathTextField;
     private FileTablePane fileTablePane;
+    private FileTable fileTable;
 
-    public NavigationPanel(JFileSystem fileSystem, FileTablePane fileTablePane, DriveComboBox driveComboBox, JTextField currentPathTextField, FileTableStatusLabel statusLabel) {
+    public NavigationPanel(FileTablePane fileTablePane, DriveComboBox driveComboBox, JTextField currentPathTextField, FileTableStatusLabel statusLabel) {
         selected = false;
         this.fileTablePane = fileTablePane;
+        this.fileTable = fileTablePane.getTable();
         this.driveComboBox = driveComboBox;
         this.currentPathTextField = currentPathTextField;
 
@@ -154,7 +156,7 @@ public class NavigationPanel extends JPanel implements ActionListener {
         }
 
         currentPathTextField.setText(path.toString());
-        fileTablePane.listFile(file);
+        fileTable.listFile(file);
     }
 
     private class MouseListener extends MouseAdapter {
@@ -179,7 +181,7 @@ public class NavigationPanel extends JPanel implements ActionListener {
 
     public void refresh() {
         //TODO Refresh the whole Panel
-        fileTablePane.refresh();
+        fileTable.refresh();
     }
 
 
@@ -194,7 +196,7 @@ public class NavigationPanel extends JPanel implements ActionListener {
         }
 
         currentPathTextField.setText(currentPath.toString());
-        fileTablePane.setPath(currentPath);
+        fileTable.setPath(currentPath);
     }
 
     public JPath getCurrentPath() {
@@ -202,6 +204,6 @@ public class NavigationPanel extends JPanel implements ActionListener {
     }
 
     public JFileSystem getFileSystem() {
-        return fileSystem;
+        return driveComboBox.getFileSystem();
     }
 }

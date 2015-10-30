@@ -31,6 +31,6 @@ public class NavigationPanelTest {
         DriveComboBox driveComboBox = new DriveComboBox(fileSystem);
         JTextField currentPathTextField = new JTextField();
         FileTableStatusLabel statusLabel = new FileTableStatusLabel(fileTablePane.getTable());
-        navPanel = new NavigationPanel(fileSystem, fileTablePane, driveComboBox, currentPathTextField, statusLabel);
+        navPanel = new NavigationPanel(fileTablePane, driveComboBox, currentPathTextField, statusLabel);
     }
 }

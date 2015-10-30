@@ -31,6 +31,8 @@ public class DriveComboBox extends JComboBox<JDrive> {
 
     private final static Logger LOGGER = Logger.getLogger(DriveComboBox.class.getName());
 
+    private JFileSystem fileSystem;
+
     public DriveComboBox(JFileSystem fileSystem) {
         super();
 
@@ -57,6 +59,10 @@ public class DriveComboBox extends JComboBox<JDrive> {
         for (JDrive driveInfo : fileSystem.getDriveList()) {
             addItem(driveInfo);
         }
+    }
+
+    public JFileSystem getFileSystem() {
+        return fileSystem;
     }
 
     private class MouseListener extends MouseAdapter {
