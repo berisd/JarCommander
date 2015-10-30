@@ -17,7 +17,10 @@ import org.apache.log4j.Logger;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
 import javax.swing.JTable;
+import javax.swing.JViewport;
 import javax.swing.KeyStroke;
 import javax.swing.RowSorter;
 import javax.swing.SortOrder;
@@ -43,13 +46,8 @@ public class FileTable extends JTable {
     private TableRowSorter<TableModel> rowSorter;
     private JPath path;
 
-    public FileTable() {
-        super();
-    }
-
     public FileTable(JPath path) {
         super();
-
         this.path = path;
 
         setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
@@ -116,31 +114,6 @@ public class FileTable extends JTable {
         repaint();
     }
 
-    private class FileTableAction extends AbstractAction {
-        public FileTableAction(String actionCommandKey) {
-            putValue(Action.ACTION_COMMAND_KEY, actionCommandKey);
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            LOGGER.debug("actionPerformed");
-            FileTable table = (FileTable) e.getSource();
-            ((ActionListener) table.getParent().getParent()).actionPerformed(e);
-        }
-    }
-
-    private class CustomerKeyListener extends KeyAdapter {
-        @Override
-        public void keyPressed(KeyEvent e) {
-            LOGGER.debug("keyPressed");
-            super.keyPressed(e);
-
-            FileTable table = (FileTable) e.getSource();
-            FileTablePane pane = (FileTablePane) table.getParent().getParent();
-            pane.actionPerformed(new ParamActionEvent<>(e.getSource(), e.getID(), KEY_PRESSED, e.getKeyCode()));
-        }
-    }
-
     /**
      * Layout columns to the width of their biggest value and make first column fill rest of the table width.
      */
@@ -174,6 +147,53 @@ public class FileTable extends JTable {
             int scrollBarSize = 14;
             int width = (viewportWidth - columnsSizeWithOutFirst) - getIntercellSpacing().width - scrollBarSize;
             tableColumn.setPreferredWidth(width);
+        }
+    }
+
+    private class FileTableAction extends AbstractAction {
+        private String actionCommandKey;
+
+        public FileTableAction(String actionCommandKey) {
+            this.actionCommandKey = actionCommandKey;
+            putValue(Action.ACTION_COMMAND_KEY, actionCommandKey);
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            LOGGER.debug("actionPerformed");
+            FileTable table = (FileTable) e.getSource();
+
+            int firstSelectedRowIndex = table.getSelectedRow();
+
+            ActionEvent newEvent = e;
+            if (actionCommandKey.equals(EXECUTE_FILE) && firstSelectedRowIndex >= 0) {
+                JFile file = (JFile) table.getModel().getValueAt(table.convertRowIndexToModel(firstSelectedRowIndex), 0);
+                newEvent = new ParamActionEvent<>(e.getSource(), e.getID(), e.getActionCommand(), file);
+            }
+            ((ActionListener) getSendActionToParent(table)).actionPerformed(newEvent);
+        }
+    }
+
+    private Component getSendActionToParent(JComponent component) {
+        JComponent parent = (JComponent) component.getParent();
+        if (parent instanceof JViewport) {
+            return parent.getParent();
+        } else if (parent instanceof JPanel) {
+            return component.getRootPane().getParent();
+        } else {
+            return parent;
+        }
+    }
+
+    private class CustomerKeyListener extends KeyAdapter {
+        @Override
+        public void keyPressed(KeyEvent e) {
+            LOGGER.debug("keyPressed");
+            super.keyPressed(e);
+
+            FileTable table = (FileTable) e.getSource();
+            Component parent = getSendActionToParent(table);
+            ((ActionListener) parent).actionPerformed(new ParamActionEvent<>(e.getSource(), e.getID(), KEY_PRESSED, e.getKeyCode()));
         }
     }
 }
