@@ -21,8 +21,8 @@ import java.awt.event.KeyEvent;
 public class RefreshAction extends CustomAction {
     private final static Logger LOGGER = Logger.getLogger(RefreshAction.class);
 
-    public RefreshAction() {
-        super();
+    public RefreshAction(ApplicationContext context) {
+        super(context);
 
         keyStrokeString = "ctrl R";
         putValue(Action.NAME, "Refresh");
@@ -36,7 +36,7 @@ public class RefreshAction extends CustomAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         LOGGER.debug("Refresh");
-        SessionPanel sessionPanel = (SessionPanel) ApplicationContext.getSessionsPanel().getSelectedComponent();
+        SessionPanel sessionPanel = (SessionPanel) context.getSessionsPanel().getSelectedComponent();
         sessionPanel.getSelectedNavigationPanel().refresh();
     }
 }

@@ -9,6 +9,8 @@
 
 package at.beris.jarcommander.action;
 
+import at.beris.jarcommander.ApplicationContext;
+
 import javax.swing.Action;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
@@ -18,8 +20,8 @@ import java.awt.event.KeyEvent;
 
 public class ShowAboutDialogAction extends CustomAction {
 
-    public ShowAboutDialogAction() {
-        super();
+    public ShowAboutDialogAction(ApplicationContext context) {
+        super(context);
         putValue(Action.NAME, "About");
         putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
                 KeyEvent.VK_A, ActionEvent.ALT_MASK));

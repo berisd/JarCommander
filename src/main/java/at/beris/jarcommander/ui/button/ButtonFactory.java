@@ -9,18 +9,25 @@
 
 package at.beris.jarcommander.ui.button;
 
+import at.beris.jarcommander.ApplicationContext;
 import at.beris.jarcommander.action.ActionType;
 import at.beris.jarcommander.action.CustomAction;
-import at.beris.jarcommander.helper.ActionHelper;
+import at.beris.jarcommander.action.ActionFactory;
 
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 
-public final class ButtonFactory {
-    public static JButton createButton(ActionType actionType) {
+public class ButtonFactory {
+    private ApplicationContext context;
+
+    public ButtonFactory(ApplicationContext context) {
+        this.context = context;
+    }
+
+    public JButton createButton(ActionType actionType) {
         JButton button = new JButton();
-        CustomAction action = ActionHelper.getAction(actionType);
+        CustomAction action = context.getActionFactory().getAction(actionType);
 
         button.setAction(action);
         button.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(action.getKeyStroke(), actionType.toString());
@@ -30,9 +37,9 @@ public final class ButtonFactory {
         return button;
     }
 
-    public static JButton createIconButton(ActionType actionType, Icon icon) {
+    public JButton createIconButton(ActionType actionType, Icon icon) {
         JButton button = new JButton();
-        CustomAction action = ActionHelper.getAction(actionType);
+        CustomAction action = context.getActionFactory().getAction(actionType);
 
         button.setAction(action);
         button.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(action.getKeyStroke(), actionType.toString());

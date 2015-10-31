@@ -21,8 +21,8 @@ import java.awt.event.KeyEvent;
 public class SwitchNavigationPanelAction extends CustomAction {
     private final static Logger LOGGER = Logger.getLogger(SwitchNavigationPanelAction.class);
 
-    public SwitchNavigationPanelAction() {
-        super();
+    public SwitchNavigationPanelAction(ApplicationContext context) {
+        super(context);
 
         keyStrokeString = "tab";
         putValue(Action.NAME, "SwitchNavigationPanel");
@@ -36,7 +36,7 @@ public class SwitchNavigationPanelAction extends CustomAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         LOGGER.debug("Switch Navigation Panel");
-        SessionPanel sessionPanel = (SessionPanel) ApplicationContext.getSessionsPanel().getSelectedComponent();
+        SessionPanel sessionPanel = (SessionPanel) context.getSessionsPanel().getSelectedComponent();
         sessionPanel.switchSelectedNavigationPanel();
     }
 }

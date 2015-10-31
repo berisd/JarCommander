@@ -26,9 +26,10 @@ public class NavigationPanelTest {
 
     @Before
     public void setUp() {
+        ApplicationContext context = new ApplicationContext();
         JFileSystem fileSystem = new LocalFileSystem();
-        fileTablePane = new FileTablePane();
-        DriveComboBox driveComboBox = new DriveComboBox(fileSystem);
+        fileTablePane = new FileTablePane(context);
+        DriveComboBox driveComboBox = new DriveComboBox(context, fileSystem);
         JTextField currentPathTextField = new JTextField();
         FileTableStatusLabel statusLabel = new FileTableStatusLabel(fileTablePane.getTable());
         navPanel = new NavigationPanel(fileTablePane, driveComboBox, currentPathTextField, statusLabel);

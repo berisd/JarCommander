@@ -9,6 +9,7 @@
 
 package at.beris.jarcommander.ui.table;
 
+import at.beris.jarcommander.ApplicationContext;
 import at.beris.jarcommander.action.ActionType;
 import at.beris.jarcommander.filesystem.path.LocalPath;
 import org.junit.Before;
@@ -34,8 +35,9 @@ public class FileTableTest {
 
     @Before
     public void setup() throws AWTException {
+        ApplicationContext context = new ApplicationContext();
         parentComponent = new ParentComponent();
-        fileTable = new FileTable();
+        fileTable = new FileTable(context);
         fileTable.setPath(new LocalPath(new File("/").toPath()));
 
         fileTable.setSelectionModel(new DefaultListSelectionModel());

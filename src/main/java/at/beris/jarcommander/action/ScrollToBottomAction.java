@@ -24,8 +24,8 @@ import java.awt.event.KeyEvent;
 public class ScrollToBottomAction extends CustomAction {
     private final static Logger LOGGER = Logger.getLogger(ScrollToBottomAction.class);
 
-    public ScrollToBottomAction() {
-        super();
+    public ScrollToBottomAction(ApplicationContext context) {
+        super(context);
 
         keyStrokeString = ActionType.SCROLL_TO_BOTTOM.getKeyStrokeString();
         putValue(Action.NAME, "Scroll to bottom");
@@ -39,7 +39,7 @@ public class ScrollToBottomAction extends CustomAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         LOGGER.debug("ScrollToBottomAction");
-        SessionPanel sessionPanel = (SessionPanel) ApplicationContext.getSessionsPanel().getSelectedComponent();
+        SessionPanel sessionPanel = (SessionPanel) context.getSessionsPanel().getSelectedComponent();
         NavigationPanel navigationPanel = sessionPanel.getSelectedNavigationPanel();
         FileTable fileTable = navigationPanel.getFileTable();
         FileTablePane fileTablePane = navigationPanel.getFileTablePane();

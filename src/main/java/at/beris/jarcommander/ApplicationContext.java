@@ -9,15 +9,19 @@
 
 package at.beris.jarcommander;
 
+import at.beris.jarcommander.action.ActionFactory;
 import at.beris.jarcommander.action.ActionType;
 import at.beris.jarcommander.action.SelectNavigationPanelAction;
 import at.beris.jarcommander.filesystem.JFileSystem;
 import at.beris.jarcommander.filesystem.LocalFileSystem;
 import at.beris.jarcommander.filesystem.drive.JDrive;
 import at.beris.jarcommander.filesystem.path.JPath;
+import at.beris.jarcommander.ui.ApplicationFrame;
 import at.beris.jarcommander.ui.FileTableStatusLabel;
 import at.beris.jarcommander.ui.NavigationPanel;
 import at.beris.jarcommander.ui.SessionPanel;
+import at.beris.jarcommander.ui.UIFactory;
+import at.beris.jarcommander.ui.button.ButtonFactory;
 import at.beris.jarcommander.ui.combobox.DriveComboBox;
 import at.beris.jarcommander.ui.table.FileTablePane;
 
@@ -34,48 +38,50 @@ public class ApplicationContext {
     public final static String HOME_DIRECTORY = System.getProperty("user.home") + File.separator + ".JarCommander";
     public final static Color SELECTION_FOREGROUND_COLOR = Color.BLUE;
 
-    private static JTabbedPane sessionsPanel;
+    private JTabbedPane sessionsPanel;
 
-    private ApplicationContext() {
+    private ActionFactory actionFactory;
+    private ButtonFactory buttonFactory;
+    private UIFactory uiFactory;
+    private ApplicationFrame applicationFrame;
+
+
+    public ApplicationContext() {
     }
 
-    public static JTabbedPane createSessionsPanel() {
-        if (sessionsPanel == null)
-            sessionsPanel = new JTabbedPane();
-        sessionsPanel.addTab("Local", createSessionPanel(new LocalFileSystem()));
-        return sessionsPanel;
-    }
-
-    public static JTabbedPane getSessionsPanel() {
-        return sessionsPanel;
-    }
-
-    public static SessionPanel createSessionPanel(JFileSystem fileSystem) {
-        SessionPanel sessionPanel = new SessionPanel(createNavigationPanel(new LocalFileSystem()), createNavigationPanel(fileSystem));
-        return sessionPanel;
-    }
-
-    public static NavigationPanel createNavigationPanel(JFileSystem fileSystem) {
-        fileSystem.open();
-        DriveComboBox driveComboBox = new DriveComboBox(fileSystem);
-        JPath currentPath = ((JDrive) driveComboBox.getSelectedItem()).getPath();
-        final FileTablePane fileTablePane = new FileTablePane();
-        JTextField currentPathTextField = new JTextField();
-        currentPathTextField.setText(currentPath.toString());
-        FileTableStatusLabel statusLabel = new FileTableStatusLabel(fileTablePane.getTable());
-
-        for (Component component : new Component[]{currentPathTextField, statusLabel}) {
-            component.addMouseListener(new MouseAdapter() {
-                @Override
-                public void mousePressed(MouseEvent e) {
-                    Component parent = ((Component) e.getSource()).getParent();
-                    new SelectNavigationPanelAction().actionPerformed(new ActionEvent(parent, e.getID(), ActionType.SELECT_NAVIGATION_PANEL.toString()));
-                }
-            });
+    public ApplicationFrame getApplicationFrame() {
+        if (applicationFrame == null) {
+            applicationFrame = new ApplicationFrame(this);
         }
+        return applicationFrame;
+    }
 
-        fileTablePane.getTable().setPath(currentPath);
+    public ActionFactory getActionFactory() {
+        if (actionFactory == null) {
+            actionFactory = new ActionFactory(this);
+        }
+        return actionFactory;
+    }
 
-        return new NavigationPanel(fileTablePane, driveComboBox, currentPathTextField, statusLabel);
+    public ButtonFactory getButtonFactory() {
+        if (buttonFactory == null) {
+            buttonFactory = new ButtonFactory(this);
+        }
+        return buttonFactory;
+    }
+
+    public UIFactory getUiFactory() {
+        if (uiFactory == null) {
+            uiFactory = new UIFactory(this);
+        }
+        return uiFactory;
+    }
+
+    public JTabbedPane getSessionsPanel() {
+        return sessionsPanel;
+    }
+
+    public void setSessionsPanel(JTabbedPane sessionsPanel) {
+        this.sessionsPanel = sessionsPanel;
     }
 }

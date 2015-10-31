@@ -28,8 +28,8 @@ import java.io.File;
 public class DeleteAction extends CustomAction {
     private final static Logger LOGGER = Logger.getLogger(DeleteAction.class);
 
-    public DeleteAction() {
-        super();
+    public DeleteAction(ApplicationContext context) {
+        super(context);
 
         keyStrokeString = "F8";
         putValue(Action.NAME, "Delete");
@@ -44,14 +44,13 @@ public class DeleteAction extends CustomAction {
     public void actionPerformed(ActionEvent event) {
         LOGGER.debug("Delete");
 
-        Application application = (Application) SwingUtilities.getRoot((Component) event.getSource());
-        SessionPanel sessionPanel = (SessionPanel) ApplicationContext.getSessionsPanel().getSelectedComponent();
+        SessionPanel sessionPanel = (SessionPanel) context.getSessionsPanel().getSelectedComponent();
         NavigationPanel sourcePanel = sessionPanel.getSelectedNavigationPanel();
 
         if (sourcePanel.getSelection().size() == 0) {
-            JOptionPane.showMessageDialog(application, "Nothing selected!");
+            JOptionPane.showMessageDialog(context.getApplicationFrame(), "Nothing selected!");
         } else {
-            int deletion = JOptionPane.showConfirmDialog(application, "Delete " + sourcePanel.getSelection().size() + " items?", "Deletion", JOptionPane.YES_NO_OPTION);
+            int deletion = JOptionPane.showConfirmDialog(context.getApplicationFrame(), "Delete " + sourcePanel.getSelection().size() + " items?", "Deletion", JOptionPane.YES_NO_OPTION);
             if (deletion == JOptionPane.YES_OPTION) {
                 for (JFile jFile : sourcePanel.getSelection()) {
                     File file = (File) jFile.getBaseObject();

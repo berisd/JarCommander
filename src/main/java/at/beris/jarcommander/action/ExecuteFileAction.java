@@ -24,8 +24,8 @@ import java.awt.event.KeyEvent;
 public class ExecuteFileAction extends CustomAction {
     private final static Logger LOGGER = Logger.getLogger(ExecuteFileAction.class);
 
-    public ExecuteFileAction() {
-        super();
+    public ExecuteFileAction(ApplicationContext context) {
+        super(context);
 
         keyStrokeString = ActionType.EXECUTE_FILE.getKeyStrokeString();
         putValue(Action.NAME, "Execute File");
@@ -39,7 +39,7 @@ public class ExecuteFileAction extends CustomAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         LOGGER.debug("ExecuteFileAction");
-        SessionPanel sessionPanel = (SessionPanel) ApplicationContext.getSessionsPanel().getSelectedComponent();
+        SessionPanel sessionPanel = (SessionPanel) context.getSessionsPanel().getSelectedComponent();
         NavigationPanel navigationPanel = sessionPanel.getSelectedNavigationPanel();
         FileTable fileTable = navigationPanel.getFileTable();
 

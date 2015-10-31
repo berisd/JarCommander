@@ -65,8 +65,11 @@ public class SiteManagerDialog extends JDialog {
 
     private SiteListModel siteListModel;
 
-    public SiteManagerDialog(Frame owner, boolean modal) {
-        super(owner, modal);
+    private ApplicationContext context;
+
+    public SiteManagerDialog(ApplicationContext context, boolean modal) {
+        super(context.getApplicationFrame(), modal);
+        this.context = context;
 
         currentSite = createSiteModel();
         loadSiteDataList();
@@ -218,16 +221,14 @@ public class SiteManagerDialog extends JDialog {
     }
 
     private void connectToSite() {
-        SshContext context = new SshContext();
-        context.setHost(currentSite.getHostname());
-        context.setPort(currentSite.getPortNumber());
-        context.setUsername(currentSite.getUsername());
-        context.setPassword(String.valueOf(currentSite.getPassword()));
+        SshContext sshContext = new SshContext();
+        sshContext.setHost(currentSite.getHostname());
+        sshContext.setPort(currentSite.getPortNumber());
+        sshContext.setUsername(currentSite.getUsername());
+        sshContext.setPassword(String.valueOf(currentSite.getPassword()));
 
-        SessionPanel sessionPanel = ApplicationContext.createSessionPanel(new SshFileSystem(context));
-        JTabbedPane sessionsPanel = ApplicationContext.getSessionsPanel();
-        sessionsPanel.addTab(currentSite.getHostname(), sessionPanel);
-        sessionsPanel.setSelectedIndex(sessionsPanel.getTabCount() - 1);
+        SessionPanel sessionPanel = context.getUiFactory().createSessionPanel("currentSite.getHostname()", new SshFileSystem(sshContext));
+        context.getSessionsPanel().setSelectedIndex(context.getSessionsPanel().getTabCount() - 1);
     }
 
     private JPanel createContentPanel() {

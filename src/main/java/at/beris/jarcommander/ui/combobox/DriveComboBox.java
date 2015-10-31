@@ -9,6 +9,7 @@
 
 package at.beris.jarcommander.ui.combobox;
 
+import at.beris.jarcommander.ApplicationContext;
 import at.beris.jarcommander.action.ActionType;
 import at.beris.jarcommander.action.ChangeDriveAction;
 import at.beris.jarcommander.action.ParamActionEvent;
@@ -30,10 +31,13 @@ public class DriveComboBox extends JComboBox<JDrive> {
     private final static Logger LOGGER = Logger.getLogger(DriveComboBox.class.getName());
 
     private JFileSystem fileSystem;
+    private ApplicationContext context;
 
-    public DriveComboBox(JFileSystem fileSystem) {
+    public DriveComboBox(ApplicationContext context, JFileSystem fileSystem) {
         super();
+        this.context = context;
         this.fileSystem = fileSystem;
+
         addItemListener(new
 
                                 ItemListener() {
@@ -44,9 +48,9 @@ public class DriveComboBox extends JComboBox<JDrive> {
                                         Component parent = ((Component) e.getSource()).getParent();
 
                                         if (parent != null) {
-                                            new SelectNavigationPanelAction().actionPerformed(new ActionEvent(parent, e.getID(), ActionType.SELECT_NAVIGATION_PANEL.toString()));
+                                            new SelectNavigationPanelAction(DriveComboBox.this.context).actionPerformed(new ActionEvent(parent, e.getID(), ActionType.SELECT_NAVIGATION_PANEL.toString()));
                                             ParamActionEvent<JDrive> event = new ParamActionEvent<>(e.getSource(), e.getID(), ActionType.CHANGE_DRIVE.toString(), driveInfo);
-                                            new ChangeDriveAction().actionPerformed(event);
+                                            new ChangeDriveAction(DriveComboBox.this.context).actionPerformed(event);
                                         }
                                     }
                                 });
@@ -69,7 +73,7 @@ public class DriveComboBox extends JComboBox<JDrive> {
         public void mousePressed(MouseEvent e) {
             LOGGER.debug("mousePressed");
             Component parent = ((Component) e.getSource()).getParent();
-            new SelectNavigationPanelAction().actionPerformed(new ActionEvent(parent, e.getID(), ActionType.SELECT_NAVIGATION_PANEL.toString()));
+            new SelectNavigationPanelAction(DriveComboBox.this.context).actionPerformed(new ActionEvent(parent, e.getID(), ActionType.SELECT_NAVIGATION_PANEL.toString()));
         }
     }
 }

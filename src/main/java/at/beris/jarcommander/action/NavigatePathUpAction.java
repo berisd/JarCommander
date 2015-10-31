@@ -24,8 +24,8 @@ import java.io.File;
 public class NavigatePathUpAction extends CustomAction {
     private final static Logger LOGGER = Logger.getLogger(NavigatePathUpAction.class);
 
-    public NavigatePathUpAction() {
-        super();
+    public NavigatePathUpAction(ApplicationContext context) {
+        super(context);
 
         keyStrokeString = ActionType.NAVIGATE_PATH_UP.getKeyStrokeString();
         putValue(Action.NAME, "Navigate path up");
@@ -39,7 +39,7 @@ public class NavigatePathUpAction extends CustomAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         LOGGER.debug("Navigate Path up");
-        SessionPanel sessionPanel = (SessionPanel) ApplicationContext.getSessionsPanel().getSelectedComponent();
+        SessionPanel sessionPanel = (SessionPanel) context.getSessionsPanel().getSelectedComponent();
         NavigationPanel navigationPanel = sessionPanel.getSelectedNavigationPanel();
 
         navigationPanel.changeDirectory(JFileFactory.newInstance(new File("..")).toPath());

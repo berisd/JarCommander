@@ -9,6 +9,7 @@
 
 package at.beris.jarcommander.action;
 
+import at.beris.jarcommander.ApplicationContext;
 import org.apache.log4j.Logger;
 
 import javax.swing.Action;
@@ -19,8 +20,8 @@ import java.awt.event.KeyEvent;
 public class RenameAction extends CustomAction {
     private final static Logger LOGGER = Logger.getLogger(RenameAction.class);
 
-    public RenameAction() {
-        super();
+    public RenameAction(ApplicationContext context) {
+        super(context);
 
         keyStrokeString = "F9";
         putValue(Action.NAME, "Rename");

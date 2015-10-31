@@ -9,6 +9,7 @@
 
 package at.beris.jarcommander.ui.button;
 
+import at.beris.jarcommander.ApplicationContext;
 import at.beris.jarcommander.action.ActionType;
 import org.junit.Test;
 
@@ -20,7 +21,10 @@ public class ButtonFactoryTest {
 
     @Test
     public void createButton() {
-        JButton button = ButtonFactory.createButton(ActionType.COPY);
+        ApplicationContext context = new ApplicationContext();
+        ButtonFactory buttonFactory = context.getButtonFactory();
+
+        JButton button = buttonFactory.createButton(ActionType.COPY);
         assertEquals("F5 Copy", button.getText());
     }
 }

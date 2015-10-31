@@ -9,6 +9,8 @@
 
 package at.beris.jarcommander.action;
 
+import at.beris.jarcommander.ApplicationContext;
+
 import javax.swing.Action;
 import javax.swing.KeyStroke;
 import java.awt.event.ActionEvent;
@@ -16,8 +18,8 @@ import java.awt.event.KeyEvent;
 
 public class QuitAction extends CustomAction {
 
-    public QuitAction() {
-        super();
+    public QuitAction(ApplicationContext context) {
+        super(context);
         putValue(Action.NAME, "Quit");
         putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
                 KeyEvent.VK_F4, ActionEvent.ALT_MASK));

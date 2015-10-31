@@ -9,6 +9,7 @@
 
 package at.beris.jarcommander.ui.table;
 
+import at.beris.jarcommander.ApplicationContext;
 import at.beris.jarcommander.action.ActionType;
 import at.beris.jarcommander.action.ExecuteFileAction;
 import at.beris.jarcommander.action.SelectNavigationPanelAction;
@@ -23,10 +24,17 @@ import java.awt.event.MouseEvent;
 public class FileTableMouseListener extends MouseAdapter {
     private final static Logger LOGGER = Logger.getLogger(FileTableMouseListener.class);
 
+    private ApplicationContext context;
+
+    public FileTableMouseListener(ApplicationContext context) {
+        super();
+        this.context = context;
+    }
+
     @Override
     public void mousePressed(MouseEvent e) {
         Component parent = ((Component) e.getSource()).getParent().getParent().getParent();
-        new SelectNavigationPanelAction().actionPerformed(new ActionEvent(parent, e.getID(), ActionType.SELECT_NAVIGATION_PANEL.toString()));
+        new SelectNavigationPanelAction(context).actionPerformed(new ActionEvent(parent, e.getID(), ActionType.SELECT_NAVIGATION_PANEL.toString()));
     }
 
     @Override
@@ -39,7 +47,7 @@ public class FileTableMouseListener extends MouseAdapter {
             LOGGER.debug("Double Clicked on row with index " + rowIndex);
 
             if (rowIndex != -1) {
-                new ExecuteFileAction().actionPerformed(new ActionEvent(e.getSource(), e.getID(), ActionType.EXECUTE_FILE.toString()));
+                new ExecuteFileAction(context).actionPerformed(new ActionEvent(e.getSource(), e.getID(), ActionType.EXECUTE_FILE.toString()));
             }
         }
     }

@@ -28,8 +28,8 @@ import java.io.File;
 public class ScrollToLetterInFileTablePaneAction extends CustomAction {
     private final static Logger LOGGER = Logger.getLogger(ScrollToLetterInFileTablePaneAction.class);
 
-    public ScrollToLetterInFileTablePaneAction() {
-        super();
+    public ScrollToLetterInFileTablePaneAction(ApplicationContext context) {
+        super(context);
 
         keyStrokeString = ActionType.SCROLL_TO_LETTER_IN_FILE_TABLE_PANE.getKeyStrokeString();
         putValue(Action.NAME, "Scroll to letter");
@@ -43,7 +43,7 @@ public class ScrollToLetterInFileTablePaneAction extends CustomAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         LOGGER.debug("ScrollToLetterInFileTablePaneAction");
-        SessionPanel sessionPanel = (SessionPanel) ApplicationContext.getSessionsPanel().getSelectedComponent();
+        SessionPanel sessionPanel = (SessionPanel) context.getSessionsPanel().getSelectedComponent();
         NavigationPanel navigationPanel = sessionPanel.getSelectedNavigationPanel();
         FileTable fileTable = navigationPanel.getFileTable();
         FileTablePane fileTablePane = navigationPanel.getFileTablePane();

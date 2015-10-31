@@ -32,8 +32,8 @@ import static at.beris.jarcommander.Application.logException;
 public class MakeDirAction extends CustomAction {
     private final static Logger LOGGER = Logger.getLogger(MakeDirAction.class);
 
-    public MakeDirAction() {
-        super();
+    public MakeDirAction(ApplicationContext context) {
+        super(context);
 
         keyStrokeString = "F7";
         putValue(Action.NAME, "MkDir");
@@ -47,8 +47,7 @@ public class MakeDirAction extends CustomAction {
     @Override
     public void actionPerformed(ActionEvent event) {
         LOGGER.debug("MkDir");
-        Application application = (Application) SwingUtilities.getRoot((Component) event.getSource());
-        SessionPanel sessionPanel = (SessionPanel) ApplicationContext.getSessionsPanel().getSelectedComponent();
+        SessionPanel sessionPanel = (SessionPanel) context.getSessionsPanel().getSelectedComponent();
         NavigationPanel sourcePanel = sessionPanel.getSelectedNavigationPanel();
 
         String newDirectoryMame = JOptionPane.showInputDialog("New directory name");
@@ -60,7 +59,7 @@ public class MakeDirAction extends CustomAction {
                 Files.createDirectory(newDirectory.toPath());
                 sourcePanel.refresh();
             } catch (AccessDeniedException ex) {
-                JOptionPane.showMessageDialog(application, "Access Denied!" + System.lineSeparator() + "(No permissions?)", "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(context.getApplicationFrame(), "Access Denied!" + System.lineSeparator() + "(No permissions?)", "Error", JOptionPane.ERROR_MESSAGE);
             } catch (IOException ex) {
                 logException(ex);
             }

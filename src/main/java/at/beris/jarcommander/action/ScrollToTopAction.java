@@ -24,8 +24,8 @@ import java.awt.event.KeyEvent;
 public class ScrollToTopAction extends CustomAction {
     private final static Logger LOGGER = Logger.getLogger(ScrollToTopAction.class);
 
-    public ScrollToTopAction() {
-        super();
+    public ScrollToTopAction(ApplicationContext context) {
+        super(context);
 
         keyStrokeString = ActionType.SCROLL_TO_TOP.getKeyStrokeString();
         putValue(Action.NAME, "Scroll to top");
@@ -39,7 +39,7 @@ public class ScrollToTopAction extends CustomAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         LOGGER.debug("ScrollToTopAction");
-        SessionPanel sessionPanel = (SessionPanel) ApplicationContext.getSessionsPanel().getSelectedComponent();
+        SessionPanel sessionPanel = (SessionPanel) context.getSessionsPanel().getSelectedComponent();
         NavigationPanel navigationPanel = sessionPanel.getSelectedNavigationPanel();
         FileTable fileTable = navigationPanel.getFileTable();
         FileTablePane fileTablePane = navigationPanel.getFileTablePane();

@@ -10,6 +10,7 @@
 package at.beris.jarcommander.action;
 
 import at.beris.jarcommander.Application;
+import at.beris.jarcommander.ApplicationContext;
 import at.beris.jarcommander.ui.SiteManagerDialog;
 
 import javax.swing.Action;
@@ -21,8 +22,8 @@ import java.awt.event.KeyEvent;
 
 public class ShowSiteDialogAction extends CustomAction {
 
-    public ShowSiteDialogAction() {
-        super();
+    public ShowSiteDialogAction(ApplicationContext context) {
+        super(context);
 
         keyStrokeString = "ctrl S";
         putValue(Action.NAME, "Sites");
@@ -35,7 +36,6 @@ public class ShowSiteDialogAction extends CustomAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        final Application application = (Application) SwingUtilities.getRoot((Component) e.getSource());
-        new SiteManagerDialog(application, true).setVisible(true);
+        new SiteManagerDialog(context, true).setVisible(true);
     }
 }

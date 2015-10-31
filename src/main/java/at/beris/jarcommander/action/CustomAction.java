@@ -9,6 +9,8 @@
 
 package at.beris.jarcommander.action;
 
+import at.beris.jarcommander.ApplicationContext;
+
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.KeyStroke;
@@ -16,9 +18,11 @@ import javax.swing.KeyStroke;
 public abstract class CustomAction extends AbstractAction {
 
     protected String keyStrokeString;
+    protected ApplicationContext context;
 
-    public CustomAction() {
+    public CustomAction(ApplicationContext context) {
         super();
+        this.context = context;
     }
 
     public KeyStroke getKeyStroke() {

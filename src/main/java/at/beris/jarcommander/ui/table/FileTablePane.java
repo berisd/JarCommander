@@ -9,6 +9,7 @@
 
 package at.beris.jarcommander.ui.table;
 
+import at.beris.jarcommander.ApplicationContext;
 import at.beris.jarcommander.action.ActionType;
 import at.beris.jarcommander.action.SelectNavigationPanelAction;
 import org.apache.log4j.Logger;
@@ -27,10 +28,12 @@ public class FileTablePane extends JScrollPane {
     private final static Logger LOGGER = Logger.getLogger(FileTablePane.class);
 
     private FileTable table;
+    private ApplicationContext context;
 
-    public FileTablePane() {
+    public FileTablePane(ApplicationContext context) {
         super();
-        table = new FileTable();
+        this.context = context;
+        table = new FileTable(context);
         getViewport().add(table);
 
         addMouseListener(new MouseListener());
@@ -58,7 +61,7 @@ public class FileTablePane extends JScrollPane {
         public void mousePressed(MouseEvent e) {
             LOGGER.debug("mousePressed");
             Component parent = ((Component) e.getSource()).getParent();
-            new SelectNavigationPanelAction().actionPerformed(new ActionEvent(parent, e.getID(), ActionType.SELECT_NAVIGATION_PANEL.toString()));
+            new SelectNavigationPanelAction(context).actionPerformed(new ActionEvent(parent, e.getID(), ActionType.SELECT_NAVIGATION_PANEL.toString()));
         }
     }
 }

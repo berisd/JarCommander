@@ -19,14 +19,14 @@ import java.awt.event.ActionEvent;
 public class SelectNavigationPanelAction extends CustomAction {
     private final static Logger LOGGER = Logger.getLogger(SelectNavigationPanelAction.class);
 
-    public SelectNavigationPanelAction() {
-        super();
+    public SelectNavigationPanelAction(ApplicationContext context) {
+        super(context);
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         LOGGER.debug("SelectNavigationPanelAction");
-        SessionPanel sessionPanel = (SessionPanel) ApplicationContext.getSessionsPanel().getSelectedComponent();
+        SessionPanel sessionPanel = (SessionPanel) context.getSessionsPanel().getSelectedComponent();
         NavigationPanel leftNavigationPanel = sessionPanel.getLeftNavigationPanel();
         NavigationPanel rightNavigationPanel = sessionPanel.getRightNavigationPanel();
 

@@ -27,8 +27,8 @@ import java.awt.event.KeyEvent;
 public class CopyAction extends CustomAction {
     private final static Logger LOGGER = Logger.getLogger(CopyAction.class);
 
-    public CopyAction() {
-        super();
+    public CopyAction(ApplicationContext context) {
+        super(context);
 
         keyStrokeString = "F5";
         putValue(Action.NAME, "Copy");
@@ -42,9 +42,8 @@ public class CopyAction extends CustomAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         LOGGER.debug("Copy");
-        Application application = (Application) SwingUtilities.getRoot((Component) e.getSource());
 
-        SessionPanel sessionPanel = (SessionPanel) ApplicationContext.getSessionsPanel().getSelectedComponent();
+        SessionPanel sessionPanel = (SessionPanel) context.getSessionsPanel().getSelectedComponent();
         final NavigationPanel sourcePanel = sessionPanel.getSelectedNavigationPanel();
         final NavigationPanel targetPanel;
         if (sessionPanel.getLeftNavigationPanel().equals(sourcePanel))
@@ -53,7 +52,7 @@ public class CopyAction extends CustomAction {
             targetPanel = sessionPanel.getLeftNavigationPanel();
 
         if (sourcePanel.getSelection().size() == 0) {
-            JOptionPane.showMessageDialog(application, "No items selected!");
+            JOptionPane.showMessageDialog(context.getApplicationFrame(), "No items selected!");
         } else {
             SwingUtilities.invokeLater(new Runnable() {
                 @Override
