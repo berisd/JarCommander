@@ -9,12 +9,9 @@
 
 package at.beris.jarcommander.ui;
 
-import at.beris.jarcommander.action.ActionType;
-import at.beris.jarcommander.action.ParamActionEvent;
 import at.beris.jarcommander.filesystem.JFileSystem;
 import at.beris.jarcommander.filesystem.drive.JDrive;
 import at.beris.jarcommander.filesystem.file.JFile;
-import at.beris.jarcommander.filesystem.file.JFileFactory;
 import at.beris.jarcommander.filesystem.path.JPath;
 import at.beris.jarcommander.ui.combobox.DriveComboBox;
 import at.beris.jarcommander.ui.table.FileTable;
@@ -29,19 +26,16 @@ import javax.swing.border.Border;
 import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import static at.beris.jarcommander.ApplicationContext.SELECTION_FOREGROUND_COLOR;
 
-public class NavigationPanel extends JPanel implements ActionListener {
+public class NavigationPanel extends JPanel {
     private final static Logger LOGGER = Logger.getLogger(NavigationPanel.class.getName());
 
     private boolean selected;
@@ -116,6 +110,10 @@ public class NavigationPanel extends JPanel implements ActionListener {
         return fileTablePane;
     }
 
+    public FileTable getFileTable() {
+        return fileTable;
+    }
+
     public boolean isSelected() {
         return selected;
     }
@@ -128,28 +126,7 @@ public class NavigationPanel extends JPanel implements ActionListener {
         }
     }
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        LOGGER.debug("actionPerformed " + e.getClass().getName());
-        if (e.getActionCommand().equals(ActionType.SELECT_NAVIGATION_PANEL.toString())) {
-            e.setSource(this);
-            ((ActionListener) this.getParent()).actionPerformed(e);
-        } else if (e.getActionCommand().equals(ActionType.EXECUTE_FILE.toString())) {
-            JFile file = (JFile) ((ParamActionEvent) e).getParam();
-            if (file.isDirectory()) {
-                changeDirectory(file.toPath());
-            } else {
-                executeFile(file);
-            }
-        } else if (e.getActionCommand().equals(ActionType.NAVIGATE_PATH_UP.toString())) {
-            changeDirectory(JFileFactory.newInstance(new File("..")).toPath());
-        } else if (e.getActionCommand().equals(ActionType.CHANGE_DRIVE.toString())) {
-            JDrive driveInfo = (JDrive) ((ParamActionEvent) e).getParam();
-            changeDirectory(driveInfo.getPath());
-        }
-    }
-
-    private void executeFile(JFile file) {
+    public void executeFile(JFile file) {
         JPath path = file.toPath();
 
         boolean isArchive = FilenameUtils.getExtension(file.toString()).toUpperCase().equals("ZIP");

@@ -79,7 +79,7 @@ public class FileTableTest {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            actionEventByActionCommand.put(e.getActionCommand(), e);
+            actionEventByActionCommand.put(e.getActionCommand().toString(), e);
         }
     }
 }

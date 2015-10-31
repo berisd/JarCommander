@@ -10,6 +10,7 @@
 package at.beris.jarcommander;
 
 import at.beris.jarcommander.action.ActionType;
+import at.beris.jarcommander.action.SelectNavigationPanelAction;
 import at.beris.jarcommander.filesystem.JFileSystem;
 import at.beris.jarcommander.filesystem.LocalFileSystem;
 import at.beris.jarcommander.filesystem.drive.JDrive;
@@ -25,7 +26,6 @@ import javax.swing.JTextField;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
@@ -68,8 +68,8 @@ public class ApplicationContext {
             component.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mousePressed(MouseEvent e) {
-                    ActionListener parent = (ActionListener) ((Component) e.getSource()).getParent();
-                    parent.actionPerformed(new ActionEvent(e.getSource(), e.getID(), ActionType.SELECT_NAVIGATION_PANEL.toString()));
+                    Component parent = ((Component) e.getSource()).getParent();
+                    new SelectNavigationPanelAction().actionPerformed(new ActionEvent(parent, e.getID(), ActionType.SELECT_NAVIGATION_PANEL.toString()));
                 }
             });
         }

@@ -10,7 +10,7 @@
 package at.beris.jarcommander.ui.table;
 
 import at.beris.jarcommander.action.ActionType;
-import at.beris.jarcommander.action.ParamActionEvent;
+import at.beris.jarcommander.action.SelectNavigationPanelAction;
 import org.apache.log4j.Logger;
 
 import javax.swing.JScrollPane;
@@ -18,14 +18,12 @@ import java.awt.Component;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.File;
 
-public class FileTablePane extends JScrollPane implements ActionListener {
+public class FileTablePane extends JScrollPane {
     private final static Logger LOGGER = Logger.getLogger(FileTablePane.class);
 
     private FileTable table;
@@ -55,50 +53,12 @@ public class FileTablePane extends JScrollPane implements ActionListener {
         getViewport().scrollRectToVisible(rect);
     }
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        LOGGER.debug("actionPerformed");
-
-        if (e.getActionCommand().equals(ActionType.SCROLL_TO_TOP.toString())) {
-            if (table.getRowCount() > 0) {
-                scrollToRow(0);
-                table.repaint();
-            }
-        } else if (e.getActionCommand().equals(ActionType.SCROLL_TO_BOTTOM.toString())) {
-            if (table.getRowCount() > 0) {
-                scrollToRow(table.getRowCount());
-                table.repaint();
-            }
-        } else if (e.getActionCommand().equals(ActionType.KEY_PRESSED.toString())) {
-            Integer keyCode = ((ParamActionEvent<Integer>) e).getParam();
-            char keyChar = (char) Character.toLowerCase(keyCode);
-
-            if ((keyChar == '.') || (keyChar >= 'a' && keyChar <= 'z')) {
-                for (int rowIndex = 0; rowIndex < table.getRowCount(); rowIndex++) {
-                    File file = (File) table.getValueAt(rowIndex, 0);
-                    String[] fileNameParts = file.toString().split(File.separator);
-                    String fileName = fileNameParts[fileNameParts.length - 1];
-                    if (fileName.toLowerCase().charAt(0) == Character.toLowerCase(keyCode)) {
-                        Rectangle rect = table.getCellRect(rowIndex, 0, true);
-                        Point pt = viewport.getViewPosition();
-                        rect.setLocation(rect.x - pt.x, rect.y - pt.y);
-                        viewport.scrollRectToVisible(rect);
-                        break;
-                    }
-                }
-            }
-        } else {
-            ((ActionListener) this.getParent()).actionPerformed(e);
-        }
-
-    }
-
     private class MouseListener extends MouseAdapter {
         @Override
         public void mousePressed(MouseEvent e) {
             LOGGER.debug("mousePressed");
-            ActionListener parent = (ActionListener) ((Component) e.getSource()).getParent();
-            parent.actionPerformed(new ActionEvent(e.getSource(), e.getID(), ActionType.SELECT_NAVIGATION_PANEL.toString()));
+            Component parent = ((Component) e.getSource()).getParent();
+            new SelectNavigationPanelAction().actionPerformed(new ActionEvent(parent, e.getID(), ActionType.SELECT_NAVIGATION_PANEL.toString()));
         }
     }
 }

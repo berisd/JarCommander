@@ -13,10 +13,8 @@ import org.apache.log4j.Logger;
 
 import javax.swing.JPanel;
 import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
-public class SessionPanel extends JPanel implements ActionListener {
+public class SessionPanel extends JPanel {
     private final static Logger LOGGER = Logger.getLogger(SessionPanel.class);
 
     private NavigationPanel leftNavigationPanel;
@@ -33,15 +31,6 @@ public class SessionPanel extends JPanel implements ActionListener {
         add(leftNavigationPanel);
         rightNavigationPanel.setSelected(false);
         add(rightNavigationPanel);
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        if (e.getSource() instanceof NavigationPanel) {
-            NavigationPanel navigationPanel = (NavigationPanel) e.getSource();
-            leftNavigationPanel.setSelected(leftNavigationPanel.equals(navigationPanel));
-            rightNavigationPanel.setSelected(rightNavigationPanel.equals(navigationPanel));
-        }
     }
 
     public NavigationPanel getLeftNavigationPanel() {

@@ -11,19 +11,19 @@ package at.beris.jarcommander.ui.table;
 
 import at.beris.jarcommander.FileDefaultComparator;
 import at.beris.jarcommander.action.ActionType;
+import at.beris.jarcommander.action.ExecuteFileAction;
+import at.beris.jarcommander.action.NavigatePathUpAction;
 import at.beris.jarcommander.action.ParamActionEvent;
+import at.beris.jarcommander.action.ScrollToBottomAction;
+import at.beris.jarcommander.action.ScrollToLetterInFileTablePaneAction;
+import at.beris.jarcommander.action.ScrollToTopAction;
+import at.beris.jarcommander.action.SelectNavigationPanelAction;
 import at.beris.jarcommander.action.SwitchNavigationPanelAction;
 import at.beris.jarcommander.filesystem.file.JFile;
 import at.beris.jarcommander.filesystem.path.JPath;
 import org.apache.log4j.Logger;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
 import javax.swing.JTable;
-import javax.swing.JViewport;
-import javax.swing.KeyStroke;
 import javax.swing.RowSorter;
 import javax.swing.SortOrder;
 import javax.swing.table.TableCellRenderer;
@@ -32,7 +32,6 @@ import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -64,20 +63,20 @@ public class FileTable extends JTable {
             @Override
             public void mousePressed(MouseEvent e) {
                 super.mousePressed(e);
-                ActionListener parent = (ActionListener) ((Component) e.getSource()).getParent().getParent();
-                parent.actionPerformed(new ActionEvent(e.getSource(), e.getID(), ActionType.SELECT_NAVIGATION_PANEL.toString()));
+                Component parent = ((Component) e.getSource()).getParent().getParent().getParent();
+                new SelectNavigationPanelAction().actionPerformed(new ActionEvent(parent, e.getID(), ActionType.SELECT_NAVIGATION_PANEL.toString()));
             }
         });
 
-        getInputMap(WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_HOME, 0), ActionType.SCROLL_TO_TOP);
-        getActionMap().put(ActionType.SCROLL_TO_TOP, new FileTableAction(ActionType.SCROLL_TO_TOP.toString()));
-        getInputMap(WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_END, 0), ActionType.SCROLL_TO_BOTTOM);
-        getActionMap().put(ActionType.SCROLL_TO_BOTTOM, new FileTableAction(ActionType.SCROLL_TO_BOTTOM.toString()));
-        getInputMap(WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), ActionType.EXECUTE_FILE);
-        getActionMap().put(ActionType.EXECUTE_FILE, new FileTableAction(ActionType.EXECUTE_FILE.toString()));
-        getInputMap(WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, 0), ActionType.NAVIGATE_PATH_UP);
-        getActionMap().put(ActionType.NAVIGATE_PATH_UP, new FileTableAction(ActionType.NAVIGATE_PATH_UP.toString()));
-        getInputMap(WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_TAB, 0), ActionType.SWITCH_NAVIGATION_PANEL);
+        getInputMap(WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(ActionType.SCROLL_TO_TOP.getKeyStroke(), ActionType.SCROLL_TO_TOP);
+        getActionMap().put(ActionType.SCROLL_TO_TOP, new ScrollToTopAction());
+        getInputMap(WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(ActionType.SCROLL_TO_BOTTOM.getKeyStroke(), ActionType.SCROLL_TO_BOTTOM);
+        getActionMap().put(ActionType.SCROLL_TO_BOTTOM, new ScrollToBottomAction());
+        getInputMap(WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(ActionType.EXECUTE_FILE.getKeyStroke(), ActionType.EXECUTE_FILE);
+        getActionMap().put(ActionType.EXECUTE_FILE, new ExecuteFileAction());
+        getInputMap(WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(ActionType.NAVIGATE_PATH_UP.getKeyStroke(), ActionType.NAVIGATE_PATH_UP);
+        getActionMap().put(ActionType.NAVIGATE_PATH_UP, new NavigatePathUpAction());
+        getInputMap(WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(ActionType.SWITCH_NAVIGATION_PANEL.getKeyStroke(), ActionType.SWITCH_NAVIGATION_PANEL);
         getActionMap().put(ActionType.SWITCH_NAVIGATION_PANEL, new SwitchNavigationPanelAction());
 
         rowSorter = new TableRowSorter<>(getModel());
@@ -150,50 +149,15 @@ public class FileTable extends JTable {
         }
     }
 
-    private class FileTableAction extends AbstractAction {
-        private String actionCommandKey;
-
-        public FileTableAction(String actionCommandKey) {
-            this.actionCommandKey = actionCommandKey;
-            putValue(Action.ACTION_COMMAND_KEY, actionCommandKey);
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            LOGGER.debug("actionPerformed");
-            FileTable table = (FileTable) e.getSource();
-
-            int firstSelectedRowIndex = table.getSelectedRow();
-
-            ActionEvent newEvent = e;
-            if (actionCommandKey.equals(ActionType.EXECUTE_FILE.toString()) && firstSelectedRowIndex >= 0) {
-                JFile file = (JFile) table.getModel().getValueAt(table.convertRowIndexToModel(firstSelectedRowIndex), 0);
-                newEvent = new ParamActionEvent<>(e.getSource(), e.getID(), e.getActionCommand(), file);
-            }
-            ((ActionListener) getSendActionToParent(table)).actionPerformed(newEvent);
-        }
-    }
-
-    private Component getSendActionToParent(JComponent component) {
-        JComponent parent = (JComponent) component.getParent();
-        if (parent instanceof JViewport) {
-            return parent.getParent();
-        } else if (parent instanceof JPanel) {
-            return component.getRootPane().getParent();
-        } else {
-            return parent;
-        }
-    }
-
     private class CustomerKeyListener extends KeyAdapter {
         @Override
         public void keyPressed(KeyEvent e) {
             LOGGER.debug("keyPressed");
             super.keyPressed(e);
 
-            FileTable table = (FileTable) e.getSource();
-            Component parent = getSendActionToParent(table);
-            ((ActionListener) parent).actionPerformed(new ParamActionEvent<>(e.getSource(), e.getID(), ActionType.KEY_PRESSED.toString(), e.getKeyCode()));
+            if ((e.getKeyChar() == '.') || (e.getKeyChar() >= 'a' && e.getKeyChar() <= 'z')) {
+                new ScrollToLetterInFileTablePaneAction().actionPerformed(new ParamActionEvent<Character>(e.getSource(), e.getID(), ActionType.SCROLL_TO_LETTER_IN_FILE_TABLE_PANE.toString(), Character.valueOf(e.getKeyChar())));
+            }
         }
     }
 }
