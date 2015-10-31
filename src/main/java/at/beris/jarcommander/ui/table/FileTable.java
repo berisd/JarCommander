@@ -10,7 +10,9 @@
 package at.beris.jarcommander.ui.table;
 
 import at.beris.jarcommander.FileDefaultComparator;
+import at.beris.jarcommander.action.ActionCommand;
 import at.beris.jarcommander.action.ParamActionEvent;
+import at.beris.jarcommander.action.SwitchNavigationPanelAction;
 import at.beris.jarcommander.filesystem.file.JFile;
 import at.beris.jarcommander.filesystem.path.JPath;
 import org.apache.log4j.Logger;
@@ -77,6 +79,8 @@ public class FileTable extends JTable {
         getActionMap().put(EXECUTE_FILE, new FileTableAction(EXECUTE_FILE));
         getInputMap(WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, 0), NAVIGATE_PATH_UP);
         getActionMap().put(NAVIGATE_PATH_UP, new FileTableAction(NAVIGATE_PATH_UP));
+        getInputMap(WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_TAB, 0), ActionCommand.SWITCH_NAVIGATION_PANEL);
+        getActionMap().put(ActionCommand.SWITCH_NAVIGATION_PANEL, new SwitchNavigationPanelAction());
 
         rowSorter = new TableRowSorter<>(getModel());
         setRowSorter(rowSorter);

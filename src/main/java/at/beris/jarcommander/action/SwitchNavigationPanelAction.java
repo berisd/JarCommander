@@ -21,27 +21,27 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
-public class RefreshAction extends CustomAction {
-    private final static Logger LOGGER = Logger.getLogger(RefreshAction.class);
-    public static final ActionType KEY = ActionType.REFRESH;
+public class SwitchNavigationPanelAction extends CustomAction {
+    private final static Logger LOGGER = Logger.getLogger(SwitchNavigationPanelAction.class);
+    public static final ActionType KEY = ActionType.SWITCH_NAVIGATION_PANEL;
 
-    public RefreshAction() {
+    public SwitchNavigationPanelAction() {
         super();
 
-        keyStrokeString = "ctrl R";
-        putValue(Action.NAME, "Refresh");
+        keyStrokeString = "tab";
+        putValue(Action.NAME, "SwitchNavigationPanel");
         putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
                 keyStrokeString));
-        putValue(Action.MNEMONIC_KEY, KeyEvent.VK_R);
-        putValue(Action.ACTION_COMMAND_KEY, "refresh");
-        putValue(Action.SHORT_DESCRIPTION, "Refresh");
+        putValue(Action.MNEMONIC_KEY, KeyEvent.VK_TAB);
+        putValue(Action.ACTION_COMMAND_KEY, "Switch Navigation Panel");
+        putValue(Action.SHORT_DESCRIPTION, "Switch Navigation Panel");
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        LOGGER.debug("Refresh");
+        LOGGER.debug("Switch Navigation Panel");
         SessionPanel sessionPanel = (SessionPanel) ApplicationContext.getSessionsPanel().getSelectedComponent();
-        sessionPanel.getSelectedNavigationPanel().refresh();
+        sessionPanel.switchSelectedNavigationPanel();
     }
 
     @Override

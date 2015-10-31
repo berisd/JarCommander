@@ -62,4 +62,9 @@ public class SessionPanel extends JPanel implements ActionListener {
 
         return selectedPanel;
     }
+
+    public void switchSelectedNavigationPanel() {
+        leftNavigationPanel.setSelected(!leftNavigationPanel.isSelected());
+        rightNavigationPanel.setSelected(!rightNavigationPanel.isSelected());
+    }
 }

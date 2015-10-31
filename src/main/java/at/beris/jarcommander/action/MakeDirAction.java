@@ -49,7 +49,7 @@ public class MakeDirAction extends CustomAction {
     public void actionPerformed(ActionEvent event) {
         LOGGER.debug("MkDir");
         Application application = (Application) SwingUtilities.getRoot((Component) event.getSource());
-        SessionPanel sessionPanel = (SessionPanel) ApplicationContext.getSessionsPanel().getTabComponentAt(0);
+        SessionPanel sessionPanel = (SessionPanel) ApplicationContext.getSessionsPanel().getSelectedComponent();
         NavigationPanel sourcePanel = sessionPanel.getSelectedNavigationPanel();
 
         String newDirectoryMame = JOptionPane.showInputDialog("New directory name");

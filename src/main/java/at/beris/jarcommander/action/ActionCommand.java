@@ -17,4 +17,5 @@ public interface ActionCommand {
     String NAVIGATE_PATH_UP = "navigatePathUp";
     String SELECT_NAVIGATION_PANEL = "selectNavigationPanel";
     String EXECUTE_FILE = "executeFile";
+    String SWITCH_NAVIGATION_PANEL = "switchNavigationPanel";
 }

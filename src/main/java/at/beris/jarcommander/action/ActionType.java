@@ -19,4 +19,5 @@ public enum ActionType {
     SHOW_ABOUT_DIALOG,
     REFRESH,
     SHOW_SITE_DIALOG,
+    SWITCH_NAVIGATION_PANEL,
 }

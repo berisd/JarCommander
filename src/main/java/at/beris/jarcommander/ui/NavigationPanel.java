@@ -124,6 +124,9 @@ public class NavigationPanel extends JPanel implements ActionListener {
     public void setSelected(boolean selected) {
         this.selected = selected;
         setBorder(selected ? borderSelected : borderNormal);
+        if (selected) {
+            fileTable.requestFocusInWindow();
+        }
     }
 
     @Override
