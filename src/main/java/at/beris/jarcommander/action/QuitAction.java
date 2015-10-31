@@ -16,8 +16,6 @@ import java.awt.event.KeyEvent;
 
 public class QuitAction extends CustomAction {
 
-    public static final ActionType KEY = ActionType.QUIT;
-
     public QuitAction() {
         super();
         putValue(Action.NAME, "Quit");
@@ -31,10 +29,5 @@ public class QuitAction extends CustomAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         //Alt+F4 already bound
-    }
-
-    @Override
-    public ActionType getKey() {
-        return KEY;
     }
 }

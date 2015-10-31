@@ -17,7 +17,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
 public class ShowAboutDialogAction extends CustomAction {
-    public static final ActionType KEY = ActionType.SHOW_ABOUT_DIALOG;
 
     public ShowAboutDialogAction() {
         super();
@@ -32,10 +31,5 @@ public class ShowAboutDialogAction extends CustomAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         JOptionPane.showMessageDialog((JMenuItem) e.getSource(), "Jar Commander" + System.lineSeparator() + "(C) 2015 Bernd Riedl", "About", JOptionPane.INFORMATION_MESSAGE);
-    }
-
-    @Override
-    public ActionType getKey() {
-        return KEY;
     }
 }

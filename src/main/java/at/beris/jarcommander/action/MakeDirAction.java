@@ -31,7 +31,6 @@ import static at.beris.jarcommander.Application.logException;
 
 public class MakeDirAction extends CustomAction {
     private final static Logger LOGGER = Logger.getLogger(MakeDirAction.class);
-    public static final ActionType KEY = ActionType.MAKE_DIR;
 
     public MakeDirAction() {
         super();
@@ -66,10 +65,5 @@ public class MakeDirAction extends CustomAction {
                 logException(ex);
             }
         }
-    }
-
-    @Override
-    public ActionType getKey() {
-        return KEY;
     }
 }

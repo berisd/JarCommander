@@ -18,7 +18,6 @@ import java.awt.event.KeyEvent;
 
 public class MoveAction extends CustomAction {
     private final static Logger LOGGER = Logger.getLogger(MoveAction.class);
-    public static final ActionType KEY = ActionType.MOVE;
 
     public MoveAction() {
         super();
@@ -35,10 +34,5 @@ public class MoveAction extends CustomAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         LOGGER.debug("Move");
-    }
-
-    @Override
-    public ActionType getKey() {
-        return KEY;
     }
 }

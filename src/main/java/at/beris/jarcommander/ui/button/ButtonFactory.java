@@ -23,8 +23,8 @@ public final class ButtonFactory {
         CustomAction action = ActionHelper.getAction(actionType);
 
         button.setAction(action);
-        button.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(action.getKeyStroke(), action.getKey());
-        button.getActionMap().put(action.getKey(), action);
+        button.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(action.getKeyStroke(), actionType.toString());
+        button.getActionMap().put(actionType.toString(), action);
         button.setText(action.getKeyStrokeString() + " " + action.getName());
 
         return button;
@@ -35,8 +35,8 @@ public final class ButtonFactory {
         CustomAction action = ActionHelper.getAction(actionType);
 
         button.setAction(action);
-        button.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(action.getKeyStroke(), action.getKey());
-        button.getActionMap().put(action.getKey(), action);
+        button.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(action.getKeyStroke(), actionType.toString());
+        button.getActionMap().put(actionType.toString(), action);
         button.setText("");
         button.setIcon(icon);
 

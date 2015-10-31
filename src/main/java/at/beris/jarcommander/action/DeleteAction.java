@@ -27,7 +27,6 @@ import java.io.File;
 
 public class DeleteAction extends CustomAction {
     private final static Logger LOGGER = Logger.getLogger(DeleteAction.class);
-    public static final ActionType KEY = ActionType.DELETE;
 
     public DeleteAction() {
         super();
@@ -61,10 +60,5 @@ public class DeleteAction extends CustomAction {
                 sourcePanel.refresh();
             }
         }
-    }
-
-    @Override
-    public ActionType getKey() {
-        return KEY;
     }
 }

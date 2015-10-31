@@ -32,6 +32,4 @@ public abstract class CustomAction extends AbstractAction {
     public String getName() {
         return (String) getValue(Action.NAME);
     }
-
-    public abstract ActionType getKey();
 }

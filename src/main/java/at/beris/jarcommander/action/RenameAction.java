@@ -18,7 +18,6 @@ import java.awt.event.KeyEvent;
 
 public class RenameAction extends CustomAction {
     private final static Logger LOGGER = Logger.getLogger(RenameAction.class);
-    public static final ActionType KEY = ActionType.MOVE;
 
     public RenameAction() {
         super();
@@ -35,10 +34,5 @@ public class RenameAction extends CustomAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         LOGGER.debug("Rename");
-    }
-
-    @Override
-    public ActionType getKey() {
-        return KEY;
     }
 }

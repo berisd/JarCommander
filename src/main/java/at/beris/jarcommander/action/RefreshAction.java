@@ -9,21 +9,17 @@
 
 package at.beris.jarcommander.action;
 
-import at.beris.jarcommander.Application;
 import at.beris.jarcommander.ApplicationContext;
 import at.beris.jarcommander.ui.SessionPanel;
 import org.apache.log4j.Logger;
 
 import javax.swing.Action;
 import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
-import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
 public class RefreshAction extends CustomAction {
     private final static Logger LOGGER = Logger.getLogger(RefreshAction.class);
-    public static final ActionType KEY = ActionType.REFRESH;
 
     public RefreshAction() {
         super();
@@ -42,10 +38,5 @@ public class RefreshAction extends CustomAction {
         LOGGER.debug("Refresh");
         SessionPanel sessionPanel = (SessionPanel) ApplicationContext.getSessionsPanel().getSelectedComponent();
         sessionPanel.getSelectedNavigationPanel().refresh();
-    }
-
-    @Override
-    public ActionType getKey() {
-        return KEY;
     }
 }

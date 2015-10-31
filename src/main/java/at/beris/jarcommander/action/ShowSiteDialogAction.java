@@ -20,7 +20,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
 public class ShowSiteDialogAction extends CustomAction {
-    public static final ActionType KEY = ActionType.SHOW_SITE_DIALOG;
 
     public ShowSiteDialogAction() {
         super();
@@ -38,10 +37,5 @@ public class ShowSiteDialogAction extends CustomAction {
     public void actionPerformed(ActionEvent e) {
         final Application application = (Application) SwingUtilities.getRoot((Component) e.getSource());
         new SiteManagerDialog(application, true).setVisible(true);
-    }
-
-    @Override
-    public ActionType getKey() {
-        return KEY;
     }
 }

@@ -26,7 +26,6 @@ import java.awt.event.KeyEvent;
 
 public class CopyAction extends CustomAction {
     private final static Logger LOGGER = Logger.getLogger(CopyAction.class);
-    public static final ActionType KEY = ActionType.COPY;
 
     public CopyAction() {
         super();
@@ -64,10 +63,5 @@ public class CopyAction extends CustomAction {
                 }
             });
         }
-    }
-
-    @Override
-    public ActionType getKey() {
-        return KEY;
     }
 }
