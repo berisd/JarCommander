@@ -10,7 +10,7 @@
 package at.beris.jarcommander.ui.table;
 
 import at.beris.jarcommander.FileDefaultComparator;
-import at.beris.jarcommander.action.ActionCommand;
+import at.beris.jarcommander.action.ActionType;
 import at.beris.jarcommander.action.ParamActionEvent;
 import at.beris.jarcommander.action.SwitchNavigationPanelAction;
 import at.beris.jarcommander.filesystem.file.JFile;
@@ -40,8 +40,6 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-import static at.beris.jarcommander.action.ActionCommand.*;
-
 public class FileTable extends JTable {
     private final static Logger LOGGER = Logger.getLogger(FileTablePane.class);
 
@@ -67,20 +65,20 @@ public class FileTable extends JTable {
             public void mousePressed(MouseEvent e) {
                 super.mousePressed(e);
                 ActionListener parent = (ActionListener) ((Component) e.getSource()).getParent().getParent();
-                parent.actionPerformed(new ActionEvent(e.getSource(), e.getID(), SELECT_NAVIGATION_PANEL));
+                parent.actionPerformed(new ActionEvent(e.getSource(), e.getID(), ActionType.SELECT_NAVIGATION_PANEL.toString()));
             }
         });
 
-        getInputMap(WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_HOME, 0), SCROLL_TO_TOP);
-        getActionMap().put(SCROLL_TO_TOP, new FileTableAction(SCROLL_TO_TOP));
-        getInputMap(WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_END, 0), SCROLL_TO_BOTTOM);
-        getActionMap().put(SCROLL_TO_BOTTOM, new FileTableAction(SCROLL_TO_BOTTOM));
-        getInputMap(WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), EXECUTE_FILE);
-        getActionMap().put(EXECUTE_FILE, new FileTableAction(EXECUTE_FILE));
-        getInputMap(WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, 0), NAVIGATE_PATH_UP);
-        getActionMap().put(NAVIGATE_PATH_UP, new FileTableAction(NAVIGATE_PATH_UP));
-        getInputMap(WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_TAB, 0), ActionCommand.SWITCH_NAVIGATION_PANEL);
-        getActionMap().put(ActionCommand.SWITCH_NAVIGATION_PANEL, new SwitchNavigationPanelAction());
+        getInputMap(WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_HOME, 0), ActionType.SCROLL_TO_TOP);
+        getActionMap().put(ActionType.SCROLL_TO_TOP, new FileTableAction(ActionType.SCROLL_TO_TOP.toString()));
+        getInputMap(WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_END, 0), ActionType.SCROLL_TO_BOTTOM);
+        getActionMap().put(ActionType.SCROLL_TO_BOTTOM, new FileTableAction(ActionType.SCROLL_TO_BOTTOM.toString()));
+        getInputMap(WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), ActionType.EXECUTE_FILE);
+        getActionMap().put(ActionType.EXECUTE_FILE, new FileTableAction(ActionType.EXECUTE_FILE.toString()));
+        getInputMap(WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, 0), ActionType.NAVIGATE_PATH_UP);
+        getActionMap().put(ActionType.NAVIGATE_PATH_UP, new FileTableAction(ActionType.NAVIGATE_PATH_UP.toString()));
+        getInputMap(WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_TAB, 0), ActionType.SWITCH_NAVIGATION_PANEL);
+        getActionMap().put(ActionType.SWITCH_NAVIGATION_PANEL, new SwitchNavigationPanelAction());
 
         rowSorter = new TableRowSorter<>(getModel());
         setRowSorter(rowSorter);
@@ -168,7 +166,7 @@ public class FileTable extends JTable {
             int firstSelectedRowIndex = table.getSelectedRow();
 
             ActionEvent newEvent = e;
-            if (actionCommandKey.equals(EXECUTE_FILE) && firstSelectedRowIndex >= 0) {
+            if (actionCommandKey.equals(ActionType.EXECUTE_FILE.toString()) && firstSelectedRowIndex >= 0) {
                 JFile file = (JFile) table.getModel().getValueAt(table.convertRowIndexToModel(firstSelectedRowIndex), 0);
                 newEvent = new ParamActionEvent<>(e.getSource(), e.getID(), e.getActionCommand(), file);
             }
@@ -195,7 +193,7 @@ public class FileTable extends JTable {
 
             FileTable table = (FileTable) e.getSource();
             Component parent = getSendActionToParent(table);
-            ((ActionListener) parent).actionPerformed(new ParamActionEvent<>(e.getSource(), e.getID(), KEY_PRESSED, e.getKeyCode()));
+            ((ActionListener) parent).actionPerformed(new ParamActionEvent<>(e.getSource(), e.getID(), ActionType.KEY_PRESSED.toString(), e.getKeyCode()));
         }
     }
 }

@@ -9,7 +9,7 @@
 
 package at.beris.jarcommander.ui.combobox;
 
-import at.beris.jarcommander.action.ActionCommand;
+import at.beris.jarcommander.action.ActionType;
 import at.beris.jarcommander.action.ParamActionEvent;
 import at.beris.jarcommander.filesystem.JFileSystem;
 import at.beris.jarcommander.filesystem.drive.JDrive;
@@ -24,8 +24,6 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-
-import static at.beris.jarcommander.action.ActionCommand.SELECT_NAVIGATION_PANEL;
 
 public class DriveComboBox extends JComboBox<JDrive> {
 
@@ -46,7 +44,7 @@ public class DriveComboBox extends JComboBox<JDrive> {
                                         ActionListener parent = (ActionListener) ((JComponent) e.getSource()).getParent();
 
                                         if (parent != null) {
-                                            ParamActionEvent<JDrive> event = new ParamActionEvent<>(e.getSource(), e.getID(), ActionCommand.CHANGE_DRIVE, driveInfo);
+                                            ParamActionEvent<JDrive> event = new ParamActionEvent<>(e.getSource(), e.getID(), ActionType.CHANGE_DRIVE.toString(), driveInfo);
                                             parent.actionPerformed(event);
                                         }
                                     }
@@ -70,7 +68,7 @@ public class DriveComboBox extends JComboBox<JDrive> {
         public void mousePressed(MouseEvent e) {
             LOGGER.debug("mousePressed");
             ActionListener parent = (ActionListener) ((Component) e.getSource()).getParent();
-            parent.actionPerformed(new ActionEvent(e.getSource(), e.getID(), SELECT_NAVIGATION_PANEL));
+            parent.actionPerformed(new ActionEvent(e.getSource(), e.getID(), ActionType.SELECT_NAVIGATION_PANEL.toString()));
         }
     }
 }

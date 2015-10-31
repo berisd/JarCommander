@@ -9,7 +9,7 @@
 
 package at.beris.jarcommander.ui;
 
-import at.beris.jarcommander.action.ActionCommand;
+import at.beris.jarcommander.action.ActionType;
 import at.beris.jarcommander.action.ParamActionEvent;
 import at.beris.jarcommander.filesystem.JFileSystem;
 import at.beris.jarcommander.filesystem.drive.JDrive;
@@ -40,7 +40,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static at.beris.jarcommander.ApplicationContext.SELECTION_FOREGROUND_COLOR;
-import static at.beris.jarcommander.action.ActionCommand.*;
 
 public class NavigationPanel extends JPanel implements ActionListener {
     private final static Logger LOGGER = Logger.getLogger(NavigationPanel.class.getName());
@@ -132,19 +131,19 @@ public class NavigationPanel extends JPanel implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         LOGGER.debug("actionPerformed " + e.getClass().getName());
-        if (e.getActionCommand().equals(ActionCommand.SELECT_NAVIGATION_PANEL)) {
+        if (e.getActionCommand().equals(ActionType.SELECT_NAVIGATION_PANEL.toString())) {
             e.setSource(this);
             ((ActionListener) this.getParent()).actionPerformed(e);
-        } else if (e.getActionCommand().equals(EXECUTE_FILE)) {
+        } else if (e.getActionCommand().equals(ActionType.EXECUTE_FILE.toString())) {
             JFile file = (JFile) ((ParamActionEvent) e).getParam();
             if (file.isDirectory()) {
                 changeDirectory(file.toPath());
             } else {
                 executeFile(file);
             }
-        } else if (e.getActionCommand().equals(NAVIGATE_PATH_UP)) {
+        } else if (e.getActionCommand().equals(ActionType.NAVIGATE_PATH_UP.toString())) {
             changeDirectory(JFileFactory.newInstance(new File("..")).toPath());
-        } else if (e.getActionCommand().equals(CHANGE_DRIVE)) {
+        } else if (e.getActionCommand().equals(ActionType.CHANGE_DRIVE.toString())) {
             JDrive driveInfo = (JDrive) ((ParamActionEvent) e).getParam();
             changeDirectory(driveInfo.getPath());
         }

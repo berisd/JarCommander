@@ -10,14 +10,21 @@
 package at.beris.jarcommander.action;
 
 public enum ActionType {
+    CHANGE_DRIVE,
     COPY,
-    MOVE,
-    MAKE_DIR,
     DELETE,
-    RENAME,
+    EXECUTE_FILE,
+    KEY_PRESSED,
+    MAKE_DIR,
+    MOVE,
+    NAVIGATE_PATH_UP,
     QUIT,
-    SHOW_ABOUT_DIALOG,
     REFRESH,
+    RENAME,
+    SCROLL_TO_BOTTOM,
+    SCROLL_TO_TOP,
+    SELECT_NAVIGATION_PANEL,
+    SHOW_ABOUT_DIALOG,
     SHOW_SITE_DIALOG,
-    SWITCH_NAVIGATION_PANEL,
+    SWITCH_NAVIGATION_PANEL
 }

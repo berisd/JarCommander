@@ -9,9 +9,8 @@
 
 package at.beris.jarcommander.ui.table;
 
+import at.beris.jarcommander.action.ActionType;
 import at.beris.jarcommander.action.ParamActionEvent;
-import at.beris.jarcommander.filesystem.file.JFile;
-import at.beris.jarcommander.filesystem.path.JPath;
 import org.apache.log4j.Logger;
 
 import javax.swing.JScrollPane;
@@ -25,8 +24,6 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
-
-import static at.beris.jarcommander.action.ActionCommand.*;
 
 public class FileTablePane extends JScrollPane implements ActionListener {
     private final static Logger LOGGER = Logger.getLogger(FileTablePane.class);
@@ -62,17 +59,17 @@ public class FileTablePane extends JScrollPane implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         LOGGER.debug("actionPerformed");
 
-        if (e.getActionCommand().equals(SCROLL_TO_TOP)) {
+        if (e.getActionCommand().equals(ActionType.SCROLL_TO_TOP.toString())) {
             if (table.getRowCount() > 0) {
                 scrollToRow(0);
                 table.repaint();
             }
-        } else if (e.getActionCommand().equals(SCROLL_TO_BOTTOM)) {
+        } else if (e.getActionCommand().equals(ActionType.SCROLL_TO_BOTTOM.toString())) {
             if (table.getRowCount() > 0) {
                 scrollToRow(table.getRowCount());
                 table.repaint();
             }
-        } else if (e.getActionCommand().equals(KEY_PRESSED)) {
+        } else if (e.getActionCommand().equals(ActionType.KEY_PRESSED.toString())) {
             Integer keyCode = ((ParamActionEvent<Integer>) e).getParam();
             char keyChar = (char) Character.toLowerCase(keyCode);
 
@@ -101,7 +98,7 @@ public class FileTablePane extends JScrollPane implements ActionListener {
         public void mousePressed(MouseEvent e) {
             LOGGER.debug("mousePressed");
             ActionListener parent = (ActionListener) ((Component) e.getSource()).getParent();
-            parent.actionPerformed(new ActionEvent(e.getSource(), e.getID(), SELECT_NAVIGATION_PANEL));
+            parent.actionPerformed(new ActionEvent(e.getSource(), e.getID(), ActionType.SELECT_NAVIGATION_PANEL.toString()));
         }
     }
 }

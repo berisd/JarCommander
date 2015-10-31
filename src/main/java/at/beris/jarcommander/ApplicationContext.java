@@ -9,6 +9,7 @@
 
 package at.beris.jarcommander;
 
+import at.beris.jarcommander.action.ActionType;
 import at.beris.jarcommander.filesystem.JFileSystem;
 import at.beris.jarcommander.filesystem.LocalFileSystem;
 import at.beris.jarcommander.filesystem.drive.JDrive;
@@ -28,8 +29,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
-
-import static at.beris.jarcommander.action.ActionCommand.SELECT_NAVIGATION_PANEL;
 
 public class ApplicationContext {
     public final static String HOME_DIRECTORY = System.getProperty("user.home") + File.separator + ".JarCommander";
@@ -70,7 +69,7 @@ public class ApplicationContext {
                 @Override
                 public void mousePressed(MouseEvent e) {
                     ActionListener parent = (ActionListener) ((Component) e.getSource()).getParent();
-                    parent.actionPerformed(new ActionEvent(e.getSource(), e.getID(), SELECT_NAVIGATION_PANEL));
+                    parent.actionPerformed(new ActionEvent(e.getSource(), e.getID(), ActionType.SELECT_NAVIGATION_PANEL.toString()));
                 }
             });
         }

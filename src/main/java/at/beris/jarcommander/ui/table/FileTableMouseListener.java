@@ -9,6 +9,7 @@
 
 package at.beris.jarcommander.ui.table;
 
+import at.beris.jarcommander.action.ActionType;
 import at.beris.jarcommander.action.ParamActionEvent;
 import at.beris.jarcommander.filesystem.file.JFile;
 import org.apache.log4j.Logger;
@@ -20,16 +21,13 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-import static at.beris.jarcommander.action.ActionCommand.EXECUTE_FILE;
-import static at.beris.jarcommander.action.ActionCommand.SELECT_NAVIGATION_PANEL;
-
 public class FileTableMouseListener extends MouseAdapter {
     private final static Logger LOGGER = Logger.getLogger(FileTableMouseListener.class);
 
     @Override
     public void mousePressed(MouseEvent e) {
         ActionListener parent = (ActionListener) ((Component) e.getSource()).getParent().getParent();
-        parent.actionPerformed(new ActionEvent(e.getSource(), e.getID(), SELECT_NAVIGATION_PANEL));
+        parent.actionPerformed(new ActionEvent(e.getSource(), e.getID(), ActionType.SELECT_NAVIGATION_PANEL.toString()));
     }
 
     @Override
@@ -45,7 +43,7 @@ public class FileTableMouseListener extends MouseAdapter {
 
             if (rowIndex != -1) {
                 JFile file = (JFile) table.getValueAt(rowIndex, 0);
-                parent.actionPerformed(new ParamActionEvent(e.getSource(), e.getID(), EXECUTE_FILE, file));
+                parent.actionPerformed(new ParamActionEvent(e.getSource(), e.getID(), ActionType.EXECUTE_FILE.toString(), file));
             }
         }
     }

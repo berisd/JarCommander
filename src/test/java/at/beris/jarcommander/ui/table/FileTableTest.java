@@ -9,7 +9,7 @@
 
 package at.beris.jarcommander.ui.table;
 
-import at.beris.jarcommander.action.ActionCommand;
+import at.beris.jarcommander.action.ActionType;
 import at.beris.jarcommander.filesystem.path.LocalPath;
 import org.junit.Before;
 import org.junit.Test;
@@ -50,19 +50,19 @@ public class FileTableTest {
     @Test
     public void whenEnterKeyIsPressedParentMustReceiveExecuteFileActionCommand() {
         fileTable.dispatchEvent(new KeyEvent(fileTable, KeyEvent.KEY_PRESSED, System.currentTimeMillis(), 0, KeyEvent.VK_ENTER, ' '));
-        assertTrue(MESSAGE_EXPECTED, parentComponent.getActionEventByActionCommand().containsKey(ActionCommand.EXECUTE_FILE));
+        assertTrue(MESSAGE_EXPECTED, parentComponent.getActionEventByActionCommand().containsKey(ActionType.EXECUTE_FILE.toString()));
     }
 
     @Test
     public void whenBackspaceKeyIsPressedParentMustReceiveNavigatePathUpActionCommand() {
         fileTable.dispatchEvent(new KeyEvent(fileTable, KeyEvent.KEY_PRESSED, System.currentTimeMillis(), 0, KeyEvent.VK_BACK_SPACE, ' '));
-        assertTrue(MESSAGE_EXPECTED, parentComponent.getActionEventByActionCommand().containsKey(ActionCommand.NAVIGATE_PATH_UP));
+        assertTrue(MESSAGE_EXPECTED, parentComponent.getActionEventByActionCommand().containsKey(ActionType.NAVIGATE_PATH_UP.toString()));
     }
 
     @Test
     public void whenAnyKeyIsPressedParentMustReceiveKeyPressedActionCommand() {
         fileTable.dispatchEvent(new KeyEvent(fileTable, KeyEvent.KEY_PRESSED, System.currentTimeMillis(), 0, KeyEvent.VK_A, ' '));
-        assertTrue(MESSAGE_EXPECTED, parentComponent.getActionEventByActionCommand().containsKey(ActionCommand.KEY_PRESSED));
+        assertTrue(MESSAGE_EXPECTED, parentComponent.getActionEventByActionCommand().containsKey(ActionType.KEY_PRESSED.toString()));
     }
 
     public class ParentComponent extends JDialog implements ActionListener {
