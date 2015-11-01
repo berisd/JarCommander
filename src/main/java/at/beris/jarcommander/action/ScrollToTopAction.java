@@ -27,13 +27,9 @@ public class ScrollToTopAction extends CustomAction {
     public ScrollToTopAction(ApplicationContext context) {
         super(context);
 
-        keyStrokeString = ActionType.SCROLL_TO_TOP.getKeyStrokeString();
-        putValue(Action.NAME, "Scroll to top");
+        keyStrokeString = "HOME";
         putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
                 keyStrokeString));
-        putValue(Action.MNEMONIC_KEY, KeyEvent.VK_HOME);
-        putValue(Action.ACTION_COMMAND_KEY, ActionType.SCROLL_TO_TOP.toString());
-        putValue(Action.SHORT_DESCRIPTION, "Scroll to top");
     }
 
     @Override

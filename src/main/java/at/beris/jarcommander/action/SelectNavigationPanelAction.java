@@ -14,9 +14,10 @@ import at.beris.jarcommander.ui.NavigationPanel;
 import at.beris.jarcommander.ui.SessionPanel;
 import org.apache.log4j.Logger;
 
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 
-public class SelectNavigationPanelAction extends CustomAction {
+    public class SelectNavigationPanelAction extends CustomAction {
     private final static Logger LOGGER = Logger.getLogger(SelectNavigationPanelAction.class);
 
     public SelectNavigationPanelAction(ApplicationContext context) {
@@ -30,8 +31,9 @@ public class SelectNavigationPanelAction extends CustomAction {
         NavigationPanel leftNavigationPanel = sessionPanel.getLeftNavigationPanel();
         NavigationPanel rightNavigationPanel = sessionPanel.getRightNavigationPanel();
 
-        if (e.getSource() instanceof NavigationPanel) {
-            NavigationPanel navigationPanel = (NavigationPanel) e.getSource();
+        NavigationPanel navigationPanel = (NavigationPanel) context.findComponentAncestor(NavigationPanel.class, (Component) e.getSource());
+
+        if (navigationPanel != null) {
             leftNavigationPanel.setSelected(leftNavigationPanel.equals(navigationPanel));
             rightNavigationPanel.setSelected(rightNavigationPanel.equals(navigationPanel));
         }

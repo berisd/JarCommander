@@ -10,15 +10,12 @@
 package at.beris.jarcommander.ui.table;
 
 import at.beris.jarcommander.ApplicationContext;
-import at.beris.jarcommander.action.ActionType;
 import at.beris.jarcommander.action.SelectNavigationPanelAction;
 import org.apache.log4j.Logger;
 
 import javax.swing.JScrollPane;
-import java.awt.Component;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
@@ -60,8 +57,7 @@ public class FileTablePane extends JScrollPane {
         @Override
         public void mousePressed(MouseEvent e) {
             LOGGER.debug("mousePressed");
-            Component parent = ((Component) e.getSource()).getParent();
-            new SelectNavigationPanelAction(context).actionPerformed(new ActionEvent(parent, e.getID(), ActionType.SELECT_NAVIGATION_PANEL.toString()));
+            context.invokeAction(SelectNavigationPanelAction.class, e);
         }
     }
 }

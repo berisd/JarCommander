@@ -11,10 +11,10 @@ package at.beris.jarcommander.ui.table;
 
 import at.beris.jarcommander.ApplicationContext;
 import at.beris.jarcommander.FileDefaultComparator;
-import at.beris.jarcommander.action.ActionType;
+import at.beris.jarcommander.action.ActionFactory;
+import at.beris.jarcommander.action.CustomAction;
 import at.beris.jarcommander.action.ExecuteFileAction;
 import at.beris.jarcommander.action.NavigatePathUpAction;
-import at.beris.jarcommander.action.ParamActionEvent;
 import at.beris.jarcommander.action.ScrollToBottomAction;
 import at.beris.jarcommander.action.ScrollToLetterInFileTablePaneAction;
 import at.beris.jarcommander.action.ScrollToTopAction;
@@ -32,7 +32,6 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 import java.awt.Component;
-import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -46,11 +45,13 @@ public class FileTable extends JTable {
     private TableRowSorter<TableModel> rowSorter;
     private JPath path;
     private ApplicationContext context;
+    private ActionFactory actionFactory;
 
-
-    public FileTable(ApplicationContext context) {
+    public FileTable(final ApplicationContext context) {
         super();
         this.context = context;
+
+        actionFactory = context.getActionFactory();
 
         setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         setModel(new PathTableModel());
@@ -67,21 +68,13 @@ public class FileTable extends JTable {
             @Override
             public void mousePressed(MouseEvent e) {
                 super.mousePressed(e);
-                Component parent = ((Component) e.getSource()).getParent().getParent().getParent();
-                new SelectNavigationPanelAction(FileTable.this.context).actionPerformed(new ActionEvent(parent, e.getID(), ActionType.SELECT_NAVIGATION_PANEL.toString()));
+                context.invokeAction(SelectNavigationPanelAction.class, e);
             }
         });
 
-        getInputMap(WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(ActionType.SCROLL_TO_TOP.getKeyStroke(), ActionType.SCROLL_TO_TOP);
-        getActionMap().put(ActionType.SCROLL_TO_TOP, new ScrollToTopAction(context));
-        getInputMap(WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(ActionType.SCROLL_TO_BOTTOM.getKeyStroke(), ActionType.SCROLL_TO_BOTTOM);
-        getActionMap().put(ActionType.SCROLL_TO_BOTTOM, new ScrollToBottomAction(context));
-        getInputMap(WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(ActionType.EXECUTE_FILE.getKeyStroke(), ActionType.EXECUTE_FILE);
-        getActionMap().put(ActionType.EXECUTE_FILE, new ExecuteFileAction(context));
-        getInputMap(WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(ActionType.NAVIGATE_PATH_UP.getKeyStroke(), ActionType.NAVIGATE_PATH_UP);
-        getActionMap().put(ActionType.NAVIGATE_PATH_UP, new NavigatePathUpAction(context));
-        getInputMap(WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(ActionType.SWITCH_NAVIGATION_PANEL.getKeyStroke(), ActionType.SWITCH_NAVIGATION_PANEL);
-        getActionMap().put(ActionType.SWITCH_NAVIGATION_PANEL, new SwitchNavigationPanelAction(context));
+        for (Class<?> actionClass : new Class<?>[]{ScrollToTopAction.class, ScrollToBottomAction.class, ExecuteFileAction.class, NavigatePathUpAction.class, SwitchNavigationPanelAction.class}) {
+            context.bindActionToComponent(this, (Class<? extends CustomAction>) actionClass);
+        }
 
         rowSorter = new TableRowSorter<>(getModel());
         setRowSorter(rowSorter);
@@ -161,7 +154,7 @@ public class FileTable extends JTable {
             super.keyPressed(e);
 
             if ((e.getKeyChar() == '.') || (e.getKeyChar() >= 'a' && e.getKeyChar() <= 'z')) {
-                new ScrollToLetterInFileTablePaneAction(FileTable.this.context).actionPerformed(new ParamActionEvent<Character>(e.getSource(), e.getID(), ActionType.SCROLL_TO_LETTER_IN_FILE_TABLE_PANE.toString(), Character.valueOf(e.getKeyChar())));
+                context.invokeAction(ScrollToLetterInFileTablePaneAction.class, e, Character.valueOf(e.getKeyChar()));
             }
         }
     }

@@ -24,7 +24,6 @@ public class QuitAction extends CustomAction {
         putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
                 KeyEvent.VK_F4, ActionEvent.ALT_MASK));
         putValue(Action.MNEMONIC_KEY, KeyEvent.VK_Q);
-        putValue(Action.ACTION_COMMAND_KEY, "quit");
         putValue(Action.SHORT_DESCRIPTION, "Quit");
     }
 

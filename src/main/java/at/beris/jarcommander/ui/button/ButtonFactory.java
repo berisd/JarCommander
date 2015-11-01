@@ -10,9 +10,7 @@
 package at.beris.jarcommander.ui.button;
 
 import at.beris.jarcommander.ApplicationContext;
-import at.beris.jarcommander.action.ActionType;
 import at.beris.jarcommander.action.CustomAction;
-import at.beris.jarcommander.action.ActionFactory;
 
 import javax.swing.Icon;
 import javax.swing.JButton;
@@ -25,25 +23,25 @@ public class ButtonFactory {
         this.context = context;
     }
 
-    public JButton createButton(ActionType actionType) {
+    public JButton createButton(Class<? extends CustomAction> actionClass) {
         JButton button = new JButton();
-        CustomAction action = context.getActionFactory().getAction(actionType);
+        CustomAction action = context.getActionFactory().getAction(actionClass);
 
         button.setAction(action);
-        button.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(action.getKeyStroke(), actionType.toString());
-        button.getActionMap().put(actionType.toString(), action);
+        button.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(action.getKeyStroke(), action);
+        button.getActionMap().put(action, action);
         button.setText(action.getKeyStrokeString() + " " + action.getName());
 
         return button;
     }
 
-    public JButton createIconButton(ActionType actionType, Icon icon) {
+    public JButton createIconButton(Class<? extends CustomAction> actionClass, Icon icon) {
         JButton button = new JButton();
-        CustomAction action = context.getActionFactory().getAction(actionType);
+        CustomAction action = context.getActionFactory().getAction(actionClass);
 
         button.setAction(action);
-        button.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(action.getKeyStroke(), actionType.toString());
-        button.getActionMap().put(actionType.toString(), action);
+        button.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(action.getKeyStroke(), action);
+        button.getActionMap().put(action, action);
         button.setText("");
         button.setIcon(icon);
 

@@ -9,7 +9,6 @@
 
 package at.beris.jarcommander.action;
 
-import at.beris.jarcommander.Application;
 import at.beris.jarcommander.ApplicationContext;
 import at.beris.jarcommander.task.CopyTask;
 import at.beris.jarcommander.ui.NavigationPanel;
@@ -20,7 +19,6 @@ import javax.swing.Action;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
-import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
@@ -35,7 +33,6 @@ public class CopyAction extends CustomAction {
         putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
                 keyStrokeString));
         putValue(Action.MNEMONIC_KEY, KeyEvent.VK_C);
-        putValue(Action.ACTION_COMMAND_KEY, "copy");
         putValue(Action.SHORT_DESCRIPTION, "Copy");
     }
 
@@ -52,7 +49,7 @@ public class CopyAction extends CustomAction {
             targetPanel = sessionPanel.getLeftNavigationPanel();
 
         if (sourcePanel.getSelection().size() == 0) {
-            JOptionPane.showMessageDialog(context.getApplicationFrame(), "No items selected!");
+            JOptionPane.showMessageDialog(context.getApplicationWindow(), "No items selected!");
         } else {
             SwingUtilities.invokeLater(new Runnable() {
                 @Override

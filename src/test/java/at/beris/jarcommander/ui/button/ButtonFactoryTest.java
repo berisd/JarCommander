@@ -10,7 +10,7 @@
 package at.beris.jarcommander.ui.button;
 
 import at.beris.jarcommander.ApplicationContext;
-import at.beris.jarcommander.action.ActionType;
+import at.beris.jarcommander.action.CopyAction;
 import org.junit.Test;
 
 import javax.swing.JButton;
@@ -24,7 +24,7 @@ public class ButtonFactoryTest {
         ApplicationContext context = new ApplicationContext();
         ButtonFactory buttonFactory = context.getButtonFactory();
 
-        JButton button = buttonFactory.createButton(ActionType.COPY);
+        JButton button = buttonFactory.createButton(CopyAction.class);
         assertEquals("F5 Copy", button.getText());
     }
 }

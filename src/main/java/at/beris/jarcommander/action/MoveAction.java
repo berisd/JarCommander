@@ -28,7 +28,6 @@ public class MoveAction extends CustomAction {
         putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
                 keyStrokeString));
         putValue(Action.MNEMONIC_KEY, KeyEvent.VK_M);
-        putValue(Action.ACTION_COMMAND_KEY, "move");
         putValue(Action.SHORT_DESCRIPTION, "Move");
     }
 

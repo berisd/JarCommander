@@ -10,9 +10,7 @@
 package at.beris.jarcommander.ui.combobox;
 
 import at.beris.jarcommander.ApplicationContext;
-import at.beris.jarcommander.action.ActionType;
 import at.beris.jarcommander.action.ChangeDriveAction;
-import at.beris.jarcommander.action.ParamActionEvent;
 import at.beris.jarcommander.action.SelectNavigationPanelAction;
 import at.beris.jarcommander.filesystem.JFileSystem;
 import at.beris.jarcommander.filesystem.drive.JDrive;
@@ -20,7 +18,6 @@ import org.apache.log4j.Logger;
 
 import javax.swing.JComboBox;
 import java.awt.Component;
-import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
@@ -48,9 +45,8 @@ public class DriveComboBox extends JComboBox<JDrive> {
                                         Component parent = ((Component) e.getSource()).getParent();
 
                                         if (parent != null) {
-                                            new SelectNavigationPanelAction(DriveComboBox.this.context).actionPerformed(new ActionEvent(parent, e.getID(), ActionType.SELECT_NAVIGATION_PANEL.toString()));
-                                            ParamActionEvent<JDrive> event = new ParamActionEvent<>(e.getSource(), e.getID(), ActionType.CHANGE_DRIVE.toString(), driveInfo);
-                                            new ChangeDriveAction(DriveComboBox.this.context).actionPerformed(event);
+                                            DriveComboBox.this.context.invokeAction(SelectNavigationPanelAction.class, e);
+                                            DriveComboBox.this.context.invokeAction(ChangeDriveAction.class, e, driveInfo);
                                         }
                                     }
                                 });
@@ -72,8 +68,7 @@ public class DriveComboBox extends JComboBox<JDrive> {
         @Override
         public void mousePressed(MouseEvent e) {
             LOGGER.debug("mousePressed");
-            Component parent = ((Component) e.getSource()).getParent();
-            new SelectNavigationPanelAction(DriveComboBox.this.context).actionPerformed(new ActionEvent(parent, e.getID(), ActionType.SELECT_NAVIGATION_PANEL.toString()));
+            context.invokeAction(SelectNavigationPanelAction.class, e);
         }
     }
 }

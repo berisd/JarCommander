@@ -9,29 +9,21 @@
 
 package at.beris.jarcommander;
 
+import at.beris.jarcommander.action.ActionEventFactory;
 import at.beris.jarcommander.action.ActionFactory;
-import at.beris.jarcommander.action.ActionType;
-import at.beris.jarcommander.action.SelectNavigationPanelAction;
-import at.beris.jarcommander.filesystem.JFileSystem;
-import at.beris.jarcommander.filesystem.LocalFileSystem;
-import at.beris.jarcommander.filesystem.drive.JDrive;
-import at.beris.jarcommander.filesystem.path.JPath;
+import at.beris.jarcommander.action.CustomAction;
 import at.beris.jarcommander.ui.ApplicationFrame;
-import at.beris.jarcommander.ui.FileTableStatusLabel;
-import at.beris.jarcommander.ui.NavigationPanel;
-import at.beris.jarcommander.ui.SessionPanel;
 import at.beris.jarcommander.ui.UIFactory;
 import at.beris.jarcommander.ui.button.ButtonFactory;
-import at.beris.jarcommander.ui.combobox.DriveComboBox;
-import at.beris.jarcommander.ui.table.FileTablePane;
+import org.reflections.Reflections;
 
+import javax.swing.JComponent;
 import javax.swing.JTabbedPane;
-import javax.swing.JTextField;
+import java.awt.AWTEvent;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.io.File;
 
 public class ApplicationContext {
@@ -41,19 +33,20 @@ public class ApplicationContext {
     private JTabbedPane sessionsPanel;
 
     private ActionFactory actionFactory;
+    private ActionEventFactory actionEventFactory;
     private ButtonFactory buttonFactory;
     private UIFactory uiFactory;
-    private ApplicationFrame applicationFrame;
+    private Window applicationWindow;
 
-
-    public ApplicationContext() {
+    public Window getApplicationWindow() {
+        if (applicationWindow == null) {
+            applicationWindow = new ApplicationFrame(this);
+        }
+        return applicationWindow;
     }
 
-    public ApplicationFrame getApplicationFrame() {
-        if (applicationFrame == null) {
-            applicationFrame = new ApplicationFrame(this);
-        }
-        return applicationFrame;
+    public void setApplicationWindow(Window applicationWindow) {
+        this.applicationWindow = applicationWindow;
     }
 
     public ActionFactory getActionFactory() {
@@ -61,6 +54,17 @@ public class ApplicationContext {
             actionFactory = new ActionFactory(this);
         }
         return actionFactory;
+    }
+
+    public void setActionFactory(ActionFactory actionFactory) {
+        this.actionFactory = actionFactory;
+    }
+
+    public ActionEventFactory getActionEventFactory() {
+        if (actionEventFactory == null) {
+            actionEventFactory = new ActionEventFactory();
+        }
+        return actionEventFactory;
     }
 
     public ButtonFactory getButtonFactory() {
@@ -77,11 +81,44 @@ public class ApplicationContext {
         return uiFactory;
     }
 
+    public Reflections getReflections(final Object... params) {
+        return new Reflections(params);
+    }
+
     public JTabbedPane getSessionsPanel() {
         return sessionsPanel;
     }
 
     public void setSessionsPanel(JTabbedPane sessionsPanel) {
         this.sessionsPanel = sessionsPanel;
+    }
+
+    public Object findComponentAncestor(Class ancestorClass, Component component) {
+        Component parent = component.getParent();
+        while (parent != null) {
+            if (parent.getClass().equals(ancestorClass))
+                break;
+            parent = parent.getParent();
+        }
+
+        return parent;
+    }
+
+    public void invokeAction(Class actionClass, AWTEvent sourceEvent) {
+        ActionEvent actionEvent = getActionEventFactory().createActionEvent(sourceEvent, actionClass);
+        getActionFactory().getAction(actionClass).actionPerformed(actionEvent);
+    }
+
+    public <T> void invokeAction(Class actionClass, AWTEvent sourceEvent, T param) {
+        ActionEvent actionEvent = getActionEventFactory().createActionEvent(sourceEvent, actionClass, param);
+        getActionFactory().getAction(actionClass).actionPerformed(actionEvent);
+    }
+
+    public void bindActionToComponent(JComponent component, Class<? extends CustomAction> actionClass) {
+        CustomAction customAction = actionFactory.getAction(actionClass);
+        if (customAction != null) {
+            component.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(customAction.getKeyStroke(), actionClass.getSimpleName());
+            component.getActionMap().put(actionClass.getSimpleName(), customAction);
+        }
     }
 }

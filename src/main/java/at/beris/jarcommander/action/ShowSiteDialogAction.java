@@ -9,14 +9,12 @@
 
 package at.beris.jarcommander.action;
 
-import at.beris.jarcommander.Application;
 import at.beris.jarcommander.ApplicationContext;
 import at.beris.jarcommander.ui.SiteManagerDialog;
 
 import javax.swing.Action;
 import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
-import java.awt.Component;
+import java.awt.Dialog;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
@@ -30,12 +28,11 @@ public class ShowSiteDialogAction extends CustomAction {
         putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
                 keyStrokeString));
         putValue(Action.MNEMONIC_KEY, KeyEvent.VK_S);
-        putValue(Action.ACTION_COMMAND_KEY, "showSites");
         putValue(Action.SHORT_DESCRIPTION, "Manage sites");
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        new SiteManagerDialog(context, true).setVisible(true);
+        new SiteManagerDialog(context, Dialog.ModalityType.APPLICATION_MODAL).setVisible(true);
     }
 }

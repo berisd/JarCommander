@@ -28,7 +28,6 @@ public class RenameAction extends CustomAction {
         putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
                 keyStrokeString));
         putValue(Action.MNEMONIC_KEY, KeyEvent.VK_R);
-        putValue(Action.ACTION_COMMAND_KEY, "rename");
         putValue(Action.SHORT_DESCRIPTION, "Rename");
     }
 

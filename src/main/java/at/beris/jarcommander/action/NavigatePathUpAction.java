@@ -27,12 +27,11 @@ public class NavigatePathUpAction extends CustomAction {
     public NavigatePathUpAction(ApplicationContext context) {
         super(context);
 
-        keyStrokeString = ActionType.NAVIGATE_PATH_UP.getKeyStrokeString();
+        keyStrokeString = "BACK_SPACE";
         putValue(Action.NAME, "Navigate path up");
         putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
                 keyStrokeString));
         putValue(Action.MNEMONIC_KEY, KeyEvent.VK_BACK_SPACE);
-        putValue(Action.ACTION_COMMAND_KEY, ActionType.NAVIGATE_PATH_UP.toString());
         putValue(Action.SHORT_DESCRIPTION, "Navigate path up");
     }
 

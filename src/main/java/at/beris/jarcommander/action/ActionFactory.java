@@ -10,27 +10,38 @@
 package at.beris.jarcommander.action;
 
 import at.beris.jarcommander.ApplicationContext;
+import org.reflections.Reflections;
 
+import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.Map;
 
+import static at.beris.jarcommander.Application.logException;
+
 public class ActionFactory {
-    private static Map<ActionType, CustomAction> actionMap;
+    private static Map<Class<? extends CustomAction>, CustomAction> actionMap;
 
     private ApplicationContext context;
+
+    public ActionFactory() {
+    }
 
     public ActionFactory(ApplicationContext context) {
         this.context = context;
     }
 
-    public Map<ActionType, CustomAction> getActionMap() {
+    public Map<Class<? extends CustomAction>, CustomAction> getActionMap() {
         if (actionMap == null) {
             createActionMap();
         }
         return actionMap;
     }
 
-    public CustomAction getAction(ActionType key) {
+    public void setActionMap(Map<Class<? extends CustomAction>, CustomAction> actionMap) {
+        this.actionMap = actionMap;
+    }
+
+    public CustomAction getAction(Class<? extends CustomAction> key) {
         if (actionMap == null) {
             getActionMap();
         }
@@ -38,15 +49,15 @@ public class ActionFactory {
     }
 
     private void createActionMap() {
+        Reflections reflections = context.getReflections(CustomAction.class);
         actionMap = new HashMap<>();
-        actionMap.put(ActionType.COPY, new CopyAction(context));
-        actionMap.put(ActionType.MOVE, new MoveAction(context));
-        actionMap.put(ActionType.MAKE_DIR, new MakeDirAction(context));
-        actionMap.put(ActionType.DELETE, new DeleteAction(context));
-        actionMap.put(ActionType.RENAME, new RenameAction(context));
-        actionMap.put(ActionType.QUIT, new QuitAction(context));
-        actionMap.put(ActionType.SHOW_ABOUT_DIALOG, new ShowAboutDialogAction(context));
-        actionMap.put(ActionType.REFRESH, new RefreshAction(context));
-        actionMap.put(ActionType.SHOW_SITE_DIALOG, new ShowSiteDialogAction(context));
+        for (Class<? extends CustomAction> actionClass : reflections.getSubTypesOf(CustomAction.class)) {
+            try {
+                Constructor<? extends CustomAction> constructor = actionClass.getConstructor(ApplicationContext.class);
+                actionMap.put(actionClass, constructor.newInstance(context));
+            } catch (ReflectiveOperationException e) {
+                logException(e);
+            }
+        }
     }
 }

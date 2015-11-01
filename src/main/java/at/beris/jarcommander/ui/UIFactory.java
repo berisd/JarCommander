@@ -10,7 +10,6 @@
 package at.beris.jarcommander.ui;
 
 import at.beris.jarcommander.ApplicationContext;
-import at.beris.jarcommander.action.ActionType;
 import at.beris.jarcommander.action.SelectNavigationPanelAction;
 import at.beris.jarcommander.filesystem.JFileSystem;
 import at.beris.jarcommander.filesystem.LocalFileSystem;
@@ -22,7 +21,6 @@ import at.beris.jarcommander.ui.table.FileTablePane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import java.awt.Component;
-import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -59,8 +57,7 @@ public class UIFactory {
             component.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mousePressed(MouseEvent e) {
-                    Component parent = ((Component) e.getSource()).getParent();
-                    new SelectNavigationPanelAction(context).actionPerformed(new ActionEvent(parent, e.getID(), ActionType.SELECT_NAVIGATION_PANEL.toString()));
+                    context.invokeAction(SelectNavigationPanelAction.class, e);
                 }
             });
         }

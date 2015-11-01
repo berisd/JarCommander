@@ -17,9 +17,7 @@ import at.beris.jarcommander.ui.table.FileTable;
 import at.beris.jarcommander.ui.table.FileTablePane;
 import org.apache.log4j.Logger;
 
-import javax.swing.Action;
 import javax.swing.JViewport;
-import javax.swing.KeyStroke;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
@@ -30,14 +28,6 @@ public class ScrollToLetterInFileTablePaneAction extends CustomAction {
 
     public ScrollToLetterInFileTablePaneAction(ApplicationContext context) {
         super(context);
-
-        keyStrokeString = ActionType.SCROLL_TO_LETTER_IN_FILE_TABLE_PANE.getKeyStrokeString();
-        putValue(Action.NAME, "Scroll to letter");
-        putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
-                keyStrokeString));
-        putValue(Action.MNEMONIC_KEY, ActionType.SCROLL_TO_LETTER_IN_FILE_TABLE_PANE.getKeyStroke());
-        putValue(Action.ACTION_COMMAND_KEY, ActionType.SCROLL_TO_LETTER_IN_FILE_TABLE_PANE.toString());
-        putValue(Action.SHORT_DESCRIPTION, "Scroll to letter");
     }
 
     @Override
@@ -50,7 +40,6 @@ public class ScrollToLetterInFileTablePaneAction extends CustomAction {
         JViewport viewport = fileTablePane.getViewport();
 
         Character keyChar = (Character) ((ParamActionEvent) e).getParam();
-
 
         for (int rowIndex = 0; rowIndex < fileTable.getRowCount(); rowIndex++) {
             JFile file = (JFile) fileTable.getValueAt(rowIndex, 0);

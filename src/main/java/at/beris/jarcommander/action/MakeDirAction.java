@@ -9,7 +9,6 @@
 
 package at.beris.jarcommander.action;
 
-import at.beris.jarcommander.Application;
 import at.beris.jarcommander.ApplicationContext;
 import at.beris.jarcommander.ui.NavigationPanel;
 import at.beris.jarcommander.ui.SessionPanel;
@@ -18,8 +17,6 @@ import org.apache.log4j.Logger;
 import javax.swing.Action;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
-import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
@@ -40,7 +37,6 @@ public class MakeDirAction extends CustomAction {
         putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
                 keyStrokeString));
         putValue(Action.MNEMONIC_KEY, KeyEvent.VK_M);
-        putValue(Action.ACTION_COMMAND_KEY, "mkdir");
         putValue(Action.SHORT_DESCRIPTION, "Make Directory");
     }
 
@@ -59,7 +55,7 @@ public class MakeDirAction extends CustomAction {
                 Files.createDirectory(newDirectory.toPath());
                 sourcePanel.refresh();
             } catch (AccessDeniedException ex) {
-                JOptionPane.showMessageDialog(context.getApplicationFrame(), "Access Denied!" + System.lineSeparator() + "(No permissions?)", "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(context.getApplicationWindow(), "Access Denied!" + System.lineSeparator() + "(No permissions?)", "Error", JOptionPane.ERROR_MESSAGE);
             } catch (IOException ex) {
                 logException(ex);
             }

@@ -26,7 +26,6 @@ public class ShowAboutDialogAction extends CustomAction {
         putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
                 KeyEvent.VK_A, ActionEvent.ALT_MASK));
         putValue(Action.MNEMONIC_KEY, KeyEvent.VK_A);
-        putValue(Action.ACTION_COMMAND_KEY, "copy");
         putValue(Action.SHORT_DESCRIPTION, "COPY");
     }
 

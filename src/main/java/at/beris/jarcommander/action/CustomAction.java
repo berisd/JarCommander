@@ -20,9 +20,13 @@ public abstract class CustomAction extends AbstractAction {
     protected String keyStrokeString;
     protected ApplicationContext context;
 
+    public CustomAction() {
+    }
+
     public CustomAction(ApplicationContext context) {
         super();
         this.context = context;
+        putValue(Action.ACTION_COMMAND_KEY, this.getClass().getSimpleName());
     }
 
     public KeyStroke getKeyStroke() {

@@ -27,12 +27,11 @@ public class ExecuteFileAction extends CustomAction {
     public ExecuteFileAction(ApplicationContext context) {
         super(context);
 
-        keyStrokeString = ActionType.EXECUTE_FILE.getKeyStrokeString();
+        keyStrokeString = "ENTER";
         putValue(Action.NAME, "Execute File");
         putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
                 keyStrokeString));
         putValue(Action.MNEMONIC_KEY, KeyEvent.VK_ENTER);
-        putValue(Action.ACTION_COMMAND_KEY, ActionType.EXECUTE_FILE.toString());
         putValue(Action.SHORT_DESCRIPTION, "Execute File");
     }
 

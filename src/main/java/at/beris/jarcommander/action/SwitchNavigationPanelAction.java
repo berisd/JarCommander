@@ -24,12 +24,11 @@ public class SwitchNavigationPanelAction extends CustomAction {
     public SwitchNavigationPanelAction(ApplicationContext context) {
         super(context);
 
-        keyStrokeString = "tab";
+        keyStrokeString = "TAB";
         putValue(Action.NAME, "SwitchNavigationPanel");
         putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
                 keyStrokeString));
         putValue(Action.MNEMONIC_KEY, KeyEvent.VK_TAB);
-        putValue(Action.ACTION_COMMAND_KEY, "Switch Navigation Panel");
         putValue(Action.SHORT_DESCRIPTION, "Switch Navigation Panel");
     }
 

@@ -29,7 +29,6 @@ public class RefreshAction extends CustomAction {
         putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
                 keyStrokeString));
         putValue(Action.MNEMONIC_KEY, KeyEvent.VK_R);
-        putValue(Action.ACTION_COMMAND_KEY, "refresh");
         putValue(Action.SHORT_DESCRIPTION, "Refresh");
     }
 

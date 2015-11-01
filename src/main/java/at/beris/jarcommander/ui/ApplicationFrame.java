@@ -10,9 +10,16 @@
 package at.beris.jarcommander.ui;
 
 import at.beris.jarcommander.ApplicationContext;
-import at.beris.jarcommander.action.ActionType;
 import at.beris.jarcommander.action.ActionFactory;
-import at.beris.jarcommander.filesystem.LocalFileSystem;
+import at.beris.jarcommander.action.CopyAction;
+import at.beris.jarcommander.action.DeleteAction;
+import at.beris.jarcommander.action.MakeDirAction;
+import at.beris.jarcommander.action.MoveAction;
+import at.beris.jarcommander.action.QuitAction;
+import at.beris.jarcommander.action.RefreshAction;
+import at.beris.jarcommander.action.RenameAction;
+import at.beris.jarcommander.action.ShowAboutDialogAction;
+import at.beris.jarcommander.action.ShowSiteDialogAction;
 import at.beris.jarcommander.ui.button.ButtonFactory;
 import org.apache.log4j.Logger;
 
@@ -25,7 +32,6 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.WindowConstants;
@@ -84,7 +90,7 @@ public class ApplicationFrame extends JFrame {
         add(footerPanel, c);
 
         pack();
-        ((SessionPanel)context.getSessionsPanel().getSelectedComponent()).getSelectedNavigationPanel().getFileTablePane().getTable().requestFocusInWindow();
+        ((SessionPanel) context.getSessionsPanel().getSelectedComponent()).getSelectedNavigationPanel().getFileTablePane().getTable().requestFocusInWindow();
     }
 
     private JPanel createHeaderPanel() {
@@ -101,8 +107,8 @@ public class ApplicationFrame extends JFrame {
         JToolBar toolbar = new JToolBar();
         toolbar.setFloatable(false);
 
-        JButton buttonRefresh = buttonFactory.createIconButton(ActionType.REFRESH, new ImageIcon(this.getClass().getClassLoader().getResource("images/arrow_refresh.png")));
-        JButton buttonServerManager = buttonFactory.createIconButton(ActionType.SHOW_SITE_DIALOG, new ImageIcon(this.getClass().getClassLoader().getResource("images/server_connect.png")));
+        JButton buttonRefresh = buttonFactory.createIconButton(RefreshAction.class, new ImageIcon(this.getClass().getClassLoader().getResource("images/arrow_refresh.png")));
+        JButton buttonServerManager = buttonFactory.createIconButton(ShowSiteDialogAction.class, new ImageIcon(this.getClass().getClassLoader().getResource("images/server_connect.png")));
 
         toolbar.add(buttonRefresh);
         toolbar.add(buttonServerManager);
@@ -134,11 +140,11 @@ public class ApplicationFrame extends JFrame {
         panel.setMinimumSize(new Dimension(1, 40));
 
         panel.setLayout(gridLayout);
-        panel.add(buttonFactory.createButton(ActionType.COPY));
-        panel.add(buttonFactory.createButton(ActionType.MOVE));
-        panel.add(buttonFactory.createButton(ActionType.MAKE_DIR));
-        panel.add(buttonFactory.createButton(ActionType.DELETE));
-        panel.add(buttonFactory.createButton(ActionType.RENAME));
+        panel.add(buttonFactory.createButton(CopyAction.class));
+        panel.add(buttonFactory.createButton(MoveAction.class));
+        panel.add(buttonFactory.createButton(MakeDirAction.class));
+        panel.add(buttonFactory.createButton(DeleteAction.class));
+        panel.add(buttonFactory.createButton(RenameAction.class));
 
         return panel;
     }
@@ -168,7 +174,7 @@ public class ApplicationFrame extends JFrame {
 
     private JMenuItem createMenuItemQuit() {
         JMenuItem menuItem = new JMenuItem("Quit");
-        menuItem.setAction(actionFactory.getAction(ActionType.QUIT));
+        menuItem.setAction(actionFactory.getAction(QuitAction.class));
         return menuItem;
     }
 
@@ -189,7 +195,7 @@ public class ApplicationFrame extends JFrame {
 //                "The only menu in this program that has menu items");
 
         JMenuItem menuItem = new JMenuItem("About");
-        menuItem.setAction(actionFactory.getAction(ActionType.SHOW_ABOUT_DIALOG));
+        menuItem.setAction(actionFactory.getAction(ShowAboutDialogAction.class));
 //        menuItem.getAccessibleContext().setAccessibleDescription(
 //                "This doesn't really do anything");
 
@@ -212,17 +218,5 @@ public class ApplicationFrame extends JFrame {
         public void windowClosing(java.awt.event.WindowEvent windowEvent) {
             quit();
         }
-    }
-
-    public static void logException(Throwable throwable) {
-        StringBuilder sb = new StringBuilder(throwable.getClass().getName());
-        sb.append(": " + throwable.getMessage());
-
-        for (StackTraceElement element : throwable.getStackTrace()) {
-            sb.append(System.lineSeparator());
-            sb.append(element.toString());
-        }
-
-        LOGGER.warn(sb.toString());
     }
 }

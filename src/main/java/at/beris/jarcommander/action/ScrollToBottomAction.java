@@ -27,12 +27,11 @@ public class ScrollToBottomAction extends CustomAction {
     public ScrollToBottomAction(ApplicationContext context) {
         super(context);
 
-        keyStrokeString = ActionType.SCROLL_TO_BOTTOM.getKeyStrokeString();
+        keyStrokeString = "END";
         putValue(Action.NAME, "Scroll to bottom");
         putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
                 keyStrokeString));
         putValue(Action.MNEMONIC_KEY, KeyEvent.VK_END);
-        putValue(Action.ACTION_COMMAND_KEY, ActionType.SCROLL_TO_BOTTOM.toString());
         putValue(Action.SHORT_DESCRIPTION, "Scroll to bottom");
     }
 

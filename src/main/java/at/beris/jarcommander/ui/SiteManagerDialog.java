@@ -26,7 +26,6 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
@@ -35,7 +34,6 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
-import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
@@ -67,8 +65,8 @@ public class SiteManagerDialog extends JDialog {
 
     private ApplicationContext context;
 
-    public SiteManagerDialog(ApplicationContext context, boolean modal) {
-        super(context.getApplicationFrame(), modal);
+    public SiteManagerDialog(ApplicationContext context, ModalityType modalityType) {
+        super(context.getApplicationWindow(), modalityType);
         this.context = context;
 
         currentSite = createSiteModel();
