@@ -10,7 +10,7 @@
 package at.beris.jarcommander.filesystem;
 
 import at.beris.jarcommander.Application;
-import at.beris.jarcommander.exception.AuthenticationException;
+import at.beris.jarcommander.exception.ApplicationException;
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
@@ -89,7 +89,7 @@ public class SshContext {
             channel.connect();
         } catch (JSchException e) {
             Application.logException(e);
-            throw new AuthenticationException("Authentication failed!", e);
+            throw new ApplicationException(e);
         }
     }
 }

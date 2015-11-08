@@ -9,14 +9,23 @@
 
 package at.beris.jarcommander.exception;
 
+import com.jcraft.jsch.JSchException;
+
 import javax.swing.JOptionPane;
 
-public abstract class ApplicationException extends RuntimeException {
-    public ApplicationException(String message, Throwable cause) {
-        super(message, cause);
+public class ApplicationException extends RuntimeException {
+    private String message;
+
+    public ApplicationException(Throwable cause) {
+        super(cause);
+        this.message = cause.getMessage();
+
+        if (cause instanceof JSchException && message.equals("Auth fail")) {
+            this.message = "Authentication failed!";
+        }
     }
 
     public void show() {
-        JOptionPane.showMessageDialog(null, getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(null, message, "Error", JOptionPane.ERROR_MESSAGE);
     }
 }
