@@ -10,10 +10,12 @@
 package at.beris.jarcommander.filesystem.path;
 
 import at.beris.jarcommander.filesystem.file.Archivable;
+import at.beris.jarcommander.filesystem.file.CompressedFile;
 import at.beris.jarcommander.filesystem.file.JFile;
 import at.beris.jarcommander.filesystem.file.JFileFactory;
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.lang3.NotImplementedException;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.util.Date;
@@ -38,7 +40,34 @@ public class CompressedPath implements JPath<ArchiveEntry> {
 
     @Override
     public JPath normalize() {
-        return this;
+        final ArchiveEntry archiveEntry = ((CompressedFile) file).getArchiveEntry();
+
+        if (archiveEntry.getName().contains("..")) {
+            CompressedFile backFile = new CompressedFile(new ArchiveEntry() {
+                @Override
+                public String getName() {
+                    String[] pathParts = archiveEntry.getName().split(File.separator);
+                    return StringUtils.join(pathParts, File.separator, 0, pathParts.length - 2);
+                }
+
+                @Override
+                public long getSize() {
+                    return 0;
+                }
+
+                @Override
+                public boolean isDirectory() {
+                    return true;
+                }
+
+                @Override
+                public Date getLastModifiedDate() {
+                    return new Date();
+                }
+            }, ((CompressedFile) file).getArchiveFile());
+            return new CompressedPath(backFile);
+        } else
+            return this;
     }
 
     @Override

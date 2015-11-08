@@ -12,11 +12,13 @@ package at.beris.jarcommander.filesystem.path;
 import at.beris.jarcommander.Application;
 import at.beris.jarcommander.filesystem.SshContext;
 import at.beris.jarcommander.filesystem.file.JFile;
-import at.beris.jarcommander.filesystem.file.SshFile;
+import at.beris.jarcommander.filesystem.file.JFileFactory;
 import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.SftpException;
 import org.apache.commons.lang3.NotImplementedException;
+import org.apache.commons.lang3.StringUtils;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
@@ -43,9 +45,6 @@ public class SshPath implements JPath<String> {
         ChannelSftp channel = (ChannelSftp) context.getChannel();
 
         if (channel != null) {
-            //
-            //            Vector files = sftp.ls("*");
-            //            System.out.printf("Found %d files in dir %s%n", files.size(), directory);
             Vector<ChannelSftp.LsEntry> dirEntries = null;
             try {
                 channel.cd(path);
@@ -55,7 +54,10 @@ public class SshPath implements JPath<String> {
             }
 
             for (ChannelSftp.LsEntry dirEntry : dirEntries) {
-                JFile file = new SshFile(dirEntry);
+                if (dirEntry.getFilename().equals(".") || (path.equals(File.separator) && dirEntry.getFilename().equals("..")))
+                    continue;
+
+                JFile file = JFileFactory.newSshFileInstance(context, path + dirEntry.getFilename() + File.separator, dirEntry);
                 file.setName(dirEntry.getFilename());
                 fileList.add(file);
             }
@@ -66,17 +68,21 @@ public class SshPath implements JPath<String> {
 
     @Override
     public JPath normalize() {
-        throw new NotImplementedException("");
+        return new SshPath(context, path.replace(".." + File.separator, ""));
     }
 
     @Override
     public JPath getRoot() {
-        throw new NotImplementedException("");
+        String[] pathParts = path.split(File.separator);
+        String rootPath = pathParts[0];
+        return new SshPath(context, rootPath);
     }
 
     @Override
     public JPath getParent() {
-        throw new NotImplementedException("");
+        String[] pathParts = path.split(File.separator);
+        String parentPath = StringUtils.join(pathParts, File.separator, 0, pathParts.length - 1);
+        return new SshPath(context, parentPath + File.separator);
     }
 
     @Override

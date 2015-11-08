@@ -17,6 +17,7 @@ import org.apache.commons.compress.archivers.ArchiveInputStream;
 import org.apache.commons.compress.archivers.ArchiveStreamFactory;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.NotImplementedException;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -24,6 +25,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -109,6 +112,15 @@ public class LocalFile implements JFile<File> {
 
         // if file is an archive that give back a list of archiveEntries
         List<JFile> fileList = new ArrayList<>();
+
+        if (file.isDirectory() || isArchive()) {
+            Path path = file.toPath();
+            if (!path.toString().equals(File.separator) && StringUtils.countMatches(path.toString(), FileSystems.getDefault().getSeparator()) >= 1) {
+                JFile backFile = JFileFactory.newInstance(new File(".."));
+                backFile.setParentFile(this);
+                fileList.add(backFile);
+            }
+        }
 
         if (file.isDirectory()) {
             for (File childFile : file.listFiles()) {
@@ -210,5 +222,9 @@ public class LocalFile implements JFile<File> {
         if (file.isHidden()) {
             attributes.add(Attribute.HIDDEN);
         }
+    }
+
+    private boolean isArchive() {
+        return FilenameUtils.getExtension(file.toString()).toUpperCase().equals("ZIP");
     }
 }

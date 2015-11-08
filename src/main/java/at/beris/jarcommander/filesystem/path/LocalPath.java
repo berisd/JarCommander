@@ -12,9 +12,11 @@ package at.beris.jarcommander.filesystem.path;
 import at.beris.jarcommander.Application;
 import at.beris.jarcommander.filesystem.file.JFile;
 import at.beris.jarcommander.filesystem.file.JFileFactory;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -36,6 +38,10 @@ public class LocalPath implements JPath<Path> {
     public List<JFile> getEntries() {
         List<JFile> entryList = new ArrayList<>();
         try {
+            if (!path.toString().equals("/") && StringUtils.countMatches(path.toString(), FileSystems.getDefault().getSeparator()) >= 1) {
+                entryList.add(JFileFactory.newInstance(new File("..")));
+            }
+
             for (Path childPath : Files.newDirectoryStream(path)) {
                 File file = childPath.toFile();
                 entryList.add(JFileFactory.newInstance(file));

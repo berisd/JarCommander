@@ -30,6 +30,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -165,10 +166,13 @@ public class NavigationPanel extends JPanel {
 
 
     public void changeDirectory(JPath newPath) {
-        if (newPath.toString().equals("..") && currentPath.equals(currentPath.getRoot()))
+        String[] pathParts =  newPath.toString().split(File.separator);
+        String pathLastPart = pathParts[pathParts.length -1];
+
+        if (pathLastPart.equals("..") && currentPath.equals(currentPath.getRoot()))
             return;
 
-        if (newPath.toString().equals("..")) {
+        if (pathLastPart.equals("..")) {
             currentPath = currentPath.getParent();
         } else {
             currentPath = newPath.normalize();

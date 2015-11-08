@@ -13,6 +13,7 @@ import at.beris.jarcommander.filesystem.path.CompressedPath;
 import at.beris.jarcommander.filesystem.path.JPath;
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.lang3.NotImplementedException;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -108,11 +109,41 @@ public class CompressedFile implements JFile<ArchiveEntry>, Archivable {
     @Override
     public List<JFile> list() {
         List<JFile> files = new ArrayList<>();
+        JFile backFile = JFileFactory.newInstance(createEmptyArchiveEntry(), this.archiveFile);
+        backFile.setParentFile(this.parentFile);
+
+        files.add(backFile);
         for (JFile childFile : children) {
             files.add(childFile);
         }
 
         return files;
+    }
+
+    private ArchiveEntry createEmptyArchiveEntry() {
+        return new ArchiveEntry() {
+            @Override
+            public String getName() {
+                String[] pathParts = archiveEntry.getName().split(File.separator);
+                String parentPath = StringUtils.join(pathParts, File.separator, 0, pathParts.length - 2);
+                return parentPath + File.separator + "..";
+            }
+
+            @Override
+            public long getSize() {
+                return 0;
+            }
+
+            @Override
+            public boolean isDirectory() {
+                return true;
+            }
+
+            @Override
+            public Date getLastModifiedDate() {
+                return new Date();
+            }
+        };
     }
 
     @Override
@@ -134,4 +165,14 @@ public class CompressedFile implements JFile<ArchiveEntry>, Archivable {
     public JFile getArchive() {
         return archiveFile;
     }
+
+    public ArchiveEntry getArchiveEntry() {
+        return archiveEntry;
+    }
+
+    public JFile getArchiveFile() {
+        return archiveFile;
+    }
+
+
 }

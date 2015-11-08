@@ -38,24 +38,12 @@ public class PathTableModel extends AbstractTableModel {
         LOGGER.debug("setPath");
         this.path = path;
         fileList.clear();
-
-        if (!path.toString().equals("/") && StringUtils.countMatches(path.toString(), FileSystems.getDefault().getSeparator()) >= 1) {
-            fileList.add(JFileFactory.newInstance(new File("..")));
-        }
-
         fileList.addAll(path.getEntries());
     }
 
     public void listFile(JFile file) {
         LOGGER.debug("listFile " + file);
         fileList.clear();
-
-        if (!path.toString().equals("/") && StringUtils.countMatches(path.toString(), FileSystems.getDefault().getSeparator()) >= 1) {
-            JFile backFile = JFileFactory.newInstance(new File(".."));
-            backFile.setParentFile(file);
-            fileList.add(backFile);
-        }
-
         fileList.addAll(file.list());
     }
 
