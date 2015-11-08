@@ -11,6 +11,7 @@ package at.beris.jarcommander.ui;
 
 import at.beris.jarcommander.ApplicationContext;
 import at.beris.jarcommander.action.SelectNavigationPanelAction;
+import at.beris.jarcommander.exception.ApplicationException;
 import at.beris.jarcommander.filesystem.JFileSystem;
 import at.beris.jarcommander.filesystem.LocalFileSystem;
 import at.beris.jarcommander.filesystem.drive.JDrive;
@@ -39,8 +40,14 @@ public class UIFactory {
     }
 
     public SessionPanel createSessionPanel(String title, JFileSystem fileSystem) {
-        SessionPanel sessionPanel = new SessionPanel(createNavigationPanel(new LocalFileSystem()), createNavigationPanel(fileSystem));
-        context.getSessionsPanel().addTab(title, sessionPanel);
+        SessionPanel sessionPanel = null;
+        try {
+            sessionPanel = new SessionPanel(createNavigationPanel(new LocalFileSystem()), createNavigationPanel(fileSystem));
+            context.getSessionsPanel().addTab(title, sessionPanel);
+        }
+        catch (ApplicationException e) {
+            e.show();
+        }
         return sessionPanel;
     }
 

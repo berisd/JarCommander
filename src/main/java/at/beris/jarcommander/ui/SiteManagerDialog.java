@@ -225,8 +225,10 @@ public class SiteManagerDialog extends JDialog {
         sshContext.setUsername(currentSite.getUsername());
         sshContext.setPassword(String.valueOf(currentSite.getPassword()));
 
-        SessionPanel sessionPanel = context.getUiFactory().createSessionPanel("currentSite.getHostname()", new SshFileSystem(sshContext));
-        context.getSessionsPanel().setSelectedIndex(context.getSessionsPanel().getTabCount() - 1);
+        SessionPanel sessionPanel = context.getUiFactory().createSessionPanel(currentSite.getHostname(), new SshFileSystem(sshContext));
+        if (sessionPanel != null) {
+            context.getSessionsPanel().setSelectedIndex(context.getSessionsPanel().getTabCount() - 1);
+        }
     }
 
     private JPanel createContentPanel() {
