@@ -11,12 +11,12 @@ package at.beris.jarcommander.ui;
 
 import at.beris.jarcommander.filesystem.JFileSystem;
 import at.beris.jarcommander.filesystem.drive.JDrive;
+import at.beris.jarcommander.filesystem.file.FileHelper;
 import at.beris.jarcommander.filesystem.file.JFile;
 import at.beris.jarcommander.filesystem.path.JPath;
 import at.beris.jarcommander.ui.combobox.DriveComboBox;
 import at.beris.jarcommander.ui.table.FileTable;
 import at.beris.jarcommander.ui.table.FileTablePane;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 
 import javax.swing.BorderFactory;
@@ -130,8 +130,7 @@ public class NavigationPanel extends JPanel {
     public void executeFile(JFile file) {
         JPath path = file.toPath();
 
-        boolean isArchive = FilenameUtils.getExtension(file.toString()).toUpperCase().equals("ZIP");
-        if (isArchive) {
+        if (FileHelper.isArchive(file)) {
             currentPath = path;
         }
 
@@ -166,8 +165,8 @@ public class NavigationPanel extends JPanel {
 
 
     public void changeDirectory(JPath newPath) {
-        String[] pathParts =  newPath.toString().split(File.separator);
-        String pathLastPart = pathParts[pathParts.length -1];
+        String[] pathParts = newPath.toString().split(File.separator);
+        String pathLastPart = pathParts[pathParts.length - 1];
 
         if (pathLastPart.equals("..") && currentPath.equals(currentPath.getRoot()))
             return;
