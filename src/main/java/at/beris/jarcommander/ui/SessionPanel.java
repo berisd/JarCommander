@@ -53,7 +53,17 @@ public class SessionPanel extends JPanel {
     }
 
     public void switchSelectedNavigationPanel() {
-        leftNavigationPanel.setSelected(!leftNavigationPanel.isSelected());
-        rightNavigationPanel.setSelected(!rightNavigationPanel.isSelected());
+        selectNavigationPanel(!leftNavigationPanel.isSelected());
+    }
+
+    public void selectRightNavigationPanel() {
+        selectNavigationPanel(false);
+    }
+
+    private void selectNavigationPanel(boolean selectLeftPanel) {
+        leftNavigationPanel.setSelected(selectLeftPanel);
+        rightNavigationPanel.setSelected(!selectLeftPanel);
+
+        (selectLeftPanel ? leftNavigationPanel : rightNavigationPanel).getFileTable().requestFocusInWindow();
     }
 }

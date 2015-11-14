@@ -228,6 +228,7 @@ public class SiteManagerDialog extends JDialog {
         SessionPanel sessionPanel = context.getUiFactory().createSessionPanel(currentSite.getHostname(), new SshFileSystem(sshContext));
         if (sessionPanel != null) {
             context.getSessionsPanel().setSelectedIndex(context.getSessionsPanel().getTabCount() - 1);
+            sessionPanel.selectRightNavigationPanel();
         }
     }
 
