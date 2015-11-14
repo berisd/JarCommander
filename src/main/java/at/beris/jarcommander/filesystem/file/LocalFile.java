@@ -28,7 +28,7 @@ import static at.beris.jarcommander.filesystem.file.FileHelper.isArchive;
 public class LocalFile implements JFile<File> {
     private File file;
     private File parentFile;
-    private Set<Attribute> attributes;
+    private Set<Attribute> windowsAttributes;
 
     public LocalFile(File file) {
         this.file = file;
@@ -82,7 +82,7 @@ public class LocalFile implements JFile<File> {
 
     @Override
     public Set<Attribute> attributes() {
-        return attributes;
+        return windowsAttributes;
     }
 
     @Override
@@ -129,34 +129,19 @@ public class LocalFile implements JFile<File> {
         return file.toString();
     }
 
-    @Override
-    public void setLastModified(Date date) {
-        throw new NotImplementedException("");
-    }
-
-    @Override
-    public void setName(String name) {
-        throw new NotImplementedException("");
-    }
-
-    @Override
-    public void setSize(long size) {
-        throw new NotImplementedException("");
-    }
-
     private void fillAttributes() {
-        attributes = new LinkedHashSet<>();
+        windowsAttributes = new LinkedHashSet<>();
         if (file.canRead()) {
-            attributes.add(Attribute.READ);
+            windowsAttributes.add(WindowsAttribute.READ);
         }
         if (file.canWrite()) {
-            attributes.add(Attribute.WRITE);
+            windowsAttributes.add(WindowsAttribute.WRITE);
         }
         if (file.canExecute()) {
-            attributes.add(Attribute.EXECUTE);
+            windowsAttributes.add(WindowsAttribute.EXECUTE);
         }
         if (file.isHidden()) {
-            attributes.add(Attribute.HIDDEN);
+            windowsAttributes.add(WindowsAttribute.HIDDEN);
         }
     }
 }

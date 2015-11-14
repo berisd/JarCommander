@@ -20,15 +20,9 @@ public interface JFile<T> {
 
     String getName();
 
-    void setName(String name);
-
     Date getLastModified();
 
-    void setLastModified(Date date);
-
     long getSize();
-
-    void setSize(long size);
 
     boolean isDirectory();
 

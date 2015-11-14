@@ -25,7 +25,7 @@ import java.util.Set;
 public class CompressedFile implements JFile<ArchiveEntry>, Archivable {
     private ArchiveEntry archiveEntry;
     private JFile parentFile;
-    private Set<Attribute> attributes;
+    private Set<Attribute> windowsAttributes;
     private Set<JFile> children;
     private JFile archiveFile;
 
@@ -36,7 +36,7 @@ public class CompressedFile implements JFile<ArchiveEntry>, Archivable {
 
     public CompressedFile(ArchiveEntry archiveEntry) {
         this.archiveEntry = archiveEntry;
-        attributes = new HashSet<>();
+        windowsAttributes = new HashSet<>();
         children = new HashSet<>();
     }
 
@@ -47,28 +47,13 @@ public class CompressedFile implements JFile<ArchiveEntry>, Archivable {
     }
 
     @Override
-    public void setName(String name) {
-        throw new NotImplementedException("");
-    }
-
-    @Override
     public Date getLastModified() {
         return archiveEntry.getLastModifiedDate();
     }
 
     @Override
-    public void setLastModified(Date date) {
-        throw new NotImplementedException("");
-    }
-
-    @Override
     public long getSize() {
         return archiveEntry.getSize();
-    }
-
-    @Override
-    public void setSize(long size) {
-        throw new NotImplementedException("");
     }
 
     @Override
@@ -103,7 +88,7 @@ public class CompressedFile implements JFile<ArchiveEntry>, Archivable {
 
     @Override
     public Set<Attribute> attributes() {
-        return attributes;
+        return windowsAttributes;
     }
 
     @Override

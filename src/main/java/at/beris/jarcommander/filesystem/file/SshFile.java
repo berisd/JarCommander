@@ -22,13 +22,13 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+
 public class SshFile implements JFile<ChannelSftp.LsEntry> {
     private SshContext context;
     private ChannelSftp.LsEntry file;
     private String path;
     private ChannelSftp.LsEntry parentFile;
     private Date lastModified;
-    private String name;
     private Set<Attribute> attributes;
 
 
@@ -37,6 +37,8 @@ public class SshFile implements JFile<ChannelSftp.LsEntry> {
         this.file = file;
         this.path = path;
         attributes = new LinkedHashSet<>();
+        lastModified = new Date(((long) file.getAttrs().getMTime()) * 1000L);
+        setPermissions();
     }
 
     @Override
@@ -56,12 +58,12 @@ public class SshFile implements JFile<ChannelSftp.LsEntry> {
 
     @Override
     public long getSize() {
-        return 0;
+        return file.getAttrs().getSize();
     }
 
     @Override
     public boolean isDirectory() {
-        return file.getLongname().startsWith("d");
+        return file.getAttrs().isDir();
     }
 
     @Override
@@ -111,18 +113,13 @@ public class SshFile implements JFile<ChannelSftp.LsEntry> {
         return new SshPath(context, path);
     }
 
-    @Override
-    public void setLastModified(Date date) {
-        this.lastModified = date;
-    }
+    private void setPermissions() {
+        int permissions = file.getAttrs().getPermissions();
 
-    @Override
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    @Override
-    public void setSize(long size) {
-
+        for (UnixAttribute attribute : UnixAttribute.values()) {
+            if ((permissions & attribute.getValue())!=0) {
+                this.attributes.add(attribute);
+            }
+        }
     }
 }

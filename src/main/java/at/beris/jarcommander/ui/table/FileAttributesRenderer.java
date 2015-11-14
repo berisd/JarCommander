@@ -10,11 +10,15 @@
 package at.beris.jarcommander.ui.table;
 
 import at.beris.jarcommander.filesystem.file.Attribute;
+import at.beris.jarcommander.filesystem.file.UnixAttribute;
+import at.beris.jarcommander.filesystem.file.WindowsAttribute;
 
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.table.TableCellRenderer;
 import java.awt.Component;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 
 import static at.beris.jarcommander.ApplicationContext.SELECTION_FOREGROUND_COLOR;
@@ -23,21 +27,48 @@ public class FileAttributesRenderer extends JLabel implements TableCellRenderer 
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
 
-        Set<Attribute> attributes = (Set<Attribute>) value;
+        StringBuilder shortText = new StringBuilder("");
+        StringBuilder longText = new StringBuilder("");
 
-        String shortText = "";
-        String longText = "";
-        for (Attribute attribute : attributes) {
-            shortText += attribute.shortName();
-            if (longText != "")
-                longText += "<br>";
-            longText += attribute.longName();
+        Set<Attribute> fileAttributes = (Set<Attribute>) value;
+
+        Attribute firstFileAttribute = null;
+        if (fileAttributes.iterator().hasNext()) {
+            firstFileAttribute = fileAttributes.iterator().next();
         }
 
-        longText = "<html>" + longText + "</html>";
+        if (firstFileAttribute != null) {
+            List<Attribute> attributes;
+            if (firstFileAttribute instanceof UnixAttribute)
+                attributes = Arrays.asList((Attribute[]) UnixAttribute.values());
+            else
+                attributes = Arrays.asList((Attribute[]) WindowsAttribute.values());
 
-        setText(shortText);
-        setToolTipText(longText);
+            for (Attribute attribute : attributes) {
+                if (fileAttributes.contains(attribute)) {
+                    if (attribute == UnixAttribute.S_IXUSR && fileAttributes.contains(UnixAttribute.S_ISUID))
+                        continue;
+                    if (attribute == UnixAttribute.S_IXGRP && fileAttributes.contains(UnixAttribute.S_ISGID))
+                        continue;
+                    shortText.append(attribute.shortName());
+                    if (longText.length() > 0)
+                        longText.append("<br>");
+                    longText.append(attribute.longName());
+                } else if (attribute != WindowsAttribute.HIDDEN && attribute != UnixAttribute.S_ISUID && attribute != UnixAttribute.S_ISGID) {
+                    shortText.append('-');
+                    longText.append('-');
+                }
+            }
+
+            longText.insert(0, "<html>");
+            longText.append("</html>");
+
+            setText(shortText.toString());
+            setToolTipText(longText.toString());
+        } else {
+            setText("");
+            setToolTipText("");
+        }
 
         if (isSelected) {
             setForeground(SELECTION_FOREGROUND_COLOR);

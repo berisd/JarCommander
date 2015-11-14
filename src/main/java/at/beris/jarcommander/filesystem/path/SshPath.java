@@ -20,6 +20,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Vector;
 
@@ -58,7 +59,6 @@ public class SshPath implements JPath<String> {
                     continue;
 
                 JFile file = JFileFactory.newSshFileInstance(context, path + dirEntry.getFilename() + File.separator, dirEntry);
-                file.setName(dirEntry.getFilename());
                 fileList.add(file);
             }
         }

@@ -9,25 +9,8 @@
 
 package at.beris.jarcommander.filesystem.file;
 
-public enum Attribute {
-    READ("R", "Read"),
-    WRITE("W", "Write"),
-    EXECUTE("X", "Execute"),
-    HIDDEN("H", "Hidden");
+public interface Attribute<T> {
+    String shortName();
 
-    private String shortName;
-    private String longName;
-
-    Attribute(String shortName, String longName) {
-        this.shortName = shortName;
-        this.longName = longName;
-    }
-
-    public String shortName() {
-        return this.shortName;
-    }
-
-    public String longName() {
-        return this.longName;
-    }
+    String longName();
 }
