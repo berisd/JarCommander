@@ -45,4 +45,6 @@ public interface JFile<T> {
     JPath toPath();
 
     void delete();
+
+    List<JFile> listFiles();
 }

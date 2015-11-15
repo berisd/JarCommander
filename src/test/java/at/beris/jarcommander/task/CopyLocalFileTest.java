@@ -28,6 +28,7 @@ import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.List;
 
+import static at.beris.jarcommander.filesystem.BlockCopy.COPY_BUFFER_SIZE;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.times;
 
@@ -101,7 +102,7 @@ public class CopyLocalFileTest {
         List<JFile> capturedFiles = fileArgumentCaptor.getAllValues();
 
         List<String> actualFilenames = new ArrayList<>();
-        for(JFile file : capturedFiles) {
+        for (JFile file : capturedFiles) {
             actualFilenames.add(file.toString());
         }
 
@@ -138,7 +139,7 @@ public class CopyLocalFileTest {
                 file.getParentFile().mkdirs();
 
             index++;
-            while (dataString.length() < CopyTask.COPY_BUFFER_SIZE * index + 10)
+            while (dataString.length() < COPY_BUFFER_SIZE * index + 10)
                 dataString.append(testString);
 
             JPath path = file.toPath();

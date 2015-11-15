@@ -32,6 +32,13 @@ import java.util.Set;
 import static at.beris.jarcommander.Application.logException;
 
 public class JFileFactory {
+    public static JFile newInstance(JFile parent, String child) {
+        if (parent instanceof LocalFile) {
+            return newInstance(new File((File) parent.getBaseObject(), child));
+        } else
+            throw new RuntimeException("Can't create JFile with given parent and child.");
+    }
+
     public static JFile newInstance(File file) {
         if (file == null)
             return null;

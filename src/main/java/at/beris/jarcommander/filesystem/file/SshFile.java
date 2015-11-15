@@ -118,11 +118,16 @@ public class SshFile implements JFile<ChannelSftp.LsEntry> {
         throw new NotImplementedException("");
     }
 
+    @Override
+    public List<JFile> listFiles() {
+        throw new NotImplementedException("");
+    }
+
     private void setPermissions() {
         int permissions = file.getAttrs().getPermissions();
 
         for (UnixAttribute attribute : UnixAttribute.values()) {
-            if ((permissions & attribute.getValue())!=0) {
+            if ((permissions & attribute.getValue()) != 0) {
                 this.attributes.add(attribute);
             }
         }

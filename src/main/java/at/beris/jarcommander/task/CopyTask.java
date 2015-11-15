@@ -9,6 +9,7 @@
 
 package at.beris.jarcommander.task;
 
+import at.beris.jarcommander.filesystem.BlockCopy;
 import at.beris.jarcommander.filesystem.file.JFile;
 import at.beris.jarcommander.filesystem.file.JFileFactory;
 import at.beris.jarcommander.filesystem.path.JPath;
@@ -18,19 +19,14 @@ import javax.swing.SwingWorker;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.nio.channels.FileChannel;
-import java.nio.file.Path;
+import java.util.Collections;
 import java.util.List;
 
 import static at.beris.jarcommander.Application.logException;
 
 public class CopyTask extends SwingWorker<Void, Integer> implements PropertyChangeListener {
     private final static Logger LOGGER = org.apache.log4j.Logger.getLogger(CopyTask.class);
-    public final static int COPY_BUFFER_SIZE = 1024 * 16;
 
     private List<JFile> sourceList;
     private JPath targetPath;
@@ -39,6 +35,7 @@ public class CopyTask extends SwingWorker<Void, Integer> implements PropertyChan
     private long totalCountFiles = 0;
     private long currentFileNumber = 0;
     private CopyTaskListener listener;
+    private BlockCopy blockCopy;
 
     public CopyTask(List<JFile> sourceList, JPath targetPath, CopyTaskListener listener) {
         this.sourceList = sourceList;
@@ -47,6 +44,8 @@ public class CopyTask extends SwingWorker<Void, Integer> implements PropertyChan
 
         listener.setCurrentProgressBar(0);
         listener.setAllProgressBar(0);
+
+        blockCopy = new BlockCopy();
     }
 
     @Override
@@ -54,12 +53,11 @@ public class CopyTask extends SwingWorker<Void, Integer> implements PropertyChan
         LOGGER.debug("doInBackground");
         try {
             for (JFile sourceFile : sourceList) {
-                File file = (File) sourceFile.getBaseObject();
-                retrieveFileInfo(file);
+                retrieveFileInfo(sourceFile);
             }
 
             for (JFile sourceFile : sourceList) {
-                JFile targetFile = JFileFactory.newInstance(new File(((Path) targetPath.getBaseObject()).toFile(), sourceFile.toPath().toString()));
+                JFile targetFile = JFileFactory.newInstance(targetPath.toFile(), sourceFile.toPath().toString());
                 copyFiles(sourceFile, targetFile);
             }
         } catch (Exception ex) {
@@ -82,16 +80,27 @@ public class CopyTask extends SwingWorker<Void, Integer> implements PropertyChan
         listener.done();
     }
 
-    private void retrieveFileInfo(File sourceFile) {
-        File[] files = sourceFile.listFiles();
-        if (files == null) {
-            files = new File[]{sourceFile};
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+        if ("progress".equals(evt.getPropertyName())) {
+            int progress = (Integer) evt.getNewValue();
+            listener.setAllProgressBar(progress);
+        }
+    }
+
+    private void retrieveFileInfo(JFile sourceFile) {
+        List<JFile> fileList;
+        if (sourceFile.isDirectory()) {
+            fileList = sourceFile.listFiles();
+        } else {
+            fileList = Collections.singletonList(sourceFile);
         }
 
-        for (File file : files) {
-            if (file.isDirectory()) retrieveFileInfo(file);
-            else {
-                bytesTotal += file.length();
+        for (JFile file : fileList) {
+            if (file.isDirectory()) {
+                retrieveFileInfo(file);
+            } else {
+                bytesTotal += file.getSize();
                 totalCountFiles++;
             }
         }
@@ -125,49 +134,28 @@ public class CopyTask extends SwingWorker<Void, Integer> implements PropertyChan
                 targetParentFile.mkdirs();
             }
 
-            FileChannel bis = new FileInputStream((File) sourceFile.getBaseObject()).getChannel();
-            FileChannel bos = new FileOutputStream((File) targetFile.getBaseObject()).getChannel();
-
-            ByteBuffer buffer = ByteBuffer.allocate(COPY_BUFFER_SIZE);
-
-            long bytesSizeCurrentFile = bis.size();
-            long bytesWrittenCurrentFile = 0L;
-            long bytesWritten = 0;
+            blockCopy.init(sourceFile, targetFile);
 
             boolean isCancelled = false;
             try {
-                while ((bis.read(buffer) >= 0 || buffer.position() != 0) && !isCancelled()) {
-                    buffer.flip();
-                    bytesWritten = bos.write(buffer);
-                    buffer.compact();
-
-                    bytesWrittenCurrentFile += bytesWritten;
-                    bytesCopied += bytesWritten;
-
+                while ((blockCopy.read() >= 0 || blockCopy.positionBuffer() != 0) && !isCancelled()) {
+                    blockCopy.copy();
+                    bytesCopied += blockCopy.bytesWritten();
                     setProgress((int) (bytesCopied * 100 / bytesTotal));
-                    publish((int) (bytesWrittenCurrentFile * 100 / bytesSizeCurrentFile));
+                    publish((int) (blockCopy.bytesWrittenTotal() * 100 / blockCopy.size()));
                 }
             } catch (IOException ex) {
                 isCancelled = true;
             } finally {
-                bis.close();
-                bos.close();
+                blockCopy.close();
                 isCancelled = isCancelled || isCancelled();
             }
 
-            if (isCancelled && bytesSizeCurrentFile != bytesWrittenCurrentFile) {
+            if (isCancelled && blockCopy.size() != blockCopy.bytesWrittenTotal()) {
                 targetFile.delete();
             }
 
             publish(100);
-        }
-    }
-
-    @Override
-    public void propertyChange(PropertyChangeEvent evt) {
-        if ("progress".equals(evt.getPropertyName())) {
-            int progress = (Integer) evt.getNewValue();
-            listener.setAllProgressBar(progress);
         }
     }
 }

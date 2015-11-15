@@ -144,6 +144,21 @@ public class LocalFile implements JFile<File> {
         }
     }
 
+    @Override
+    public List<JFile> listFiles() {
+        List<JFile> fileList = new ArrayList<>();
+
+        File[] files = file.listFiles();
+
+        if (files != null) {
+            for (File file : files) {
+                fileList.add(JFileFactory.newInstance(file));
+            }
+        }
+
+        return fileList;
+    }
+
     private void fillAttributes() {
         windowsAttributes = new LinkedHashSet<>();
         if (file.canRead()) {
