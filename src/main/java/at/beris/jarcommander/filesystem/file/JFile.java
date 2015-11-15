@@ -43,4 +43,6 @@ public interface JFile<T> {
     String getAbsolutePath();
 
     JPath toPath();
+
+    void delete();
 }

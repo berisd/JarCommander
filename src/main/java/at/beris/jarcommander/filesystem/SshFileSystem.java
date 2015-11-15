@@ -45,9 +45,4 @@ public class SshFileSystem implements JFileSystem {
         driveList.add(drive);
         return driveList;
     }
-
-    @Override
-    public void delete(JPath jPath) throws IOException {
-        throw new NotImplementedException("");
-    }
 }

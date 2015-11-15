@@ -151,6 +151,11 @@ public class CompressedFile implements JFile<ArchiveEntry>, Archivable {
         return archiveFile;
     }
 
+    @Override
+    public void delete() {
+        throw new NotImplementedException("");
+    }
+
     public ArchiveEntry getArchiveEntry() {
         return archiveEntry;
     }

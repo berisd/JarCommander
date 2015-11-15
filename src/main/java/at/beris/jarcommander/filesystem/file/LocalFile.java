@@ -9,14 +9,20 @@
 
 package at.beris.jarcommander.filesystem.file;
 
+import at.beris.jarcommander.Application;
 import at.beris.jarcommander.filesystem.path.JPath;
 import at.beris.jarcommander.filesystem.path.LocalPath;
 import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.FileSystems;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashSet;
@@ -129,6 +135,15 @@ public class LocalFile implements JFile<File> {
         return file.toString();
     }
 
+    @Override
+    public void delete() {
+        try {
+            Files.walkFileTree(file.toPath(), new DeletingFileVisitor());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     private void fillAttributes() {
         windowsAttributes = new LinkedHashSet<>();
         if (file.canRead()) {
@@ -142,6 +157,32 @@ public class LocalFile implements JFile<File> {
         }
         if (file.isHidden()) {
             windowsAttributes.add(WindowsAttribute.HIDDEN);
+        }
+    }
+
+    private class DeletingFileVisitor extends SimpleFileVisitor<Path> {
+
+        @Override
+        public FileVisitResult visitFile(Path file, BasicFileAttributes attributes)
+                throws IOException {
+            if (attributes.isRegularFile()) {
+                Files.delete(file);
+            }
+            return FileVisitResult.CONTINUE;
+        }
+
+        @Override
+        public FileVisitResult postVisitDirectory(Path directory, IOException ioe)
+                throws IOException {
+            Files.delete(directory);
+            return FileVisitResult.CONTINUE;
+        }
+
+        @Override
+        public FileVisitResult visitFileFailed(Path file, IOException ioe)
+                throws IOException {
+            Application.logException(ioe);
+            return FileVisitResult.CONTINUE;
         }
     }
 }

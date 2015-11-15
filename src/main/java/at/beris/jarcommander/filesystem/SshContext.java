@@ -92,4 +92,9 @@ public class SshContext {
             throw new ApplicationException(e);
         }
     }
+
+    public void disconnect() {
+        channel.disconnect();
+        session.disconnect();
+    }
 }

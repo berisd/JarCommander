@@ -87,10 +87,4 @@ public class LocalFileSystem implements JFileSystem {
     public List<JDrive> getDriveList() {
         return driveList;
     }
-
-    @Override
-    public void delete(JPath jPath) throws IOException {
-        Path path = (Path) jPath.getBaseObject();
-        Files.delete(path);
-    }
 }
