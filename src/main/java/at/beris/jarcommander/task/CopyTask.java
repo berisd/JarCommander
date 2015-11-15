@@ -57,7 +57,7 @@ public class CopyTask extends SwingWorker<Void, Integer> implements PropertyChan
             }
 
             for (JFile sourceFile : sourceList) {
-                JFile targetFile = JFileFactory.newInstance(targetPath.toFile(), sourceFile.toPath().toString());
+                JFile targetFile = JFileFactory.newInstance(targetPath.toFile(), sourceFile.getName());
                 copyFiles(sourceFile, targetFile);
             }
         } catch (Exception ex) {

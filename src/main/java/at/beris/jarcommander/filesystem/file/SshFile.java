@@ -123,6 +123,11 @@ public class SshFile implements JFile<ChannelSftp.LsEntry> {
         throw new NotImplementedException("");
     }
 
+    @Override
+    public byte[] checksum() {
+        throw new NotImplementedException("");
+    }
+
     private void setPermissions() {
         int permissions = file.getAttrs().getPermissions();
 

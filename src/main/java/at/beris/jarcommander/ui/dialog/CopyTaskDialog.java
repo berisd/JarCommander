@@ -10,8 +10,8 @@
 package at.beris.jarcommander.ui.dialog;
 
 import at.beris.jarcommander.filesystem.file.JFile;
-import at.beris.jarcommander.task.CopyTaskListener;
 import at.beris.jarcommander.task.CopyTask;
+import at.beris.jarcommander.task.CopyTaskListener;
 import at.beris.jarcommander.ui.NavigationPanel;
 import org.apache.commons.lang3.NotImplementedException;
 

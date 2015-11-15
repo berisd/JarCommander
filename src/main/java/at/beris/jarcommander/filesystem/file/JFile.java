@@ -47,4 +47,6 @@ public interface JFile<T> {
     void delete();
 
     List<JFile> listFiles();
+
+    byte[] checksum();
 }

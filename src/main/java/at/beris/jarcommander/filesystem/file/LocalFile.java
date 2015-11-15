@@ -23,6 +23,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashSet;
@@ -157,6 +159,21 @@ public class LocalFile implements JFile<File> {
         }
 
         return fileList;
+    }
+
+    @Override
+    public byte[] checksum() {
+        try {
+            MessageDigest messageDigest = MessageDigest.getInstance("SHA");
+            messageDigest.reset();
+            messageDigest.update(Files.readAllBytes(file.toPath()));
+            return messageDigest.digest();
+        } catch (NoSuchAlgorithmException e) {
+            Application.logException(e);
+        } catch (IOException e) {
+            Application.logException(e);
+        }
+        return null;
     }
 
     private void fillAttributes() {

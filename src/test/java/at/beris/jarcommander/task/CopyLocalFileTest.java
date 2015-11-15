@@ -24,7 +24,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,11 +32,11 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.times;
 
 public class CopyLocalFileTest {
+    private static final String TARGET_DIRECTORY = "testtargetdir";
+
     private static List<JFile> fileList;
     private static List<JFile> sourceFiles;
     private static JPath targetPath;
-
-    private static MessageDigest messageDigest;
 
     @BeforeClass
     public static void setUp() throws Exception {
@@ -45,9 +44,7 @@ public class CopyLocalFileTest {
         sourceFiles.add(JFileFactory.newInstance(new File("testfile1.txt")));
         sourceFiles.add(JFileFactory.newInstance(new File("testdir")));
 
-        targetPath = new LocalPath(new File("testtargetdir").toPath());
-
-        messageDigest = MessageDigest.getInstance("SHA");
+        targetPath = new LocalPath(new File(TARGET_DIRECTORY).toPath());
 
         createFiles();
     }
@@ -112,13 +109,13 @@ public class CopyLocalFileTest {
 
     private List<String> createExpectedFilenames() {
         List<String> expectedFilenames = new ArrayList<>();
-        expectedFilenames.add("testtargetdir/testfile1.txt");
-        expectedFilenames.add("testtargetdir/testdir");
-        expectedFilenames.add("testtargetdir/testdir/testfile2.txt");
-        expectedFilenames.add("testtargetdir/testdir/testfile3.txt");
-        expectedFilenames.add("testtargetdir/testdir/subdir");
-        expectedFilenames.add("testtargetdir/testdir/subdir/testfile4.txt");
-        expectedFilenames.add("testtargetdir/testdir/subdir/testfile5.txt");
+        expectedFilenames.add(TARGET_DIRECTORY + "/testfile1.txt");
+        expectedFilenames.add(TARGET_DIRECTORY + "/testdir");
+        expectedFilenames.add(TARGET_DIRECTORY + "/testdir/testfile2.txt");
+        expectedFilenames.add(TARGET_DIRECTORY + "/testdir/testfile3.txt");
+        expectedFilenames.add(TARGET_DIRECTORY + "/testdir/subdir");
+        expectedFilenames.add(TARGET_DIRECTORY + "/testdir/subdir/testfile4.txt");
+        expectedFilenames.add(TARGET_DIRECTORY + "/testdir/subdir/testfile5.txt");
         return expectedFilenames;
     }
 
@@ -151,16 +148,7 @@ public class CopyLocalFileTest {
         for (JFile sourceFile : fileList) {
             JFile targetFile = JFileFactory.newInstance(new File(targetPath.toString(), sourceFile.toString()));
             if (targetFile.exists()) {
-                messageDigest.reset();
-                messageDigest.update(Files.readAllBytes((Path) sourceFile.toPath().getBaseObject()));
-                byte[] sourceHashBytes = messageDigest.digest();
-
-                messageDigest.reset();
-                messageDigest.update(Files.readAllBytes((Path) targetFile.toPath().getBaseObject()));
-                byte[] targetHashBytes = messageDigest.digest();
-
-                assertArrayEquals(sourceHashBytes, targetHashBytes);
-
+                assertArrayEquals(sourceFile.checksum(), targetFile.checksum());
             } else {
                 fail("targetFile doesn't exist.");
             }

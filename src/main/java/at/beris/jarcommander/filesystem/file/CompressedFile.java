@@ -105,32 +105,6 @@ public class CompressedFile implements JFile<ArchiveEntry>, Archivable {
         return files;
     }
 
-    private ArchiveEntry createEmptyArchiveEntry() {
-        return new ArchiveEntry() {
-            @Override
-            public String getName() {
-                String[] pathParts = archiveEntry.getName().split(File.separator);
-                String parentPath = StringUtils.join(pathParts, File.separator, 0, pathParts.length - 2);
-                return parentPath + File.separator + "..";
-            }
-
-            @Override
-            public long getSize() {
-                return 0;
-            }
-
-            @Override
-            public boolean isDirectory() {
-                return true;
-            }
-
-            @Override
-            public Date getLastModifiedDate() {
-                return new Date();
-            }
-        };
-    }
-
     @Override
     public String getAbsolutePath() {
         throw new NotImplementedException("");
@@ -159,6 +133,37 @@ public class CompressedFile implements JFile<ArchiveEntry>, Archivable {
     @Override
     public List<JFile> listFiles() {
         throw new NotImplementedException("");
+    }
+
+    @Override
+    public byte[] checksum() {
+        throw new NotImplementedException("");
+    }
+
+    private ArchiveEntry createEmptyArchiveEntry() {
+        return new ArchiveEntry() {
+            @Override
+            public String getName() {
+                String[] pathParts = archiveEntry.getName().split(File.separator);
+                String parentPath = StringUtils.join(pathParts, File.separator, 0, pathParts.length - 2);
+                return parentPath + File.separator + "..";
+            }
+
+            @Override
+            public long getSize() {
+                return 0;
+            }
+
+            @Override
+            public boolean isDirectory() {
+                return true;
+            }
+
+            @Override
+            public Date getLastModifiedDate() {
+                return new Date();
+            }
+        };
     }
 
     public ArchiveEntry getArchiveEntry() {
