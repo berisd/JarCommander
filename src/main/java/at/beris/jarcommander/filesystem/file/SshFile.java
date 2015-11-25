@@ -105,7 +105,7 @@ public class SshFile implements JFile<ChannelSftp.LsEntry> {
 
     @Override
     public String getAbsolutePath() {
-        throw new NotImplementedException("");
+        return this.path;
     }
 
     @Override

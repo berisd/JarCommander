@@ -58,7 +58,7 @@ public class SshPath implements JPath<String> {
                 if (dirEntry.getFilename().equals(".") || (path.equals(File.separator) && dirEntry.getFilename().equals("..")))
                     continue;
 
-                JFile file = JFileFactory.newSshFileInstance(context, path + dirEntry.getFilename() + File.separator, dirEntry);
+                JFile file = JFileFactory.newSshFileInstance(context, path + (! path.equals(File.separator) ? File.separator : "") + dirEntry.getFilename(), dirEntry);
                 fileList.add(file);
             }
         }
