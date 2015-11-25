@@ -154,4 +154,9 @@ public class CopyTaskDialog extends JDialog implements ActionListener, CopyTaskL
                         System.lineSeparator() + "Would you like to overwrite it?", "File exists",
                 JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
     }
+
+    @Override
+    public int showError(String message) {
+        return JOptionPane.showConfirmDialog(this, message, "Error", JOptionPane.OK_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);
+    }
 }

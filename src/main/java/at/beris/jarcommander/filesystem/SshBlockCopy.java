@@ -82,7 +82,7 @@ public class SshBlockCopy implements IBlockCopy {
 
             int c = checkAck(in);
             if (c != 'C') {
-                throw new ApplicationException(new RuntimeException("Ssh checkAck!=C"));
+                throw new RuntimeException("Ssh checkAck!=C");
             }
 
             // read '0644 '
@@ -128,12 +128,10 @@ public class SshBlockCopy implements IBlockCopy {
     @Override
     public void close() {
         try {
-            fos.close();
-            fos = null;
-
-//            if (checkAck(in) != 0) {
-//                System.exit(0);
-//            }
+            if (fos != null) {
+                fos.close();
+                fos = null;
+            }
 
             // send '\0'
             buf[0] = 0;
@@ -230,12 +228,8 @@ public class SshBlockCopy implements IBlockCopy {
                 sb.append((char) c);
             }
             while (c != '\n');
-            if (b == 1) { // error
-                LOGGER.error(sb.toString());
-            }
-            if (b == 2) { // fatal error
-                LOGGER.error(sb.toString());
-            }
+
+            throw new RuntimeException(sb.toString());
         }
         return b;
     }

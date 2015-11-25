@@ -57,13 +57,14 @@ public class CopyTask extends SwingWorker<Void, Integer> {
             }
 
             for (IFile sourceFile : sourceList) {
+                if (isCancelled())
+                    break;
                 IFile targetFile = FileFactory.newInstance(targetPath.toFile(), sourceFile.getName());
                 copyFiles(sourceFile, targetFile);
             }
         } catch (Exception ex) {
             logException(ex);
         } finally {
-            //TODO Cleanup resources
             blockCopy.close();
         }
         return null;
@@ -139,15 +140,20 @@ public class CopyTask extends SwingWorker<Void, Integer> {
                 targetParentFile.mkdirs();
             }
 
-            blockCopy.init(sourceFile, targetFile);
-
             try {
+                blockCopy.init(sourceFile, targetFile);
+
                 while ((blockCopy.read() >= 0 || blockCopy.positionBuffer() != 0) && !isCancelled()) {
                     blockCopy.copy();
                     bytesCopied += blockCopy.bytesWritten();
                     listener.setAllProgressBar((int) (bytesCopied * 100 / bytesTotal));
                     publish((int) (blockCopy.bytesWrittenTotal() * 100 / blockCopy.size()));
                 }
+            } catch (RuntimeException ex) {
+                LOGGER.error(ex.getMessage());
+                int result = listener.showError(ex.getMessage());
+                if (result == JOptionPane.CANCEL_OPTION)
+                    cancel(true);
             } catch (Exception ex) {
                 Application.logException(ex);
             } finally {
