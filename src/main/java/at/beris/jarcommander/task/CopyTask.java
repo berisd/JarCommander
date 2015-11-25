@@ -9,7 +9,9 @@
 
 package at.beris.jarcommander.task;
 
-import at.beris.jarcommander.filesystem.BlockCopy;
+import at.beris.jarcommander.exception.ApplicationException;
+import at.beris.jarcommander.filesystem.IBlockCopy;
+import at.beris.jarcommander.filesystem.LocalBlockCopy;
 import at.beris.jarcommander.filesystem.file.JFile;
 import at.beris.jarcommander.filesystem.file.JFileFactory;
 import at.beris.jarcommander.filesystem.path.JPath;
@@ -33,7 +35,7 @@ public class CopyTask extends SwingWorker<Void, Integer> {
     private long totalCountFiles = 0;
     private long currentFileNumber = 0;
     private CopyTaskListener listener;
-    private BlockCopy blockCopy;
+    private IBlockCopy blockCopy;
 
     public CopyTask(List<JFile> sourceList, JPath targetPath, CopyTaskListener listener) {
         this.sourceList = sourceList;
@@ -43,7 +45,7 @@ public class CopyTask extends SwingWorker<Void, Integer> {
         listener.setCurrentProgressBar(0);
         listener.setAllProgressBar(0);
 
-        blockCopy = new BlockCopy();
+        blockCopy = new LocalBlockCopy();
     }
 
     @Override
@@ -134,7 +136,8 @@ public class CopyTask extends SwingWorker<Void, Integer> {
                     listener.setAllProgressBar((int) (bytesCopied * 100 / bytesTotal));
                     publish((int) (blockCopy.bytesWrittenTotal() * 100 / blockCopy.size()));
                 }
-            } catch (IOException ex) {
+            } catch (ApplicationException ex) {
+                ex.show();
                 isCancelled = true;
             } finally {
                 blockCopy.close();

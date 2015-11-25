@@ -27,7 +27,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-import static at.beris.jarcommander.filesystem.BlockCopy.COPY_BUFFER_SIZE;
+import static at.beris.jarcommander.filesystem.LocalBlockCopy.COPY_BUFFER_SIZE;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.times;
 
