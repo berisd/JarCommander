@@ -9,13 +9,15 @@
 
 package at.beris.jarcommander.filesystem;
 
-import at.beris.jarcommander.exception.ApplicationException;
+import at.beris.jarcommander.Application;
 import at.beris.jarcommander.filesystem.file.IFile;
 import at.beris.jarcommander.filesystem.file.LocalFile;
 import org.apache.commons.lang3.NotImplementedException;
 
 import java.io.*;
 import java.nio.ByteBuffer;
+import java.nio.channels.ClosedByInterruptException;
+import java.nio.channels.ClosedChannelException;
 import java.nio.channels.FileChannel;
 
 public class LocalBlockCopy implements IBlockCopy {
@@ -47,9 +49,11 @@ public class LocalBlockCopy implements IBlockCopy {
             bytesWritten = 0;
             buffer.clear();
         } catch (FileNotFoundException e) {
-            throw new ApplicationException(e);
+            Application.logException(e);
+        } catch (ClosedByInterruptException e) {
+            targetFile.delete();
         } catch (IOException e) {
-            throw new ApplicationException(e);
+            Application.logException(e);
         }
     }
 
@@ -59,7 +63,7 @@ public class LocalBlockCopy implements IBlockCopy {
             bis.close();
             bos.close();
         } catch (IOException e) {
-            throw new ApplicationException(e);
+            Application.logException(e);
         }
     }
 
@@ -71,7 +75,7 @@ public class LocalBlockCopy implements IBlockCopy {
             buffer.compact();
             bytesWrittenTotal += bytesWritten;
         } catch (IOException e) {
-            throw new ApplicationException(e);
+            Application.logException(e);
         }
     }
 
@@ -79,9 +83,12 @@ public class LocalBlockCopy implements IBlockCopy {
     public int read() {
         try {
             return bis.read(buffer);
+        } catch (ClosedChannelException e) {
+            return 0;
         } catch (IOException e) {
-            throw new ApplicationException(e);
+            Application.logException(e);
         }
+        return 0;
     }
 
     @Override

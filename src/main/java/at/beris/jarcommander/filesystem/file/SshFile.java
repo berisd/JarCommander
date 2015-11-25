@@ -137,4 +137,8 @@ public class SshFile implements IFile<ChannelSftp.LsEntry> {
             }
         }
     }
+
+    public SshContext getContext() {
+        return context;
+    }
 }

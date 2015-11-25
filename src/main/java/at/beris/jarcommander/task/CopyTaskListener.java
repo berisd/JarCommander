@@ -20,5 +20,5 @@ public interface CopyTaskListener {
 
     void startCopyFile(IFile sourceFile, long currentFileNumber, long totalCountFiles);
 
-    void fileExists(IFile file);
+    int fileExists(IFile file);
 }

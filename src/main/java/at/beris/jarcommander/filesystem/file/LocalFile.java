@@ -17,19 +17,11 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.FileSystems;
-import java.nio.file.FileVisitResult;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.SimpleFileVisitor;
+import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static at.beris.jarcommander.filesystem.file.FileHelper.isArchive;
 
@@ -140,7 +132,9 @@ public class LocalFile implements IFile<File> {
     @Override
     public void delete() {
         try {
-            Files.walkFileTree(file.toPath(), new DeletingFileVisitor());
+            if (file.exists()) {
+                Files.walkFileTree(file.toPath(), new DeletingFileVisitor());
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

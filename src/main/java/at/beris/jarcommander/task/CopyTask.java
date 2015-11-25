@@ -9,11 +9,11 @@
 
 package at.beris.jarcommander.task;
 
-import at.beris.jarcommander.exception.ApplicationException;
+import at.beris.jarcommander.Application;
+import at.beris.jarcommander.filesystem.FileUtils;
 import at.beris.jarcommander.filesystem.IBlockCopy;
-import at.beris.jarcommander.filesystem.LocalBlockCopy;
-import at.beris.jarcommander.filesystem.file.IFile;
 import at.beris.jarcommander.filesystem.file.FileFactory;
+import at.beris.jarcommander.filesystem.file.IFile;
 import at.beris.jarcommander.filesystem.path.IPath;
 import org.apache.log4j.Logger;
 
@@ -45,7 +45,7 @@ public class CopyTask extends SwingWorker<Void, Integer> {
         listener.setCurrentProgressBar(0);
         listener.setAllProgressBar(0);
 
-        blockCopy = new LocalBlockCopy();
+        blockCopy = FileUtils.createBlockCopyInstance(sourceList.get(0));
     }
 
     @Override
@@ -62,6 +62,9 @@ public class CopyTask extends SwingWorker<Void, Integer> {
             }
         } catch (Exception ex) {
             logException(ex);
+        } finally {
+            //TODO Cleanup resources
+            blockCopy.close();
         }
         return null;
     }
@@ -118,7 +121,17 @@ public class CopyTask extends SwingWorker<Void, Integer> {
             listener.startCopyFile(sourceFile, currentFileNumber, totalCountFiles);
 
             if (targetFile.exists()) {
-                listener.fileExists(targetFile);
+                int result = listener.fileExists(targetFile);
+                switch (result) {
+                    case JOptionPane.NO_OPTION:
+                        bytesCopied += targetFile.getSize();
+                        listener.setAllProgressBar((int) (bytesCopied * 100 / bytesTotal));
+                        return;
+                    case JOptionPane.CANCEL_OPTION:
+                        cancel(true);
+                    default:
+                        targetFile.delete();
+                }
             }
 
             IFile targetParentFile = targetFile.getParentFile();
@@ -128,7 +141,6 @@ public class CopyTask extends SwingWorker<Void, Integer> {
 
             blockCopy.init(sourceFile, targetFile);
 
-            boolean isCancelled = false;
             try {
                 while ((blockCopy.read() >= 0 || blockCopy.positionBuffer() != 0) && !isCancelled()) {
                     blockCopy.copy();
@@ -136,16 +148,13 @@ public class CopyTask extends SwingWorker<Void, Integer> {
                     listener.setAllProgressBar((int) (bytesCopied * 100 / bytesTotal));
                     publish((int) (blockCopy.bytesWrittenTotal() * 100 / blockCopy.size()));
                 }
-            } catch (ApplicationException ex) {
-                ex.show();
-                isCancelled = true;
+            } catch (Exception ex) {
+                Application.logException(ex);
             } finally {
                 blockCopy.close();
-                isCancelled = isCancelled || isCancelled();
-            }
-
-            if (isCancelled && blockCopy.size() != blockCopy.bytesWrittenTotal()) {
-                targetFile.delete();
+                if (isCancelled() && blockCopy.size() != blockCopy.bytesWrittenTotal()) {
+                    targetFile.delete();
+                }
             }
 
             publish(100);

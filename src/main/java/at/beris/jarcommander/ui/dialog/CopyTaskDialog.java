@@ -13,18 +13,9 @@ import at.beris.jarcommander.filesystem.file.IFile;
 import at.beris.jarcommander.task.CopyTask;
 import at.beris.jarcommander.task.CopyTaskListener;
 import at.beris.jarcommander.ui.NavigationPanel;
-import org.apache.commons.lang3.NotImplementedException;
 
-import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JProgressBar;
-import java.awt.BorderLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
@@ -158,7 +149,9 @@ public class CopyTaskDialog extends JDialog implements ActionListener, CopyTaskL
     }
 
     @Override
-    public void fileExists(IFile file) {
-        throw new NotImplementedException("");
+    public int fileExists(IFile file) {
+        return JOptionPane.showConfirmDialog(this, file.getAbsolutePath() + " already exists! " +
+                        System.lineSeparator() + "Would you like to overwrite it?", "File exists",
+                JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
     }
 }
