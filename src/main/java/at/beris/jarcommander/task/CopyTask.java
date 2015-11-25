@@ -15,9 +15,7 @@ import at.beris.jarcommander.filesystem.file.JFileFactory;
 import at.beris.jarcommander.filesystem.path.JPath;
 import org.apache.log4j.Logger;
 
-import javax.swing.SwingWorker;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
+import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
@@ -25,7 +23,7 @@ import java.util.List;
 
 import static at.beris.jarcommander.Application.logException;
 
-public class CopyTask extends SwingWorker<Void, Integer> implements PropertyChangeListener {
+public class CopyTask extends SwingWorker<Void, Integer> {
     private final static Logger LOGGER = org.apache.log4j.Logger.getLogger(CopyTask.class);
 
     private List<JFile> sourceList;
@@ -78,14 +76,6 @@ public class CopyTask extends SwingWorker<Void, Integer> implements PropertyChan
         LOGGER.info("done");
         setProgress(100);
         listener.done();
-    }
-
-    @Override
-    public void propertyChange(PropertyChangeEvent evt) {
-        if ("progress".equals(evt.getPropertyName())) {
-            int progress = (Integer) evt.getNewValue();
-            listener.setAllProgressBar(progress);
-        }
     }
 
     private void retrieveFileInfo(JFile sourceFile) {
@@ -141,7 +131,7 @@ public class CopyTask extends SwingWorker<Void, Integer> implements PropertyChan
                 while ((blockCopy.read() >= 0 || blockCopy.positionBuffer() != 0) && !isCancelled()) {
                     blockCopy.copy();
                     bytesCopied += blockCopy.bytesWritten();
-                    setProgress((int) (bytesCopied * 100 / bytesTotal));
+                    listener.setAllProgressBar((int) (bytesCopied * 100 / bytesTotal));
                     publish((int) (blockCopy.bytesWrittenTotal() * 100 / blockCopy.size()));
                 }
             } catch (IOException ex) {
