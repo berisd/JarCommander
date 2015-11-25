@@ -10,5 +10,5 @@
 package at.beris.jarcommander.filesystem.file;
 
 public interface Archivable {
-    JFile getArchive();
+    IFile getArchive();
 }

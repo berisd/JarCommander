@@ -9,9 +9,9 @@
 
 package at.beris.jarcommander.task;
 
-import at.beris.jarcommander.filesystem.file.JFile;
-import at.beris.jarcommander.filesystem.file.JFileFactory;
-import at.beris.jarcommander.filesystem.path.JPath;
+import at.beris.jarcommander.filesystem.file.IFile;
+import at.beris.jarcommander.filesystem.file.FileFactory;
+import at.beris.jarcommander.filesystem.path.IPath;
 import at.beris.jarcommander.filesystem.path.LocalPath;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -34,15 +34,15 @@ import static org.mockito.Mockito.times;
 public class CopyLocalFileTest {
     private static final String TARGET_DIRECTORY = "testtargetdir";
 
-    private static List<JFile> fileList;
-    private static List<JFile> sourceFiles;
-    private static JPath targetPath;
+    private static List<IFile> fileList;
+    private static List<IFile> sourceFiles;
+    private static IPath targetPath;
 
     @BeforeClass
     public static void setUp() throws Exception {
         sourceFiles = new ArrayList<>();
-        sourceFiles.add(JFileFactory.newInstance(new File("testfile1.txt")));
-        sourceFiles.add(JFileFactory.newInstance(new File("testdir")));
+        sourceFiles.add(FileFactory.newInstance(new File("testfile1.txt")));
+        sourceFiles.add(FileFactory.newInstance(new File("testdir")));
 
         targetPath = new LocalPath(new File(TARGET_DIRECTORY).toPath());
 
@@ -51,7 +51,7 @@ public class CopyLocalFileTest {
 
     @AfterClass
     public static void tearDown() {
-        for (JFile file : sourceFiles) {
+        for (IFile file : sourceFiles) {
             file.delete();
         }
     }
@@ -78,8 +78,8 @@ public class CopyLocalFileTest {
 
         List<String> expectedFilenames = createExpectedFilenames();
 
-        for (JFile file : fileList) {
-            JFile targetFile = JFileFactory.newInstance(new File(targetPath.toString(), file.toString()));
+        for (IFile file : fileList) {
+            IFile targetFile = FileFactory.newInstance(new File(targetPath.toString(), file.toString()));
 
             if (targetFile.isDirectory())
                 targetFile.mkdirs();
@@ -93,13 +93,13 @@ public class CopyLocalFileTest {
         copyTask.execute();
         copyTask.get();
 
-        ArgumentCaptor<JFile> fileArgumentCaptor = ArgumentCaptor.forClass(JFile.class);
+        ArgumentCaptor<IFile> fileArgumentCaptor = ArgumentCaptor.forClass(IFile.class);
         Mockito.verify(copyTaskListener, times(expectedFilenames.size())).fileExists(fileArgumentCaptor.capture());
 
-        List<JFile> capturedFiles = fileArgumentCaptor.getAllValues();
+        List<IFile> capturedFiles = fileArgumentCaptor.getAllValues();
 
         List<String> actualFilenames = new ArrayList<>();
-        for (JFile file : capturedFiles) {
+        for (IFile file : capturedFiles) {
             actualFilenames.add(file.toString());
         }
 
@@ -121,17 +121,17 @@ public class CopyLocalFileTest {
 
     private static void createFiles() throws IOException {
         fileList = new ArrayList<>();
-        fileList.add(JFileFactory.newInstance(new File("testfile1.txt")));
-        fileList.add(JFileFactory.newInstance(new File("testdir" + File.separator + "testfile2.txt")));
-        fileList.add(JFileFactory.newInstance(new File("testdir" + File.separator + "testfile3.txt")));
-        fileList.add(JFileFactory.newInstance(new File("testdir" + File.separator + "subdir" + File.separator + "testfile4.txt")));
-        fileList.add(JFileFactory.newInstance(new File("testdir" + File.separator + "subdir" + File.separator + "testfile5.txt")));
+        fileList.add(FileFactory.newInstance(new File("testfile1.txt")));
+        fileList.add(FileFactory.newInstance(new File("testdir" + File.separator + "testfile2.txt")));
+        fileList.add(FileFactory.newInstance(new File("testdir" + File.separator + "testfile3.txt")));
+        fileList.add(FileFactory.newInstance(new File("testdir" + File.separator + "subdir" + File.separator + "testfile4.txt")));
+        fileList.add(FileFactory.newInstance(new File("testdir" + File.separator + "subdir" + File.separator + "testfile5.txt")));
 
         String testString = "testtesttesttesttesttesttesttesttesttesttesttesttesttesttest";
         StringBuilder dataString = new StringBuilder(testString);
 
         int index = 0;
-        for (JFile file : fileList) {
+        for (IFile file : fileList) {
             if (file.getParentFile() != null)
                 file.getParentFile().mkdirs();
 
@@ -139,14 +139,14 @@ public class CopyLocalFileTest {
             while (dataString.length() < COPY_BUFFER_SIZE * index + 10)
                 dataString.append(testString);
 
-            JPath path = file.toPath();
+            IPath path = file.toPath();
             Files.write((Path) path.getBaseObject(), dataString.toString().getBytes());
         }
     }
 
     private void assertFiles() throws IOException {
-        for (JFile sourceFile : fileList) {
-            JFile targetFile = JFileFactory.newInstance(new File(targetPath.toString(), sourceFile.toString()));
+        for (IFile sourceFile : fileList) {
+            IFile targetFile = FileFactory.newInstance(new File(targetPath.toString(), sourceFile.toString()));
             if (targetFile.exists()) {
                 assertArrayEquals(sourceFile.checksum(), targetFile.checksum());
             } else {

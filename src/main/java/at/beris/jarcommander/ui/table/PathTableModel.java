@@ -9,15 +9,11 @@
 
 package at.beris.jarcommander.ui.table;
 
-import at.beris.jarcommander.filesystem.file.JFile;
-import at.beris.jarcommander.filesystem.file.JFileFactory;
-import at.beris.jarcommander.filesystem.path.JPath;
-import org.apache.commons.lang3.StringUtils;
+import at.beris.jarcommander.filesystem.file.IFile;
+import at.beris.jarcommander.filesystem.path.IPath;
 import org.apache.log4j.Logger;
 
 import javax.swing.table.AbstractTableModel;
-import java.io.File;
-import java.nio.file.FileSystems;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -27,21 +23,21 @@ public class PathTableModel extends AbstractTableModel {
     private final static Logger LOGGER = Logger.getLogger(PathTableModel.class);
 
     private static final int columnCount = 4;
-    private List<JFile> fileList;
-    private JPath path;
+    private List<IFile> fileList;
+    private IPath path;
 
     public PathTableModel() {
         fileList = new ArrayList<>();
     }
 
-    public void setPath(JPath path) {
+    public void setPath(IPath path) {
         LOGGER.debug("setPath");
         this.path = path;
         fileList.clear();
         fileList.addAll(path.getEntries());
     }
 
-    public void listFile(JFile file) {
+    public void listFile(IFile file) {
         LOGGER.debug("listFile " + file);
         fileList.clear();
         fileList.addAll(file.list());
@@ -67,7 +63,7 @@ public class PathTableModel extends AbstractTableModel {
     public Class<?> getColumnClass(int columnIndex) {
         switch (columnIndex) {
             case 0:
-                return JFile.class;
+                return IFile.class;
             case 1:
                 return Date.class;
             case 2:
@@ -91,7 +87,7 @@ public class PathTableModel extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        JFile file = fileList.get(rowIndex);
+        IFile file = fileList.get(rowIndex);
 
         switch (columnIndex) {
             case 0:

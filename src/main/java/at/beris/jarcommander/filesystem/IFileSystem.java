@@ -9,14 +9,14 @@
 
 package at.beris.jarcommander.filesystem;
 
-import at.beris.jarcommander.filesystem.drive.JDrive;
+import at.beris.jarcommander.filesystem.drive.IDrive;
 
 import java.util.List;
 
-public interface JFileSystem {
+public interface IFileSystem {
     void open();
 
     void close();
 
-    List<JDrive> getDriveList();
+    List<IDrive> getDriveList();
 }

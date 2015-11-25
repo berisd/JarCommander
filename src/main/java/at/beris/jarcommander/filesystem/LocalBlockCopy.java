@@ -10,7 +10,7 @@
 package at.beris.jarcommander.filesystem;
 
 import at.beris.jarcommander.exception.ApplicationException;
-import at.beris.jarcommander.filesystem.file.JFile;
+import at.beris.jarcommander.filesystem.file.IFile;
 import at.beris.jarcommander.filesystem.file.LocalFile;
 import org.apache.commons.lang3.NotImplementedException;
 
@@ -34,9 +34,9 @@ public class LocalBlockCopy implements IBlockCopy {
     }
 
     @Override
-    public void init(JFile sourceFile, JFile targetFile) {
+    public void init(IFile sourceFile, IFile targetFile) {
         if (!(sourceFile instanceof LocalFile) || !(targetFile instanceof LocalFile)) {
-            throw new NotImplementedException("Not implemented for this JFile Type");
+            throw new NotImplementedException("Not implemented for this IFile Type");
         }
 
         try {

@@ -9,17 +9,17 @@
 
 package at.beris.jarcommander;
 
-import at.beris.jarcommander.filesystem.file.JFile;
+import at.beris.jarcommander.filesystem.file.IFile;
 
 import java.util.Comparator;
 
-public class FileDefaultComparator implements Comparator<JFile> {
+public class FileDefaultComparator implements Comparator<IFile> {
     @Override
-    public int compare(JFile o1, JFile o2) {
+    public int compare(IFile o1, IFile o2) {
         return compareTo(o1, o2);
     }
 
-    public int compareTo(JFile file1, JFile file2) {
+    public int compareTo(IFile file1, IFile file2) {
         if (file1 == null && file2 == null) {
             return 0;
         } else if (file1 == null || file2 == null) {

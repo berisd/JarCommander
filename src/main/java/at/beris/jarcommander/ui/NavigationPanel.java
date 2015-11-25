@@ -9,11 +9,11 @@
 
 package at.beris.jarcommander.ui;
 
-import at.beris.jarcommander.filesystem.JFileSystem;
-import at.beris.jarcommander.filesystem.drive.JDrive;
+import at.beris.jarcommander.filesystem.IFileSystem;
+import at.beris.jarcommander.filesystem.drive.IDrive;
 import at.beris.jarcommander.filesystem.file.FileHelper;
-import at.beris.jarcommander.filesystem.file.JFile;
-import at.beris.jarcommander.filesystem.path.JPath;
+import at.beris.jarcommander.filesystem.file.IFile;
+import at.beris.jarcommander.filesystem.path.IPath;
 import at.beris.jarcommander.ui.combobox.DriveComboBox;
 import at.beris.jarcommander.ui.table.FileTable;
 import at.beris.jarcommander.ui.table.FileTablePane;
@@ -42,7 +42,7 @@ public class NavigationPanel extends JPanel {
     private boolean selected;
     private Border borderNormal;
     private Border borderSelected;
-    private JPath currentPath;
+    private IPath currentPath;
 
     private DriveComboBox driveComboBox;
     private JTextField currentPathTextField;
@@ -58,7 +58,7 @@ public class NavigationPanel extends JPanel {
 
         addMouseListener(new MouseListener());
 
-        final JDrive currentDrive = (JDrive) driveComboBox.getSelectedItem();
+        final IDrive currentDrive = (IDrive) driveComboBox.getSelectedItem();
         currentPath = currentDrive.getPath();
 
         currentPathTextField.addKeyListener(new
@@ -127,8 +127,8 @@ public class NavigationPanel extends JPanel {
         }
     }
 
-    public void executeFile(JFile file) {
-        JPath path = file.toPath();
+    public void executeFile(IFile file) {
+        IPath path = file.toPath();
 
         if (FileHelper.isArchive(file)) {
             currentPath = path;
@@ -149,11 +149,11 @@ public class NavigationPanel extends JPanel {
         }
     }
 
-    public List<JFile> getSelection() {
-        List<JFile> fileList = new ArrayList<>();
+    public List<IFile> getSelection() {
+        List<IFile> fileList = new ArrayList<>();
         for (int rowIndex : fileTablePane.getTable().getSelectedRows()) {
             int modelIndex = fileTablePane.getTable().getRowSorter().convertRowIndexToModel(rowIndex);
-            fileList.add((JFile) fileTablePane.getTable().getModel().getValueAt(modelIndex, 0));
+            fileList.add((IFile) fileTablePane.getTable().getModel().getValueAt(modelIndex, 0));
         }
         return fileList;
     }
@@ -164,7 +164,7 @@ public class NavigationPanel extends JPanel {
     }
 
 
-    public void changeDirectory(JPath newPath) {
+    public void changeDirectory(IPath newPath) {
         String[] pathParts = newPath.toString().split(File.separator);
         String pathLastPart = pathParts[pathParts.length - 1];
 
@@ -181,11 +181,11 @@ public class NavigationPanel extends JPanel {
         fileTable.setPath(currentPath);
     }
 
-    public JPath getCurrentPath() {
+    public IPath getCurrentPath() {
         return currentPath;
     }
 
-    public JFileSystem getFileSystem() {
+    public IFileSystem getFileSystem() {
         return driveComboBox.getFileSystem();
     }
 }

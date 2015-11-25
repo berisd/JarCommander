@@ -10,7 +10,7 @@
 package at.beris.jarcommander.action;
 
 import at.beris.jarcommander.ApplicationContext;
-import at.beris.jarcommander.filesystem.drive.JDrive;
+import at.beris.jarcommander.filesystem.drive.IDrive;
 import at.beris.jarcommander.ui.NavigationPanel;
 import at.beris.jarcommander.ui.SessionPanel;
 import org.apache.log4j.Logger;
@@ -30,7 +30,7 @@ public class ChangeDriveAction extends CustomAction {
         SessionPanel sessionPanel = (SessionPanel) context.getSessionsPanel().getSelectedComponent();
         NavigationPanel navigationPanel = sessionPanel.getSelectedNavigationPanel();
 
-        JDrive driveInfo = (JDrive) ((ParamActionEvent) e).getParam();
+        IDrive driveInfo = (IDrive) ((ParamActionEvent) e).getParam();
         navigationPanel.changeDirectory(driveInfo.getPath());
     }
 }

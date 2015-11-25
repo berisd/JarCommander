@@ -9,7 +9,7 @@
 
 package at.beris.jarcommander.ui.dialog;
 
-import at.beris.jarcommander.filesystem.file.JFile;
+import at.beris.jarcommander.filesystem.file.IFile;
 import at.beris.jarcommander.task.CopyTask;
 import at.beris.jarcommander.task.CopyTaskListener;
 import at.beris.jarcommander.ui.NavigationPanel;
@@ -42,9 +42,9 @@ public class CopyTaskDialog extends JDialog implements ActionListener, CopyTaskL
     private JLabel labelCopyStatus;
 
     private NavigationPanel targetPanel;
-    private List<JFile> fileList;
+    private List<IFile> fileList;
 
-    public CopyTaskDialog(List<JFile> fileList, NavigationPanel targetPanel) {
+    public CopyTaskDialog(List<IFile> fileList, NavigationPanel targetPanel) {
         this.fileList = fileList;
         this.targetPanel = targetPanel;
 
@@ -148,7 +148,7 @@ public class CopyTaskDialog extends JDialog implements ActionListener, CopyTaskL
     }
 
     @Override
-    public void startCopyFile(JFile sourceFile, long currentFileNumber, long totalCountFiles) {
+    public void startCopyFile(IFile sourceFile, long currentFileNumber, long totalCountFiles) {
         String infoText = "Copying " + sourceFile.getAbsolutePath() + " ... ";
         labelInfo.setText(infoText);
         labelInfo.setToolTipText(infoText);
@@ -158,7 +158,7 @@ public class CopyTaskDialog extends JDialog implements ActionListener, CopyTaskL
     }
 
     @Override
-    public void fileExists(JFile file) {
+    public void fileExists(IFile file) {
         throw new NotImplementedException("");
     }
 }

@@ -9,17 +9,15 @@
 
 package at.beris.jarcommander.filesystem;
 
-import at.beris.jarcommander.filesystem.drive.JDrive;
+import at.beris.jarcommander.filesystem.drive.IDrive;
 import at.beris.jarcommander.filesystem.drive.SshDrive;
-import at.beris.jarcommander.filesystem.path.JPath;
 import at.beris.jarcommander.filesystem.path.SshPath;
 import org.apache.commons.lang3.NotImplementedException;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SshFileSystem implements JFileSystem {
+public class SshFileSystem implements IFileSystem {
     private SshContext context;
 
     public SshFileSystem(SshContext context) {
@@ -38,8 +36,8 @@ public class SshFileSystem implements JFileSystem {
     }
 
     @Override
-    public List<JDrive> getDriveList() {
-        ArrayList<JDrive> driveList = new ArrayList<>();
+    public List<IDrive> getDriveList() {
+        ArrayList<IDrive> driveList = new ArrayList<>();
         SshDrive drive = new SshDrive();
         drive.setPath(new SshPath(context, "/"));
         driveList.add(drive);

@@ -10,8 +10,8 @@
 package at.beris.jarcommander.filesystem.path;
 
 import at.beris.jarcommander.Application;
-import at.beris.jarcommander.filesystem.file.JFile;
-import at.beris.jarcommander.filesystem.file.JFileFactory;
+import at.beris.jarcommander.filesystem.file.IFile;
+import at.beris.jarcommander.filesystem.file.FileFactory;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
@@ -22,7 +22,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LocalPath implements JPath<Path> {
+public class LocalPath implements IPath<Path> {
     private Path path;
 
     public LocalPath(Path path) {
@@ -35,16 +35,16 @@ public class LocalPath implements JPath<Path> {
     }
 
     @Override
-    public List<JFile> getEntries() {
-        List<JFile> entryList = new ArrayList<>();
+    public List<IFile> getEntries() {
+        List<IFile> entryList = new ArrayList<>();
         try {
             if (!path.toString().equals("/") && StringUtils.countMatches(path.toString(), FileSystems.getDefault().getSeparator()) >= 1) {
-                entryList.add(JFileFactory.newInstance(new File("..")));
+                entryList.add(FileFactory.newInstance(new File("..")));
             }
 
             for (Path childPath : Files.newDirectoryStream(path)) {
                 File file = childPath.toFile();
-                entryList.add(JFileFactory.newInstance(file));
+                entryList.add(FileFactory.newInstance(file));
             }
         } catch (IOException e) {
             Application.logException(e);
@@ -53,23 +53,23 @@ public class LocalPath implements JPath<Path> {
     }
 
     @Override
-    public JPath normalize() {
+    public IPath normalize() {
         return new LocalPath(path.normalize());
     }
 
     @Override
-    public JPath getRoot() {
+    public IPath getRoot() {
         return new LocalPath(path.getRoot());
     }
 
     @Override
-    public JPath getParent() {
+    public IPath getParent() {
         return new LocalPath(path.getParent());
     }
 
     @Override
-    public JFile toFile() {
-        return JFileFactory.newInstance(path.toFile());
+    public IFile toFile() {
+        return FileFactory.newInstance(path.toFile());
     }
 
     @Override
@@ -78,7 +78,7 @@ public class LocalPath implements JPath<Path> {
     }
 
     @Override
-    public int compareTo(JPath jPath) {
-        return path.compareTo((Path) jPath.getBaseObject());
+    public int compareTo(IPath iPath) {
+        return path.compareTo((Path) iPath.getBaseObject());
     }
 }

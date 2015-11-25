@@ -9,7 +9,7 @@
 
 package at.beris.jarcommander.filesystem.file;
 
-import at.beris.jarcommander.filesystem.path.JPath;
+import at.beris.jarcommander.filesystem.path.IPath;
 import org.apache.commons.compress.archivers.ArchiveOutputStream;
 import org.apache.commons.compress.archivers.ArchiveStreamFactory;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
@@ -51,25 +51,25 @@ public class CompressedFileTest {
 
     @Test
     public void readFilesInRootDirectory() {
-        List<JFile> fileList = JFileFactory.createListFromArchive(new File(ZIP_FILENAME));
+        List<IFile> fileList = FileFactory.createListFromArchive(new File(ZIP_FILENAME));
         assertEquals(3, fileList.size());
     }
 
     @Test
     public void navigatePathDown() {
-        List<JFile> subDirFileList = getFilesInSubDirectory();
+        List<IFile> subDirFileList = getFilesInSubDirectory();
         assertEquals(2, subDirFileList.size());
     }
 
     @Test
     public void navigatePathUp() {
-        List<JFile> subDirFileList = getFilesInSubDirectory();
-        JPath parentDir = subDirFileList.get(0).toPath().getParent();
+        List<IFile> subDirFileList = getFilesInSubDirectory();
+        IPath parentDir = subDirFileList.get(0).toPath().getParent();
         assertEquals(3, parentDir.getEntries().size());
     }
 
-    private List<JFile> getFilesInSubDirectory() {
-        List<JFile> fileList = JFileFactory.createListFromArchive(new File(ZIP_FILENAME));
+    private List<IFile> getFilesInSubDirectory() {
+        List<IFile> fileList = FileFactory.createListFromArchive(new File(ZIP_FILENAME));
         return fileList.get(0).toPath().getEntries();
     }
 

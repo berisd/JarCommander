@@ -31,51 +31,51 @@ import java.util.Set;
 
 import static at.beris.jarcommander.Application.logException;
 
-public class JFileFactory {
-    public static JFile newInstance(JFile parent, String child) {
+public class FileFactory {
+    public static IFile newInstance(IFile parent, String child) {
         if (parent instanceof LocalFile) {
             return newInstance(new File((File) parent.getBaseObject(), child));
         } else
-            throw new RuntimeException("Can't create JFile with given parent and child.");
+            throw new RuntimeException("Can't create IFile with given parent and child.");
     }
 
-    public static JFile newInstance(File file) {
+    public static IFile newInstance(File file) {
         if (file == null)
             return null;
 
-        JFile<File> jFile = new LocalFile(file);
+        IFile<File> iFile = new LocalFile(file);
 
         File parent = file.getParentFile();
-        JFile virtualChild = jFile;
+        IFile virtualChild = iFile;
         while (parent != null) {
-            JFile virtualParent = newInstance(parent);
+            IFile virtualParent = newInstance(parent);
             virtualChild.setParentFile(virtualParent);
             virtualChild = virtualParent;
             parent = parent.getParentFile();
         }
-        return jFile;
+        return iFile;
     }
 
-    public static JFile newInstance(ArchiveEntry archiveEntry, File archiveFile) {
+    public static IFile newInstance(ArchiveEntry archiveEntry, File archiveFile) {
         if (archiveEntry == null)
             return null;
-        return newInstance(archiveEntry, JFileFactory.newInstance(archiveFile));
+        return newInstance(archiveEntry, FileFactory.newInstance(archiveFile));
     }
 
-    public static JFile newInstance(ArchiveEntry archiveEntry, JFile archiveFile) {
+    public static IFile newInstance(ArchiveEntry archiveEntry, IFile archiveFile) {
         if (archiveEntry == null)
             return null;
         return new CompressedFile(archiveEntry, archiveFile);
     }
 
-    public static JFile newSshFileInstance(SshContext context, String path, ChannelSftp.LsEntry file) {
+    public static IFile newSshFileInstance(SshContext context, String path, ChannelSftp.LsEntry file) {
         if (file == null)
             return null;
         return new SshFile(context, path, file);
     }
 
-    public static List<JFile> createListFromArchive(File archiveFile) {
-        List<JFile> fileList = new ArrayList<>();
+    public static List<IFile> createListFromArchive(File archiveFile) {
+        List<IFile> fileList = new ArrayList<>();
         try {
 
             ArchiveStreamFactory factory = new ArchiveStreamFactory();
@@ -83,19 +83,19 @@ public class JFileFactory {
             ArchiveInputStream ais = factory.createArchiveInputStream(fis);
 
             ArchiveEntry ae;
-            Map<String, JFile> pathToArchiveEntryMap = new HashMap<>();
-            Map<String, Set<JFile>> archiveEntryToChildrenMap = new HashMap<>();
+            Map<String, IFile> pathToArchiveEntryMap = new HashMap<>();
+            Map<String, Set<IFile>> archiveEntryToChildrenMap = new HashMap<>();
 
             while ((ae = ais.getNextEntry()) != null) {
-                JFile file = JFileFactory.newInstance(ae, archiveFile);
+                IFile file = FileFactory.newInstance(ae, archiveFile);
 
                 String[] parts = ae.getName().split(File.separator);
                 pathToArchiveEntryMap.put(parts[parts.length - 1], file);
 
                 if (parts.length > 1) {
-                    JFile currentFile = file;
+                    IFile currentFile = file;
                     for (int i = parts.length - 2; i >= 0; i--) {
-                        JFile parentFile = pathToArchiveEntryMap.get(parts[i]);
+                        IFile parentFile = pathToArchiveEntryMap.get(parts[i]);
                         currentFile.setParentFile(parentFile);
                         currentFile = parentFile;
                     }
@@ -103,19 +103,19 @@ public class JFileFactory {
                     for (int i = 0; i < parts.length - 1; i++) {
                         if (i + 1 < parts.length) {
                             if (archiveEntryToChildrenMap.get(parts[i]) == null) {
-                                archiveEntryToChildrenMap.put(parts[i], new LinkedHashSet<JFile>());
+                                archiveEntryToChildrenMap.put(parts[i], new LinkedHashSet<IFile>());
                             }
                             archiveEntryToChildrenMap.get(parts[i]).add(pathToArchiveEntryMap.get(parts[i + 1]));
                         }
                     }
 
-                    for (Map.Entry<String, Set<JFile>> entry : archiveEntryToChildrenMap.entrySet()) {
-                        Set<JFile> children = archiveEntryToChildrenMap.get(entry.getKey());
+                    for (Map.Entry<String, Set<IFile>> entry : archiveEntryToChildrenMap.entrySet()) {
+                        Set<IFile> children = archiveEntryToChildrenMap.get(entry.getKey());
                         pathToArchiveEntryMap.get(entry.getKey()).addFile(children);
                     }
 
                 } else {
-                    file.setParentFile(JFileFactory.newInstance(archiveFile));
+                    file.setParentFile(FileFactory.newInstance(archiveFile));
                     fileList.add(file);
                 }
             }

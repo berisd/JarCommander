@@ -11,8 +11,8 @@ package at.beris.jarcommander.filesystem.path;
 
 import at.beris.jarcommander.Application;
 import at.beris.jarcommander.filesystem.SshContext;
-import at.beris.jarcommander.filesystem.file.JFile;
-import at.beris.jarcommander.filesystem.file.JFileFactory;
+import at.beris.jarcommander.filesystem.file.IFile;
+import at.beris.jarcommander.filesystem.file.FileFactory;
 import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.SftpException;
 import org.apache.commons.lang3.NotImplementedException;
@@ -20,11 +20,10 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Vector;
 
-public class SshPath implements JPath<String> {
+public class SshPath implements IPath<String> {
 
     private SshContext context;
     private String path;
@@ -40,8 +39,8 @@ public class SshPath implements JPath<String> {
     }
 
     @Override
-    public List<JFile> getEntries() {
-        List<JFile> fileList = new ArrayList<JFile>();
+    public List<IFile> getEntries() {
+        List<IFile> fileList = new ArrayList<IFile>();
 
         ChannelSftp channel = (ChannelSftp) context.getChannel();
 
@@ -58,7 +57,7 @@ public class SshPath implements JPath<String> {
                 if (dirEntry.getFilename().equals(".") || (path.equals(File.separator) && dirEntry.getFilename().equals("..")))
                     continue;
 
-                JFile file = JFileFactory.newSshFileInstance(context, path + (! path.equals(File.separator) ? File.separator : "") + dirEntry.getFilename(), dirEntry);
+                IFile file = FileFactory.newSshFileInstance(context, path + (! path.equals(File.separator) ? File.separator : "") + dirEntry.getFilename(), dirEntry);
                 fileList.add(file);
             }
         }
@@ -67,26 +66,26 @@ public class SshPath implements JPath<String> {
     }
 
     @Override
-    public JPath normalize() {
+    public IPath normalize() {
         return new SshPath(context, path.replace(".." + File.separator, ""));
     }
 
     @Override
-    public JPath getRoot() {
+    public IPath getRoot() {
         String[] pathParts = path.split(File.separator);
         String rootPath = pathParts[0];
         return new SshPath(context, rootPath);
     }
 
     @Override
-    public JPath getParent() {
+    public IPath getParent() {
         String[] pathParts = path.split(File.separator);
         String parentPath = StringUtils.join(pathParts, File.separator, 0, pathParts.length - 1);
         return new SshPath(context, parentPath + File.separator);
     }
 
     @Override
-    public JFile toFile() {
+    public IFile toFile() {
         throw new NotImplementedException("");
     }
 
@@ -96,7 +95,7 @@ public class SshPath implements JPath<String> {
     }
 
     @Override
-    public int compareTo(JPath jPath) {
+    public int compareTo(IPath iPath) {
         return 0;
     }
 }

@@ -9,12 +9,12 @@
 
 package at.beris.jarcommander.filesystem;
 
-import at.beris.jarcommander.filesystem.file.JFile;
+import at.beris.jarcommander.filesystem.file.IFile;
 
 public interface IBlockCopy {
     int COPY_BUFFER_SIZE = 1024 * 16;
 
-    void init(JFile sourceFile, JFile targetFile);
+    void init(IFile sourceFile, IFile targetFile);
     void close();
     void copy();
     int read();

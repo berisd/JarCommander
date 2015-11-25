@@ -9,24 +9,24 @@
 
 package at.beris.jarcommander.filesystem.path;
 
-import at.beris.jarcommander.filesystem.file.JFile;
+import at.beris.jarcommander.filesystem.file.IFile;
 
 import java.util.List;
 
-public interface JPath<T> {
+public interface IPath<T> {
     T getBaseObject();
 
-    List<JFile> getEntries();
+    List<IFile> getEntries();
 
-    JPath normalize();
+    IPath normalize();
 
-    JPath getRoot();
+    IPath getRoot();
 
-    JPath getParent();
+    IPath getParent();
 
     String toString();
 
-    JFile toFile();
+    IFile toFile();
 
-    int compareTo(JPath jPath);
+    int compareTo(IPath iPath);
 }

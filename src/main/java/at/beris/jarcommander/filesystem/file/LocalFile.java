@@ -10,7 +10,7 @@
 package at.beris.jarcommander.filesystem.file;
 
 import at.beris.jarcommander.Application;
-import at.beris.jarcommander.filesystem.path.JPath;
+import at.beris.jarcommander.filesystem.path.IPath;
 import at.beris.jarcommander.filesystem.path.LocalPath;
 import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
@@ -33,7 +33,7 @@ import java.util.Set;
 
 import static at.beris.jarcommander.filesystem.file.FileHelper.isArchive;
 
-public class LocalFile implements JFile<File> {
+public class LocalFile implements IFile<File> {
     private File file;
     private File parentFile;
     private Set<Attribute> windowsAttributes;
@@ -64,17 +64,17 @@ public class LocalFile implements JFile<File> {
     }
 
     @Override
-    public void setParentFile(JFile parentFile) {
+    public void setParentFile(IFile parentFile) {
         this.parentFile = (File) parentFile.getBaseObject();
     }
 
     @Override
-    public JFile getParentFile() {
-        return JFileFactory.newInstance(parentFile);
+    public IFile getParentFile() {
+        return FileFactory.newInstance(parentFile);
     }
 
     @Override
-    public JPath toPath() {
+    public IPath toPath() {
         return new LocalPath(file.toPath());
     }
 
@@ -99,18 +99,18 @@ public class LocalFile implements JFile<File> {
     }
 
     @Override
-    public void addFile(Set<JFile> files) {
+    public void addFile(Set<IFile> files) {
         throw new NotImplementedException("");
     }
 
     @Override
-    public List<JFile> list() {
-        List<JFile> fileList = new ArrayList<>();
+    public List<IFile> list() {
+        List<IFile> fileList = new ArrayList<>();
 
         if (file.isDirectory() || isArchive(this)) {
             Path path = file.toPath();
             if (!path.toString().equals(File.separator) && StringUtils.countMatches(path.toString(), FileSystems.getDefault().getSeparator()) >= 1) {
-                JFile backFile = JFileFactory.newInstance(new File(".."));
+                IFile backFile = FileFactory.newInstance(new File(".."));
                 backFile.setParentFile(this);
                 fileList.add(backFile);
             }
@@ -118,10 +118,10 @@ public class LocalFile implements JFile<File> {
 
         if (file.isDirectory()) {
             for (File childFile : file.listFiles()) {
-                fileList.add(JFileFactory.newInstance(childFile));
+                fileList.add(FileFactory.newInstance(childFile));
             }
         } else if (FileHelper.isArchive(this)) {
-            fileList.addAll(JFileFactory.createListFromArchive(this.file));
+            fileList.addAll(FileFactory.createListFromArchive(this.file));
         }
 
         return fileList;
@@ -147,14 +147,14 @@ public class LocalFile implements JFile<File> {
     }
 
     @Override
-    public List<JFile> listFiles() {
-        List<JFile> fileList = new ArrayList<>();
+    public List<IFile> listFiles() {
+        List<IFile> fileList = new ArrayList<>();
 
         File[] files = file.listFiles();
 
         if (files != null) {
             for (File file : files) {
-                fileList.add(JFileFactory.newInstance(file));
+                fileList.add(FileFactory.newInstance(file));
             }
         }
 

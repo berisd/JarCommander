@@ -9,9 +9,8 @@
 
 package at.beris.jarcommander.filesystem;
 
-import at.beris.jarcommander.filesystem.drive.JDrive;
+import at.beris.jarcommander.filesystem.drive.IDrive;
 import at.beris.jarcommander.filesystem.drive.LocalDrive;
-import at.beris.jarcommander.filesystem.path.JPath;
 import at.beris.jarcommander.filesystem.path.LocalPath;
 
 import java.io.File;
@@ -26,15 +25,15 @@ import java.util.List;
 
 import static at.beris.jarcommander.Application.logException;
 
-public class LocalFileSystem implements JFileSystem {
-    private List<JDrive> driveList;
+public class LocalFileSystem implements IFileSystem {
+    private List<IDrive> driveList;
 
     public LocalFileSystem() {
         driveList = createDriveList();
     }
 
-    public List<JDrive> createDriveList() {
-        List<JDrive> driveList = new ArrayList<>();
+    public List<IDrive> createDriveList() {
+        List<IDrive> driveList = new ArrayList<>();
         if (driveList.size() > 0)
             return driveList;
 
@@ -65,9 +64,9 @@ public class LocalFileSystem implements JFileSystem {
             logException(e);
         }
 
-        driveList.sort(new Comparator<JDrive>() {
+        driveList.sort(new Comparator<IDrive>() {
             @Override
-            public int compare(JDrive o1, JDrive o2) {
+            public int compare(IDrive o1, IDrive o2) {
                 return o1.getPath().compareTo(o2.getPath());
             }
         });
@@ -84,7 +83,7 @@ public class LocalFileSystem implements JFileSystem {
     }
 
     @Override
-    public List<JDrive> getDriveList() {
+    public List<IDrive> getDriveList() {
         return driveList;
     }
 }

@@ -12,10 +12,10 @@ package at.beris.jarcommander.ui;
 import at.beris.jarcommander.ApplicationContext;
 import at.beris.jarcommander.action.SelectNavigationPanelAction;
 import at.beris.jarcommander.exception.ApplicationException;
-import at.beris.jarcommander.filesystem.JFileSystem;
+import at.beris.jarcommander.filesystem.IFileSystem;
 import at.beris.jarcommander.filesystem.LocalFileSystem;
-import at.beris.jarcommander.filesystem.drive.JDrive;
-import at.beris.jarcommander.filesystem.path.JPath;
+import at.beris.jarcommander.filesystem.drive.IDrive;
+import at.beris.jarcommander.filesystem.path.IPath;
 import at.beris.jarcommander.ui.combobox.DriveComboBox;
 import at.beris.jarcommander.ui.table.FileTablePane;
 
@@ -39,7 +39,7 @@ public class UIFactory {
         return sessionsPanel;
     }
 
-    public SessionPanel createSessionPanel(String title, JFileSystem fileSystem) {
+    public SessionPanel createSessionPanel(String title, IFileSystem fileSystem) {
         SessionPanel sessionPanel = null;
         try {
             sessionPanel = new SessionPanel(createNavigationPanel(new LocalFileSystem()), createNavigationPanel(fileSystem));
@@ -51,10 +51,10 @@ public class UIFactory {
         return sessionPanel;
     }
 
-    public NavigationPanel createNavigationPanel(JFileSystem fileSystem) {
+    public NavigationPanel createNavigationPanel(IFileSystem fileSystem) {
         fileSystem.open();
         DriveComboBox driveComboBox = new DriveComboBox(context, fileSystem);
-        JPath currentPath = ((JDrive) driveComboBox.getSelectedItem()).getPath();
+        IPath currentPath = ((IDrive) driveComboBox.getSelectedItem()).getPath();
         final FileTablePane fileTablePane = new FileTablePane(context);
         JTextField currentPathTextField = new JTextField();
         currentPathTextField.setText(currentPath.toString());

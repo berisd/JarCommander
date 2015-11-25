@@ -10,7 +10,7 @@
 package at.beris.jarcommander.action;
 
 import at.beris.jarcommander.ApplicationContext;
-import at.beris.jarcommander.filesystem.file.JFile;
+import at.beris.jarcommander.filesystem.file.IFile;
 import at.beris.jarcommander.ui.NavigationPanel;
 import at.beris.jarcommander.ui.SessionPanel;
 import org.apache.log4j.Logger;
@@ -48,8 +48,8 @@ public class DeleteAction extends CustomAction {
         } else {
             int deletion = JOptionPane.showConfirmDialog(context.getApplicationWindow(), "Delete " + sourcePanel.getSelection().size() + " items?", "Deletion", JOptionPane.YES_NO_OPTION);
             if (deletion == JOptionPane.YES_OPTION) {
-                for (JFile jFile : sourcePanel.getSelection()) {
-                    File file = (File) jFile.getBaseObject();
+                for (IFile iFile : sourcePanel.getSelection()) {
+                    File file = (File) iFile.getBaseObject();
                     file.delete();
                 }
                 sourcePanel.refresh();

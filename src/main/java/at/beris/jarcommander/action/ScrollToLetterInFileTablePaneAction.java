@@ -10,7 +10,7 @@
 package at.beris.jarcommander.action;
 
 import at.beris.jarcommander.ApplicationContext;
-import at.beris.jarcommander.filesystem.file.JFile;
+import at.beris.jarcommander.filesystem.file.IFile;
 import at.beris.jarcommander.ui.NavigationPanel;
 import at.beris.jarcommander.ui.SessionPanel;
 import at.beris.jarcommander.ui.table.FileTable;
@@ -42,7 +42,7 @@ public class ScrollToLetterInFileTablePaneAction extends CustomAction {
         Character keyChar = (Character) ((ParamActionEvent) e).getParam();
 
         for (int rowIndex = 0; rowIndex < fileTable.getRowCount(); rowIndex++) {
-            JFile file = (JFile) fileTable.getValueAt(rowIndex, 0);
+            IFile file = (IFile) fileTable.getValueAt(rowIndex, 0);
             String[] fileNameParts = file.toString().split(File.separator);
             String fileName = fileNameParts[fileNameParts.length - 1];
             if (fileName.toLowerCase().charAt(0) == Character.toLowerCase(keyChar)) {

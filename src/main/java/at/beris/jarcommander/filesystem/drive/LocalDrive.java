@@ -9,21 +9,21 @@
 
 package at.beris.jarcommander.filesystem.drive;
 
-import at.beris.jarcommander.filesystem.path.JPath;
+import at.beris.jarcommander.filesystem.path.IPath;
 import at.beris.jarcommander.filesystem.path.LocalPath;
 
 import java.nio.file.Paths;
 
-public class LocalDrive implements JDrive {
-    private JPath path;
+public class LocalDrive implements IDrive {
+    private IPath path;
     private long spaceTotal;
     private long spaceLeft;
 
-    public JPath getPath() {
+    public IPath getPath() {
         return path;
     }
 
-    public void setPath(JPath path) {
+    public void setPath(IPath path) {
         this.path = path;
     }
 
@@ -43,7 +43,7 @@ public class LocalDrive implements JDrive {
         this.spaceLeft = spaceLeft;
     }
 
-    public JPath getPath(String path) {
+    public IPath getPath(String path) {
         return new LocalPath(Paths.get(path));
     }
 }

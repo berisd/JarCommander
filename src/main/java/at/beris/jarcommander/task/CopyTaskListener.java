@@ -9,7 +9,7 @@
 
 package at.beris.jarcommander.task;
 
-import at.beris.jarcommander.filesystem.file.JFile;
+import at.beris.jarcommander.filesystem.file.IFile;
 
 public interface CopyTaskListener {
     void setCurrentProgressBar(int progress);
@@ -18,7 +18,7 @@ public interface CopyTaskListener {
 
     void done();
 
-    void startCopyFile(JFile sourceFile, long currentFileNumber, long totalCountFiles);
+    void startCopyFile(IFile sourceFile, long currentFileNumber, long totalCountFiles);
 
-    void fileExists(JFile file);
+    void fileExists(IFile file);
 }

@@ -12,8 +12,8 @@ package at.beris.jarcommander.ui.combobox;
 import at.beris.jarcommander.ApplicationContext;
 import at.beris.jarcommander.action.ChangeDriveAction;
 import at.beris.jarcommander.action.SelectNavigationPanelAction;
-import at.beris.jarcommander.filesystem.JFileSystem;
-import at.beris.jarcommander.filesystem.drive.JDrive;
+import at.beris.jarcommander.filesystem.IFileSystem;
+import at.beris.jarcommander.filesystem.drive.IDrive;
 import org.apache.log4j.Logger;
 
 import javax.swing.JComboBox;
@@ -23,14 +23,14 @@ import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class DriveComboBox extends JComboBox<JDrive> {
+public class DriveComboBox extends JComboBox<IDrive> {
 
     private final static Logger LOGGER = Logger.getLogger(DriveComboBox.class.getName());
 
-    private JFileSystem fileSystem;
+    private IFileSystem fileSystem;
     private ApplicationContext context;
 
-    public DriveComboBox(ApplicationContext context, JFileSystem fileSystem) {
+    public DriveComboBox(ApplicationContext context, IFileSystem fileSystem) {
         super();
         this.context = context;
         this.fileSystem = fileSystem;
@@ -41,7 +41,7 @@ public class DriveComboBox extends JComboBox<JDrive> {
                                     @Override
                                     public void itemStateChanged(ItemEvent e) {
                                         LOGGER.debug("drivecombo itemStateChanged " + e.getItem().getClass());
-                                        JDrive driveInfo = (JDrive) e.getItem();
+                                        IDrive driveInfo = (IDrive) e.getItem();
                                         Component parent = ((Component) e.getSource()).getParent();
 
                                         if (parent != null) {
@@ -55,12 +55,12 @@ public class DriveComboBox extends JComboBox<JDrive> {
 
         setRenderer(new DriveInfoComboBoxRenderer());
 
-        for (JDrive driveInfo : fileSystem.getDriveList()) {
+        for (IDrive driveInfo : fileSystem.getDriveList()) {
             addItem(driveInfo);
         }
     }
 
-    public JFileSystem getFileSystem() {
+    public IFileSystem getFileSystem() {
         return fileSystem;
     }
 

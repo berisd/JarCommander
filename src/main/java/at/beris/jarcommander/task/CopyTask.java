@@ -12,9 +12,9 @@ package at.beris.jarcommander.task;
 import at.beris.jarcommander.exception.ApplicationException;
 import at.beris.jarcommander.filesystem.IBlockCopy;
 import at.beris.jarcommander.filesystem.LocalBlockCopy;
-import at.beris.jarcommander.filesystem.file.JFile;
-import at.beris.jarcommander.filesystem.file.JFileFactory;
-import at.beris.jarcommander.filesystem.path.JPath;
+import at.beris.jarcommander.filesystem.file.IFile;
+import at.beris.jarcommander.filesystem.file.FileFactory;
+import at.beris.jarcommander.filesystem.path.IPath;
 import org.apache.log4j.Logger;
 
 import javax.swing.*;
@@ -28,8 +28,8 @@ import static at.beris.jarcommander.Application.logException;
 public class CopyTask extends SwingWorker<Void, Integer> {
     private final static Logger LOGGER = org.apache.log4j.Logger.getLogger(CopyTask.class);
 
-    private List<JFile> sourceList;
-    private JPath targetPath;
+    private List<IFile> sourceList;
+    private IPath targetPath;
     private long bytesTotal = 0L;
     private long bytesCopied = 0L;
     private long totalCountFiles = 0;
@@ -37,7 +37,7 @@ public class CopyTask extends SwingWorker<Void, Integer> {
     private CopyTaskListener listener;
     private IBlockCopy blockCopy;
 
-    public CopyTask(List<JFile> sourceList, JPath targetPath, CopyTaskListener listener) {
+    public CopyTask(List<IFile> sourceList, IPath targetPath, CopyTaskListener listener) {
         this.sourceList = sourceList;
         this.targetPath = targetPath;
         this.listener = listener;
@@ -52,12 +52,12 @@ public class CopyTask extends SwingWorker<Void, Integer> {
     public Void doInBackground() throws Exception {
         LOGGER.debug("doInBackground");
         try {
-            for (JFile sourceFile : sourceList) {
+            for (IFile sourceFile : sourceList) {
                 retrieveFileInfo(sourceFile);
             }
 
-            for (JFile sourceFile : sourceList) {
-                JFile targetFile = JFileFactory.newInstance(targetPath.toFile(), sourceFile.getName());
+            for (IFile sourceFile : sourceList) {
+                IFile targetFile = FileFactory.newInstance(targetPath.toFile(), sourceFile.getName());
                 copyFiles(sourceFile, targetFile);
             }
         } catch (Exception ex) {
@@ -80,15 +80,15 @@ public class CopyTask extends SwingWorker<Void, Integer> {
         listener.done();
     }
 
-    private void retrieveFileInfo(JFile sourceFile) {
-        List<JFile> fileList;
+    private void retrieveFileInfo(IFile sourceFile) {
+        List<IFile> fileList;
         if (sourceFile.isDirectory()) {
             fileList = sourceFile.listFiles();
         } else {
             fileList = Collections.singletonList(sourceFile);
         }
 
-        for (JFile file : fileList) {
+        for (IFile file : fileList) {
             if (file.isDirectory()) {
                 retrieveFileInfo(file);
             } else {
@@ -98,7 +98,7 @@ public class CopyTask extends SwingWorker<Void, Integer> {
         }
     }
 
-    private void copyFiles(JFile sourceFile, JFile targetFile) throws IOException {
+    private void copyFiles(IFile sourceFile, IFile targetFile) throws IOException {
         LOGGER.debug("CopyFile " + sourceFile);
 
         if (sourceFile.isDirectory()) {
@@ -107,10 +107,10 @@ public class CopyTask extends SwingWorker<Void, Integer> {
             else
                 listener.fileExists(targetFile);
 
-            for (JFile sourceChildFile : (List<JFile>) sourceFile.list()) {
+            for (IFile sourceChildFile : (List<IFile>) sourceFile.list()) {
                 if (sourceChildFile.toString().equals(".."))
                     continue;
-                JFile destFile = JFileFactory.newInstance(new File((File) targetFile.getBaseObject(), sourceChildFile.getName()));
+                IFile destFile = FileFactory.newInstance(new File((File) targetFile.getBaseObject(), sourceChildFile.getName()));
                 copyFiles(sourceChildFile, destFile);
             }
         } else {
@@ -121,7 +121,7 @@ public class CopyTask extends SwingWorker<Void, Integer> {
                 listener.fileExists(targetFile);
             }
 
-            JFile targetParentFile = targetFile.getParentFile();
+            IFile targetParentFile = targetFile.getParentFile();
             if (targetParentFile != null) {
                 targetParentFile.mkdirs();
             }

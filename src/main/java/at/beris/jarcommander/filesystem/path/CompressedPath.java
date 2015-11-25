@@ -11,8 +11,8 @@ package at.beris.jarcommander.filesystem.path;
 
 import at.beris.jarcommander.filesystem.file.Archivable;
 import at.beris.jarcommander.filesystem.file.CompressedFile;
-import at.beris.jarcommander.filesystem.file.JFile;
-import at.beris.jarcommander.filesystem.file.JFileFactory;
+import at.beris.jarcommander.filesystem.file.IFile;
+import at.beris.jarcommander.filesystem.file.FileFactory;
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
@@ -21,10 +21,10 @@ import java.io.File;
 import java.util.Date;
 import java.util.List;
 
-public class CompressedPath implements JPath<ArchiveEntry> {
-    private JFile file;
+public class CompressedPath implements IPath<ArchiveEntry> {
+    private IFile file;
 
-    public CompressedPath(JFile file) {
+    public CompressedPath(IFile file) {
         this.file = file;
     }
 
@@ -34,12 +34,12 @@ public class CompressedPath implements JPath<ArchiveEntry> {
     }
 
     @Override
-    public List<JFile> getEntries() {
+    public List<IFile> getEntries() {
         return file.list();
     }
 
     @Override
-    public JPath normalize() {
+    public IPath normalize() {
         final ArchiveEntry archiveEntry = ((CompressedFile) file).getArchiveEntry();
 
         if (archiveEntry.getName().contains("..")) {
@@ -71,9 +71,9 @@ public class CompressedPath implements JPath<ArchiveEntry> {
     }
 
     @Override
-    public JPath getRoot() {
+    public IPath getRoot() {
         if (file instanceof Archivable) {
-            return new CompressedPath(JFileFactory.newInstance(new ArchiveEntry() {
+            return new CompressedPath(FileFactory.newInstance(new ArchiveEntry() {
                 @Override
                 public String getName() {
                     return "";
@@ -100,11 +100,11 @@ public class CompressedPath implements JPath<ArchiveEntry> {
     }
 
     @Override
-    public JPath getParent() {
-        JFile parentFile = file.getParentFile();
+    public IPath getParent() {
+        IFile parentFile = file.getParentFile();
 
         if (parentFile == null) {
-            JFile archivefile = ((Archivable) file).getArchive();
+            IFile archivefile = ((Archivable) file).getArchive();
             return archivefile.toPath();
         }
 
@@ -112,7 +112,7 @@ public class CompressedPath implements JPath<ArchiveEntry> {
     }
 
     @Override
-    public JFile toFile() {
+    public IFile toFile() {
         throw new NotImplementedException("");
     }
 
@@ -120,7 +120,7 @@ public class CompressedPath implements JPath<ArchiveEntry> {
     public String toString() {
         if (file instanceof Archivable) {
             Archivable archive = ((Archivable) file);
-            JFile archiveFile = archive.getArchive();
+            IFile archiveFile = archive.getArchive();
 
             return archiveFile.getAbsolutePath() + File.separator + file.getName();
         } else {
@@ -129,7 +129,7 @@ public class CompressedPath implements JPath<ArchiveEntry> {
     }
 
     @Override
-    public int compareTo(JPath jPath) {
+    public int compareTo(IPath iPath) {
         return 0;
     }
 }

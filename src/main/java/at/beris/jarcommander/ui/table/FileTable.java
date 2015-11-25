@@ -20,8 +20,8 @@ import at.beris.jarcommander.action.ScrollToLetterInFileTablePaneAction;
 import at.beris.jarcommander.action.ScrollToTopAction;
 import at.beris.jarcommander.action.SelectNavigationPanelAction;
 import at.beris.jarcommander.action.SwitchNavigationPanelAction;
-import at.beris.jarcommander.filesystem.file.JFile;
-import at.beris.jarcommander.filesystem.path.JPath;
+import at.beris.jarcommander.filesystem.file.IFile;
+import at.beris.jarcommander.filesystem.path.IPath;
 import org.apache.log4j.Logger;
 
 import javax.swing.JTable;
@@ -43,7 +43,7 @@ public class FileTable extends JTable {
     private final static Logger LOGGER = Logger.getLogger(FileTablePane.class);
 
     private TableRowSorter<TableModel> rowSorter;
-    private JPath path;
+    private IPath path;
     private ApplicationContext context;
     private ActionFactory actionFactory;
 
@@ -94,7 +94,7 @@ public class FileTable extends JTable {
         repaint();
     }
 
-    public void setPath(JPath path) {
+    public void setPath(IPath path) {
         this.path = path;
         ((PathTableModel) getModel()).setPath(path);
         rowSorter.sort();
@@ -103,7 +103,7 @@ public class FileTable extends JTable {
         requestFocusInWindow();
     }
 
-    public void listFile(JFile file) {
+    public void listFile(IFile file) {
         ((PathTableModel) getModel()).listFile(file);
         rowSorter.sort();
         getSelectionModel().clearSelection();

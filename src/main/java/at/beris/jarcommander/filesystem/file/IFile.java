@@ -9,13 +9,13 @@
 
 package at.beris.jarcommander.filesystem.file;
 
-import at.beris.jarcommander.filesystem.path.JPath;
+import at.beris.jarcommander.filesystem.path.IPath;
 
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-public interface JFile<T> {
+public interface IFile<T> {
     T getBaseObject();
 
     String getName();
@@ -26,11 +26,11 @@ public interface JFile<T> {
 
     boolean isDirectory();
 
-    void setParentFile(JFile parentFile);
+    void setParentFile(IFile parentFile);
 
-    JFile getParentFile();
+    IFile getParentFile();
 
-    void addFile(Set<JFile> files);
+    void addFile(Set<IFile> files);
 
     boolean exists();
 
@@ -38,15 +38,15 @@ public interface JFile<T> {
 
     Set<Attribute> attributes();
 
-    List<JFile> list();
+    List<IFile> list();
 
     String getAbsolutePath();
 
-    JPath toPath();
+    IPath toPath();
 
     void delete();
 
-    List<JFile> listFiles();
+    List<IFile> listFiles();
 
     byte[] checksum();
 }

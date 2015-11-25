@@ -9,19 +9,19 @@
 
 package at.beris.jarcommander.filesystem.drive;
 
-import at.beris.jarcommander.filesystem.path.JPath;
+import at.beris.jarcommander.filesystem.path.IPath;
 import org.apache.commons.lang3.NotImplementedException;
 
-public class SshDrive implements JDrive {
-    private JPath path;
+public class SshDrive implements IDrive {
+    private IPath path;
 
     @Override
-    public JPath getPath() {
+    public IPath getPath() {
         return path;
     }
 
     @Override
-    public void setPath(JPath path) {
+    public void setPath(IPath path) {
         this.path = path;
     }
 
@@ -46,7 +46,7 @@ public class SshDrive implements JDrive {
     }
 
     @Override
-    public JPath getPath(String path) {
+    public IPath getPath(String path) {
         throw new NotImplementedException("");
     }
 }

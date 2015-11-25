@@ -10,7 +10,7 @@
 package at.beris.jarcommander.filesystem.file;
 
 import at.beris.jarcommander.filesystem.path.CompressedPath;
-import at.beris.jarcommander.filesystem.path.JPath;
+import at.beris.jarcommander.filesystem.path.IPath;
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
@@ -22,14 +22,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class CompressedFile implements JFile<ArchiveEntry>, Archivable {
+public class CompressedFile implements IFile<ArchiveEntry>, Archivable {
     private ArchiveEntry archiveEntry;
-    private JFile parentFile;
+    private IFile parentFile;
     private Set<Attribute> windowsAttributes;
-    private Set<JFile> children;
-    private JFile archiveFile;
+    private Set<IFile> children;
+    private IFile archiveFile;
 
-    public CompressedFile(ArchiveEntry archiveEntry, JFile archiveFile) {
+    public CompressedFile(ArchiveEntry archiveEntry, IFile archiveFile) {
         this(archiveEntry);
         this.archiveFile = archiveFile;
     }
@@ -62,17 +62,17 @@ public class CompressedFile implements JFile<ArchiveEntry>, Archivable {
     }
 
     @Override
-    public void setParentFile(JFile parentFile) {
+    public void setParentFile(IFile parentFile) {
         this.parentFile = parentFile;
     }
 
     @Override
-    public JFile getParentFile() {
+    public IFile getParentFile() {
         return parentFile;
     }
 
     @Override
-    public JPath toPath() {
+    public IPath toPath() {
         return new CompressedPath(this);
     }
 
@@ -92,13 +92,13 @@ public class CompressedFile implements JFile<ArchiveEntry>, Archivable {
     }
 
     @Override
-    public List<JFile> list() {
-        List<JFile> files = new ArrayList<>();
-        JFile backFile = JFileFactory.newInstance(createEmptyArchiveEntry(), this.archiveFile);
+    public List<IFile> list() {
+        List<IFile> files = new ArrayList<>();
+        IFile backFile = FileFactory.newInstance(createEmptyArchiveEntry(), this.archiveFile);
         backFile.setParentFile(this.parentFile);
 
         files.add(backFile);
-        for (JFile childFile : children) {
+        for (IFile childFile : children) {
             files.add(childFile);
         }
 
@@ -116,12 +116,12 @@ public class CompressedFile implements JFile<ArchiveEntry>, Archivable {
     }
 
     @Override
-    public void addFile(Set<JFile> files) {
+    public void addFile(Set<IFile> files) {
         children.addAll(files);
     }
 
     @Override
-    public JFile getArchive() {
+    public IFile getArchive() {
         return archiveFile;
     }
 
@@ -131,7 +131,7 @@ public class CompressedFile implements JFile<ArchiveEntry>, Archivable {
     }
 
     @Override
-    public List<JFile> listFiles() {
+    public List<IFile> listFiles() {
         throw new NotImplementedException("");
     }
 
@@ -170,7 +170,7 @@ public class CompressedFile implements JFile<ArchiveEntry>, Archivable {
         return archiveEntry;
     }
 
-    public JFile getArchiveFile() {
+    public IFile getArchiveFile() {
         return archiveFile;
     }
 

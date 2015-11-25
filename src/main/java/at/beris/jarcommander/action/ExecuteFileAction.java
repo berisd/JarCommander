@@ -10,7 +10,7 @@
 package at.beris.jarcommander.action;
 
 import at.beris.jarcommander.ApplicationContext;
-import at.beris.jarcommander.filesystem.file.JFile;
+import at.beris.jarcommander.filesystem.file.IFile;
 import at.beris.jarcommander.ui.NavigationPanel;
 import at.beris.jarcommander.ui.SessionPanel;
 import at.beris.jarcommander.ui.table.FileTable;
@@ -45,7 +45,7 @@ public class ExecuteFileAction extends CustomAction {
         int firstSelectedRowIndex = fileTable.getSelectedRow();
 
         if (firstSelectedRowIndex >= 0) {
-            JFile file = (JFile) fileTable.getModel().getValueAt(fileTable.convertRowIndexToModel(firstSelectedRowIndex), 0);
+            IFile file = (IFile) fileTable.getModel().getValueAt(fileTable.convertRowIndexToModel(firstSelectedRowIndex), 0);
             if (file.isDirectory()) {
                 navigationPanel.changeDirectory(file.toPath());
             } else {

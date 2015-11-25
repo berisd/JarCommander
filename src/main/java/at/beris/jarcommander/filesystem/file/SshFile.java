@@ -10,7 +10,7 @@
 package at.beris.jarcommander.filesystem.file;
 
 import at.beris.jarcommander.filesystem.SshContext;
-import at.beris.jarcommander.filesystem.path.JPath;
+import at.beris.jarcommander.filesystem.path.IPath;
 import at.beris.jarcommander.filesystem.path.SshPath;
 import com.jcraft.jsch.ChannelSftp;
 import org.apache.commons.lang3.NotImplementedException;
@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Set;
 
 
-public class SshFile implements JFile<ChannelSftp.LsEntry> {
+public class SshFile implements IFile<ChannelSftp.LsEntry> {
     private SshContext context;
     private ChannelSftp.LsEntry file;
     private String path;
@@ -67,19 +67,19 @@ public class SshFile implements JFile<ChannelSftp.LsEntry> {
     }
 
     @Override
-    public void setParentFile(JFile parentFile) {
+    public void setParentFile(IFile parentFile) {
         this.parentFile = (ChannelSftp.LsEntry) parentFile.getBaseObject();
     }
 
     @Override
-    public JFile getParentFile() {
+    public IFile getParentFile() {
         String[] pathParts = path.split(File.separator);
         String parentPath = StringUtils.join(pathParts, File.separator, 0, pathParts.length - 2);
-        return JFileFactory.newSshFileInstance(context, parentPath, this.parentFile);
+        return FileFactory.newSshFileInstance(context, parentPath, this.parentFile);
     }
 
     @Override
-    public void addFile(Set<JFile> files) {
+    public void addFile(Set<IFile> files) {
         throw new NotImplementedException("");
     }
 
@@ -99,7 +99,7 @@ public class SshFile implements JFile<ChannelSftp.LsEntry> {
     }
 
     @Override
-    public List<JFile> list() {
+    public List<IFile> list() {
         throw new NotImplementedException("");
     }
 
@@ -109,7 +109,7 @@ public class SshFile implements JFile<ChannelSftp.LsEntry> {
     }
 
     @Override
-    public JPath toPath() {
+    public IPath toPath() {
         return new SshPath(context, path);
     }
 
@@ -119,7 +119,7 @@ public class SshFile implements JFile<ChannelSftp.LsEntry> {
     }
 
     @Override
-    public List<JFile> listFiles() {
+    public List<IFile> listFiles() {
         throw new NotImplementedException("");
     }
 
