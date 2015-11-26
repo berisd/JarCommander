@@ -66,13 +66,25 @@ public class CopyTaskDialog extends JDialog implements ActionListener, CopyTaskL
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         panel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder("Input"), BorderFactory.createEmptyBorder(5, 5, 5, 5)));
 
-        labelInfo = new JLabel("Copy " + fileList.size() + " items to:");
+        labelInfo = new JLabel("Copy " + countFileList() + " items to:");
         panel.add(labelInfo);
 
         labelCopyStatus = new JLabel(targetPanel.getCurrentPath().toString());
         panel.add(labelCopyStatus);
 
         return panel;
+    }
+
+    private int countFileList() {
+        int count = 0;
+
+        for (IFile file : fileList) {
+            if (file.getName().equals(".."))
+                continue;
+            count++;
+        }
+
+        return count;
     }
 
     private JPanel createPanelProgress() {

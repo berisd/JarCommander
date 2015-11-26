@@ -53,12 +53,16 @@ public class CopyTask extends SwingWorker<Void, Integer> {
         LOGGER.debug("doInBackground");
         try {
             for (IFile sourceFile : sourceList) {
+                if (sourceFile.getName().equals(".."))
+                    continue;
                 retrieveFileInfo(sourceFile);
             }
 
             for (IFile sourceFile : sourceList) {
                 if (isCancelled())
                     break;
+                if (sourceFile.getName().equals(".."))
+                    continue;
                 IFile targetFile = FileFactory.newInstance(targetPath.toFile(), sourceFile.getName());
                 copyFiles(sourceFile, targetFile);
             }
@@ -85,6 +89,9 @@ public class CopyTask extends SwingWorker<Void, Integer> {
     }
 
     private void retrieveFileInfo(IFile sourceFile) {
+        if (sourceFile.getName().equals(".."))
+            return;
+
         List<IFile> fileList;
         if (sourceFile.isDirectory()) {
             fileList = sourceFile.listFiles();
@@ -93,6 +100,8 @@ public class CopyTask extends SwingWorker<Void, Integer> {
         }
 
         for (IFile file : fileList) {
+            if (file.getName().equals(".."))
+                continue;
             if (file.isDirectory()) {
                 retrieveFileInfo(file);
             } else {
@@ -103,7 +112,10 @@ public class CopyTask extends SwingWorker<Void, Integer> {
     }
 
     private void copyFiles(IFile sourceFile, IFile targetFile) throws IOException {
-        LOGGER.debug("CopyFile " + sourceFile);
+        if (sourceFile.getName().equals(".."))
+            return;
+
+        LOGGER.debug("CopyFile " + sourceFile + " to " + targetFile);
 
         if (sourceFile.isDirectory()) {
             if (!targetFile.exists())
