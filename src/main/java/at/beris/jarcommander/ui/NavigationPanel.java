@@ -19,13 +19,9 @@ import at.beris.jarcommander.ui.table.FileTable;
 import at.beris.jarcommander.ui.table.FileTablePane;
 import org.apache.log4j.Logger;
 
-import javax.swing.BorderFactory;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
+import javax.swing.*;
 import javax.swing.border.Border;
-import java.awt.Component;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
+import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -161,6 +157,7 @@ public class NavigationPanel extends JPanel {
     public void refresh() {
         //TODO Refresh the whole Panel
         fileTable.refresh();
+        fileTablePane.getTable().clearSelection();
     }
 
 
