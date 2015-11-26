@@ -15,12 +15,10 @@ import at.beris.jarcommander.ui.NavigationPanel;
 import at.beris.jarcommander.ui.SessionPanel;
 import org.apache.log4j.Logger;
 
-import javax.swing.Action;
-import javax.swing.JOptionPane;
-import javax.swing.KeyStroke;
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.io.File;
+import java.util.List;
 
 public class DeleteAction extends CustomAction {
     private final static Logger LOGGER = Logger.getLogger(DeleteAction.class);
@@ -46,14 +44,27 @@ public class DeleteAction extends CustomAction {
         if (sourcePanel.getSelection().size() == 0) {
             JOptionPane.showMessageDialog(context.getApplicationWindow(), "Nothing selected!");
         } else {
-            int deletion = JOptionPane.showConfirmDialog(context.getApplicationWindow(), "Delete " + sourcePanel.getSelection().size() + " items?", "Deletion", JOptionPane.YES_NO_OPTION);
+            int deletion = JOptionPane.showConfirmDialog(context.getApplicationWindow(), "Delete " + countFileList(sourcePanel.getSelection()) + " items?", "Deletion", JOptionPane.YES_NO_OPTION);
             if (deletion == JOptionPane.YES_OPTION) {
-                for (IFile iFile : sourcePanel.getSelection()) {
-                    File file = (File) iFile.getBaseObject();
+                for (IFile file : sourcePanel.getSelection()) {
+                    if (file.getName().equals(".."))
+                        continue;
                     file.delete();
                 }
                 sourcePanel.refresh();
             }
         }
+    }
+
+    private int countFileList(List<IFile> fileList) {
+        int count = 0;
+
+        for (IFile file : fileList) {
+            if (file.getName().equals(".."))
+                continue;
+            count++;
+        }
+
+        return count;
     }
 }
