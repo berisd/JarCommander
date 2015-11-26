@@ -124,7 +124,7 @@ public class SshFile implements IFile<ChannelSftp.LsEntry> {
 
     @Override
     public String getAbsolutePath() {
-        return this.path + File.separator + file.getFilename();
+        return this.path;
     }
 
     @Override

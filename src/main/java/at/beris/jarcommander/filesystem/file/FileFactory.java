@@ -34,9 +34,7 @@ public class FileFactory {
             buf.putInt(0);
             ChannelSftp.LsEntry lsEntry = c.new CustomLsEntry(child, child, c.getATTR(buf));
 
-            String parentPath = parent.getAbsolutePath().substring(0, parent.getAbsolutePath().lastIndexOf(File.separator));
-
-            return newSshFileInstance(((SshFile) parent).getContext(), parentPath, lsEntry);
+            return newSshFileInstance(((SshFile) parent).getContext(), parent.getAbsolutePath(), lsEntry);
         } else
             throw new RuntimeException("Can't create IFile with given parent and child.");
     }

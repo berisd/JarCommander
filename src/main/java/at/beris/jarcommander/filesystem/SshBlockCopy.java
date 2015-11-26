@@ -16,15 +16,22 @@ import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
-import org.apache.commons.lang3.NotImplementedException;
 import org.apache.log4j.Logger;
 
 import java.io.*;
 
-public class SshBlockCopyTo implements IBlockCopy {
-    private final static Logger LOGGER = Logger.getLogger(SshBlockCopyTo.class);
+public class SshBlockCopy implements IBlockCopy {
+    private final static Logger LOGGER = org.apache.log4j.Logger.getLogger(SshBlockCopy.class);
+
+    private static int SUCCESS = 0;
+    private static int ERROR = 1;
+    private static int FATAL_ERROR = 2;
+    private static int UNKNOWN_ERROR = -1;
+
+    private enum TransferMode {FROM_REMOTE, TO_REMOTE}
 
     private IFile sourceFile;
+    private IFile targetFile;
 
     private byte[] buf;
 
@@ -37,9 +44,13 @@ public class SshBlockCopyTo implements IBlockCopy {
     private OutputStream out;
     private InputStream in;
     private Channel channel;
+    private FileOutputStream fos;
     private FileInputStream fis;
 
-    public SshBlockCopyTo() {
+    private TransferMode transferMode;
+
+
+    public SshBlockCopy() {
         buf = new byte[COPY_BUFFER_SIZE];
     }
 
@@ -47,48 +58,43 @@ public class SshBlockCopyTo implements IBlockCopy {
     public void init(IFile sourceFile, IFile targetFile) {
         if ((sourceFile instanceof SshFile && targetFile instanceof SshFile) ||
                 (!(sourceFile instanceof SshFile) && !(targetFile instanceof SshFile))) {
-            throw new NotImplementedException("Not implemented for this IFile Type");
+            throw new IllegalArgumentException("BlockCopy from " + sourceFile.getClass() + " to " + targetFile.getClass() + " not possible.");
         }
+
+        this.sourceFile = sourceFile;
+        this.targetFile = targetFile;
 
         bytesRead = 0;
         bytesReadTotal = 0;
         bytesWritten = 0;
         fileSize = 0;
-
+        Session session;
+        String command;
         try {
-            this.sourceFile = sourceFile;
-            SshFile sshFile = (SshFile) targetFile;
+            if (sourceFile instanceof SshFile) {
+                transferMode = TransferMode.FROM_REMOTE;
+                session = ((SshFile) sourceFile).getContext().getSession();
+                command = "scp -f " + sourceFile.getAbsolutePath();
+            } else {
+                transferMode = TransferMode.TO_REMOTE;
+                session = ((SshFile) targetFile).getContext().getSession();
+                command = "scp -t " + targetFile.getAbsolutePath();
+            }
 
-            SshContext sshContext = sshFile.getContext();
-            Session session = sshContext.getSession();
 
-            String command = "scp -t " + sshFile.getAbsolutePath();
             channel = session.openChannel("exec");
             ((ChannelExec) channel).setCommand(command);
 
-            // get I/O streams for remote scp
             out = channel.getOutputStream();
             in = channel.getInputStream();
 
             channel.connect();
 
-            if (checkAck(in) != 0) {
-                System.exit(0);
-            }
+            if (transferMode == TransferMode.FROM_REMOTE)
+                initFromRemote();
+            else
+                initToRemote();
 
-
-            fileSize = sourceFile.getSize();
-            // send "C0644 filesize filename", where filename should not include '/'
-            command = "C0644 " + fileSize + " ";
-            command += sourceFile.getName();
-            command += "\n";
-            out.write(command.getBytes());
-            out.flush();
-            if (checkAck(in) != 0) {
-                throw new RuntimeException("Error with file transfer.");
-            }
-
-            fis = new FileInputStream(sourceFile.getAbsolutePath());
 
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
@@ -99,15 +105,79 @@ public class SshBlockCopyTo implements IBlockCopy {
         }
     }
 
+    private void initToRemote() throws IOException {
+        if (checkAck(in) != SUCCESS) {
+            throw new RuntimeException("Error with file transfer.");
+        }
+
+
+        fileSize = sourceFile.getSize();
+        // send "C0644 filesize filename", where filename should not include '/'
+        String command = "C0644 " + fileSize + " ";
+        command += sourceFile.getName();
+        command += "\n";
+        out.write(command.getBytes());
+        out.flush();
+        if (checkAck(in) != SUCCESS) {
+            throw new RuntimeException("Error with file transfer.");
+        }
+
+        fis = new FileInputStream(sourceFile.getAbsolutePath());
+    }
+
+    private void initFromRemote() throws IOException {
+        buf[0] = 0;
+        out.write(buf, 0, 1);
+        out.flush();
+
+        int c = checkAck(in);
+        if (c != 'C') {
+            throw new RuntimeException("Ssh checkAck!=C");
+        }
+
+        // read '0644 '
+        in.read(buf, 0, 5);
+
+        fileSize = 0L;
+        while (true) {
+            if (in.read(buf, 0, 1) < 0) {
+                throw new RuntimeException("Ssh error while reading fileSize");
+            }
+            if (buf[0] == ' ') break;
+            fileSize = fileSize * 10L + (long) (buf[0] - '0');
+        }
+
+        String file;
+        for (int i = 0; ; i++) {
+            in.read(buf, i, 1);
+            if (buf[i] == (byte) 0x0a) {
+                file = new String(buf, 0, i);
+                break;
+            }
+        }
+
+        LOGGER.info("fileSize=" + fileSize + ", file=" + file);
+
+        buf[0] = 0;
+        out.write(buf, 0, 1);
+        out.flush();
+
+        fos = new FileOutputStream(targetFile.getAbsolutePath());
+    }
+
     @Override
     public void close() {
         try {
+            if (fos != null) {
+                fos.close();
+                fos = null;
+            }
+
             if (fis != null) {
                 fis.close();
                 fis = null;
             }
 
-            // send '\0'
             buf[0] = 0;
             out.write(buf, 0, 1);
             out.flush();
@@ -121,7 +191,11 @@ public class SshBlockCopyTo implements IBlockCopy {
     @Override
     public int write() {
         try {
-            out.write(buf, 0, bytesRead);
+            if (transferMode == TransferMode.FROM_REMOTE)
+                fos.write(buf, 0, bytesRead);
+            else
+                out.write(buf, 0, bytesRead);
+
             bytesWritten += bytesRead;
             return bytesRead;
         } catch (IOException e) {
@@ -139,7 +213,7 @@ public class SshBlockCopyTo implements IBlockCopy {
                 return -1;
             }
 
-            long bytesToRead = 0;
+            long bytesToRead;
 
             if (bytesReadTotal + buf.length < fileSize)
                 bytesToRead = buf.length;
@@ -149,7 +223,11 @@ public class SshBlockCopyTo implements IBlockCopy {
             if (bytesToRead == 0)
                 return 0;
 
-            bytesRead = fis.read(buf, 0, (int) bytesToRead);
+            if (transferMode == TransferMode.FROM_REMOTE)
+                bytesRead = in.read(buf, 0, (int) bytesToRead);
+            else
+                bytesRead = fis.read(buf, 0, (int) bytesToRead);
+
             bytesReadTotal += bytesRead;
             if (bytesToRead < 0) {
                 LOGGER.error("bytes read < 0 ");
@@ -179,14 +257,11 @@ public class SshBlockCopyTo implements IBlockCopy {
 
     private static int checkAck(InputStream in) throws IOException {
         int b = in.read();
-        // b may be 0 for success,
-        //          1 for error,
-        //          2 for fatal error,
-        //          -1
-        if (b == 0) return b;
-        if (b == -1) return b;
 
-        if (b == 1 || b == 2) {
+        if (b == SUCCESS || b == UNKNOWN_ERROR)
+            return b;
+
+        if (b == ERROR || b == FATAL_ERROR) {
             StringBuffer sb = new StringBuffer();
             int c;
             do {

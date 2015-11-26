@@ -22,10 +22,8 @@ public final class FileUtils {
 
         if (sourceFile instanceof LocalFile && targetPath instanceof LocalPath)
             blockCopy = new LocalBlockCopy();
-        else if (sourceFile instanceof SshFile && targetPath instanceof LocalPath)
-            blockCopy = new SshBlockCopyFrom();
-        else if (sourceFile instanceof LocalFile && targetPath instanceof SshPath)
-            blockCopy = new SshBlockCopyTo();
+        else if (sourceFile instanceof SshFile || targetPath instanceof SshPath)
+            blockCopy = new SshBlockCopy();
         else
             throw new IllegalArgumentException("Can't create BlockCopyInstance for sourceFile " +
                     sourceFile.getAbsolutePath() + " and targetPath " + targetPath.getClass());
