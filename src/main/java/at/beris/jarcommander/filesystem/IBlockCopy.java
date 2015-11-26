@@ -15,11 +15,16 @@ public interface IBlockCopy {
     int COPY_BUFFER_SIZE = 1024 * 16;
 
     void init(IFile sourceFile, IFile targetFile);
+
     void close();
-    void copy();
+
+    int write();
+
     int read();
+
     int positionBuffer();
+
     long size();
-    long bytesWrittenTotal();
+
     long bytesWritten();
 }

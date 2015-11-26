@@ -45,7 +45,7 @@ public class CopyTask extends SwingWorker<Void, Integer> {
         listener.setCurrentProgressBar(0);
         listener.setAllProgressBar(0);
 
-        blockCopy = FileUtils.createBlockCopyInstance(sourceList.get(0));
+        blockCopy = FileUtils.createBlockCopyInstance(sourceList.get(0), targetPath);
     }
 
     @Override
@@ -144,10 +144,9 @@ public class CopyTask extends SwingWorker<Void, Integer> {
                 blockCopy.init(sourceFile, targetFile);
 
                 while ((blockCopy.read() >= 0 || blockCopy.positionBuffer() != 0) && !isCancelled()) {
-                    blockCopy.copy();
-                    bytesCopied += blockCopy.bytesWritten();
+                    bytesCopied += blockCopy.write();
                     listener.setAllProgressBar((int) (bytesCopied * 100 / bytesTotal));
-                    publish((int) (blockCopy.bytesWrittenTotal() * 100 / blockCopy.size()));
+                    publish((int) (blockCopy.bytesWritten() * 100 / blockCopy.size()));
                 }
             } catch (RuntimeException ex) {
                 LOGGER.error(ex.getMessage());
@@ -158,7 +157,7 @@ public class CopyTask extends SwingWorker<Void, Integer> {
                 Application.logException(ex);
             } finally {
                 blockCopy.close();
-                if (isCancelled() && blockCopy.size() != blockCopy.bytesWrittenTotal()) {
+                if (isCancelled() && blockCopy.size() != blockCopy.bytesWritten()) {
                     targetFile.delete();
                 }
             }

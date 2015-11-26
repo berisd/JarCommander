@@ -10,7 +10,6 @@
 package at.beris.jarcommander.filesystem;
 
 import at.beris.jarcommander.Application;
-import at.beris.jarcommander.exception.ApplicationException;
 import at.beris.jarcommander.filesystem.file.IFile;
 import at.beris.jarcommander.filesystem.file.LocalFile;
 import at.beris.jarcommander.filesystem.file.SshFile;
@@ -18,20 +17,18 @@ import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
-import org.apache.commons.lang3.NotImplementedException;
 import org.apache.log4j.Logger;
 
 import java.io.*;
 
-public class SshBlockCopy implements IBlockCopy {
-    private final static Logger LOGGER = org.apache.log4j.Logger.getLogger(SshBlockCopy.class);
+public class SshBlockCopyFrom implements IBlockCopy {
+    private final static Logger LOGGER = org.apache.log4j.Logger.getLogger(SshBlockCopyFrom.class);
 
     private IFile targetFile;
 
     private byte[] buf;
 
     private long fileSize;
-    private long bytesWrittenTotal;
     private long bytesWritten;
 
     private int bytesReadTotal;
@@ -42,19 +39,18 @@ public class SshBlockCopy implements IBlockCopy {
     private Channel channel;
     private FileOutputStream fos;
 
-    public SshBlockCopy() {
+    public SshBlockCopyFrom() {
         buf = new byte[COPY_BUFFER_SIZE];
     }
 
     @Override
     public void init(IFile sourceFile, IFile targetFile) {
         if (!(sourceFile instanceof SshFile) || !(targetFile instanceof LocalFile)) {
-            throw new NotImplementedException("Not implemented for this IFile Type");
+            throw new IllegalArgumentException("Not implemented for this IFile Type");
         }
 
         bytesRead = 0;
         bytesReadTotal = 0;
-        bytesWrittenTotal = 0;
         bytesWritten = 0;
         fileSize = 0;
 
@@ -91,7 +87,7 @@ public class SshBlockCopy implements IBlockCopy {
             fileSize = 0L;
             while (true) {
                 if (in.read(buf, 0, 1) < 0) {
-                    throw new ApplicationException(new RuntimeException("Ssh error while reading fileSize"));
+                    throw new RuntimeException("Ssh error while reading fileSize");
                 }
                 if (buf[0] == ' ') break;
                 fileSize = fileSize * 10L + (long) (buf[0] - '0');
@@ -117,11 +113,11 @@ public class SshBlockCopy implements IBlockCopy {
             fos = new FileOutputStream(targetFile.getAbsolutePath());
 
         } catch (FileNotFoundException e) {
-            throw new ApplicationException(e);
+            throw new RuntimeException(e);
         } catch (IOException e) {
-            throw new ApplicationException(e);
+            throw new RuntimeException(e);
         } catch (JSchException e) {
-            throw new ApplicationException(e);
+            throw new RuntimeException(e);
         }
     }
 
@@ -145,15 +141,15 @@ public class SshBlockCopy implements IBlockCopy {
     }
 
     @Override
-    public void copy() {
+    public int write() {
         try {
             fos.write(buf, 0, bytesRead);
             bytesWritten += bytesRead;
-            bytesWrittenTotal += bytesWritten;
-
+            return bytesRead;
         } catch (IOException e) {
             Application.logException(e);
         }
+        return 0;
     }
 
     @Override
@@ -187,7 +183,7 @@ public class SshBlockCopy implements IBlockCopy {
 
             return bytesRead;
         } catch (IOException e) {
-            throw new ApplicationException(e);
+            throw new RuntimeException(e);
         }
     }
 
@@ -199,11 +195,6 @@ public class SshBlockCopy implements IBlockCopy {
     @Override
     public long size() {
         return fileSize;
-    }
-
-    @Override
-    public long bytesWrittenTotal() {
-        return bytesWrittenTotal;
     }
 
     @Override

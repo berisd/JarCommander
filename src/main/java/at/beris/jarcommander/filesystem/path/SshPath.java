@@ -11,11 +11,12 @@ package at.beris.jarcommander.filesystem.path;
 
 import at.beris.jarcommander.Application;
 import at.beris.jarcommander.filesystem.SshContext;
-import at.beris.jarcommander.filesystem.file.IFile;
 import at.beris.jarcommander.filesystem.file.FileFactory;
+import at.beris.jarcommander.filesystem.file.IFile;
+import com.jcraft.jsch.Buffer;
 import com.jcraft.jsch.ChannelSftp;
+import com.jcraft.jsch.CustomChannelSftp;
 import com.jcraft.jsch.SftpException;
-import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
@@ -57,7 +58,7 @@ public class SshPath implements IPath<String> {
                 if (dirEntry.getFilename().equals(".") || (path.equals(File.separator) && dirEntry.getFilename().equals("..")))
                     continue;
 
-                IFile file = FileFactory.newSshFileInstance(context, path + (! path.equals(File.separator) ? File.separator : "") + dirEntry.getFilename(), dirEntry);
+                IFile file = FileFactory.newSshFileInstance(context, path + (!path.equals(File.separator) ? File.separator : "") + dirEntry.getFilename(), dirEntry);
                 fileList.add(file);
             }
         }
@@ -86,7 +87,12 @@ public class SshPath implements IPath<String> {
 
     @Override
     public IFile toFile() {
-        throw new NotImplementedException("");
+        CustomChannelSftp c = new CustomChannelSftp();
+        Buffer buf = new Buffer();
+        buf.putInt(0);
+        ChannelSftp.LsEntry lsEntry = c.new CustomLsEntry("", "", c.getATTR(buf));
+
+        return FileFactory.newSshFileInstance(context, path, lsEntry);
     }
 
     @Override

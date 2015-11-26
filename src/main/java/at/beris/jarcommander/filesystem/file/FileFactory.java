@@ -10,24 +10,16 @@
 package at.beris.jarcommander.filesystem.file;
 
 import at.beris.jarcommander.filesystem.SshContext;
+import com.jcraft.jsch.Buffer;
 import com.jcraft.jsch.ChannelSftp;
+import com.jcraft.jsch.CustomChannelSftp;
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.ArchiveException;
 import org.apache.commons.compress.archivers.ArchiveInputStream;
 import org.apache.commons.compress.archivers.ArchiveStreamFactory;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.io.*;
+import java.util.*;
 
 import static at.beris.jarcommander.Application.logException;
 
@@ -35,6 +27,16 @@ public class FileFactory {
     public static IFile newInstance(IFile parent, String child) {
         if (parent instanceof LocalFile) {
             return newInstance(new File((File) parent.getBaseObject(), child));
+        }
+        if (parent instanceof SshFile) {
+            CustomChannelSftp c = new CustomChannelSftp();
+            Buffer buf = new Buffer();
+            buf.putInt(0);
+            ChannelSftp.LsEntry lsEntry = c.new CustomLsEntry(child, child, c.getATTR(buf));
+
+            String parentPath = parent.getAbsolutePath().substring(0, parent.getAbsolutePath().lastIndexOf(File.separator));
+
+            return newSshFileInstance(((SshFile) parent).getContext(), parentPath, lsEntry);
         } else
             throw new RuntimeException("Can't create IFile with given parent and child.");
     }

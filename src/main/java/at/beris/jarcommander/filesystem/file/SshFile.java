@@ -9,18 +9,17 @@
 
 package at.beris.jarcommander.filesystem.file;
 
+import at.beris.jarcommander.Application;
 import at.beris.jarcommander.filesystem.SshContext;
 import at.beris.jarcommander.filesystem.path.IPath;
 import at.beris.jarcommander.filesystem.path.SshPath;
 import com.jcraft.jsch.ChannelSftp;
+import com.jcraft.jsch.SftpException;
 import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
-import java.util.Date;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 
 public class SshFile implements IFile<ChannelSftp.LsEntry> {
@@ -85,7 +84,27 @@ public class SshFile implements IFile<ChannelSftp.LsEntry> {
 
     @Override
     public boolean exists() {
-        throw new NotImplementedException("");
+        boolean exists = false;
+
+        ChannelSftp channel = (ChannelSftp) context.getChannel();
+
+        if (channel != null) {
+            Vector<ChannelSftp.LsEntry> dirEntries = null;
+            try {
+                channel.cd(path);
+                dirEntries = channel.ls(path);
+            } catch (SftpException e) {
+                Application.logException(e);
+            }
+
+            for (ChannelSftp.LsEntry dirEntry : dirEntries) {
+                if (dirEntry.getFilename().equals(file.getFilename())) {
+                    exists = true;
+                    break;
+                }
+            }
+        }
+        return exists;
     }
 
     @Override
@@ -105,7 +124,7 @@ public class SshFile implements IFile<ChannelSftp.LsEntry> {
 
     @Override
     public String getAbsolutePath() {
-        return this.path;
+        return this.path + File.separator + file.getFilename();
     }
 
     @Override

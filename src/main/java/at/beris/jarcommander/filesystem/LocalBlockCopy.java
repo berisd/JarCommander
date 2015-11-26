@@ -28,7 +28,6 @@ public class LocalBlockCopy implements IBlockCopy {
     private ByteBuffer buffer;
 
     private long size;
-    private long bytesWrittenTotal;
     private long bytesWritten;
 
     public LocalBlockCopy() {
@@ -45,7 +44,6 @@ public class LocalBlockCopy implements IBlockCopy {
             bis = new FileInputStream((File) sourceFile.getBaseObject()).getChannel();
             bos = new FileOutputStream((File) targetFile.getBaseObject()).getChannel();
             size = bis.size();
-            bytesWrittenTotal = 0;
             bytesWritten = 0;
             buffer.clear();
         } catch (FileNotFoundException e) {
@@ -68,15 +66,18 @@ public class LocalBlockCopy implements IBlockCopy {
     }
 
     @Override
-    public void copy() {
+    public int write() {
         try {
             buffer.flip();
-            bytesWritten = bos.write(buffer);
+            int bytesWrittenCurrent = bos.write(buffer);
+            bytesWritten += bytesWrittenCurrent;
             buffer.compact();
-            bytesWrittenTotal += bytesWritten;
+            return bytesWrittenCurrent;
+
         } catch (IOException e) {
             Application.logException(e);
         }
+        return 0;
     }
 
     @Override
@@ -99,11 +100,6 @@ public class LocalBlockCopy implements IBlockCopy {
     @Override
     public long size() {
         return size;
-    }
-
-    @Override
-    public long bytesWrittenTotal() {
-        return bytesWrittenTotal;
     }
 
     @Override
