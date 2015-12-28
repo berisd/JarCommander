@@ -25,6 +25,4 @@ public interface IBlockCopy {
     int positionBuffer();
 
     long size();
-
-    long bytesWritten();
 }

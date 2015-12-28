@@ -36,7 +36,6 @@ public class SshBlockCopy implements IBlockCopy {
     private byte[] buf;
 
     private long fileSize;
-    private long bytesWritten;
 
     private int bytesReadTotal;
     private int bytesRead;
@@ -66,7 +65,6 @@ public class SshBlockCopy implements IBlockCopy {
 
         bytesRead = 0;
         bytesReadTotal = 0;
-        bytesWritten = 0;
         fileSize = 0;
         Session session;
         String command;
@@ -190,7 +188,6 @@ public class SshBlockCopy implements IBlockCopy {
             else
                 out.write(buf, 0, bytesRead);
 
-            bytesWritten += bytesRead;
             return bytesRead;
         } catch (IOException e) {
             Application.logException(e);
@@ -242,11 +239,6 @@ public class SshBlockCopy implements IBlockCopy {
     @Override
     public long size() {
         return fileSize;
-    }
-
-    @Override
-    public long bytesWritten() {
-        return bytesWritten;
     }
 
     private static int checkAck(InputStream in) throws IOException {
