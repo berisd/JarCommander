@@ -12,17 +12,14 @@ package at.beris.jarcommander;
 import at.beris.jarcommander.action.ActionEventFactory;
 import at.beris.jarcommander.action.ActionFactory;
 import at.beris.jarcommander.action.CustomAction;
+import at.beris.jarcommander.filesystem.file.FileFactory;
 import at.beris.jarcommander.ui.ApplicationFrame;
 import at.beris.jarcommander.ui.UIFactory;
 import at.beris.jarcommander.ui.button.ButtonFactory;
 import org.reflections.Reflections;
 
-import javax.swing.JComponent;
-import javax.swing.JTabbedPane;
-import java.awt.AWTEvent;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Window;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.File;
 
@@ -37,6 +34,7 @@ public class ApplicationContext {
     private ButtonFactory buttonFactory;
     private UIFactory uiFactory;
     private Window applicationWindow;
+    private FileFactory fileFactory;
 
     public Window getApplicationWindow() {
         if (applicationWindow == null) {
@@ -58,6 +56,17 @@ public class ApplicationContext {
 
     public void setActionFactory(ActionFactory actionFactory) {
         this.actionFactory = actionFactory;
+    }
+
+    public FileFactory getFileFactory() {
+        if (fileFactory == null) {
+            fileFactory = new FileFactory();
+        }
+        return fileFactory;
+    }
+
+    public void setFileFactory(FileFactory fileFactory) {
+        this.fileFactory = fileFactory;
     }
 
     public ActionEventFactory getActionEventFactory() {

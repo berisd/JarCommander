@@ -19,9 +19,8 @@ import at.beris.jarcommander.filesystem.path.IPath;
 import at.beris.jarcommander.ui.combobox.DriveComboBox;
 import at.beris.jarcommander.ui.table.FileTablePane;
 
-import javax.swing.JTabbedPane;
-import javax.swing.JTextField;
-import java.awt.Component;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -35,17 +34,16 @@ public class UIFactory {
     public JTabbedPane createSessionsPanel() {
         JTabbedPane sessionsPanel = new JTabbedPane();
         context.setSessionsPanel(sessionsPanel);
-        createSessionPanel("Local", new LocalFileSystem());
+        createSessionPanel("Local", new LocalFileSystem(context.getFileFactory()));
         return sessionsPanel;
     }
 
     public SessionPanel createSessionPanel(String title, IFileSystem fileSystem) {
         SessionPanel sessionPanel = null;
         try {
-            sessionPanel = new SessionPanel(createNavigationPanel(new LocalFileSystem()), createNavigationPanel(fileSystem));
+            sessionPanel = new SessionPanel(createNavigationPanel(new LocalFileSystem(context.getFileFactory())), createNavigationPanel(fileSystem));
             context.getSessionsPanel().addTab(title, sessionPanel);
-        }
-        catch (ApplicationException e) {
+        } catch (ApplicationException e) {
             e.show();
         }
         return sessionPanel;

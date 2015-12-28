@@ -16,11 +16,8 @@ import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.io.IOException;
+import java.util.*;
 
 public class CompressedFile implements IFile<ArchiveEntry>, Archivable {
     private ArchiveEntry archiveEntry;
@@ -28,13 +25,15 @@ public class CompressedFile implements IFile<ArchiveEntry>, Archivable {
     private Set<Attribute> windowsAttributes;
     private Set<IFile> children;
     private IFile archiveFile;
+    private FileFactory fileFactory;
 
-    public CompressedFile(ArchiveEntry archiveEntry, IFile archiveFile) {
-        this(archiveEntry);
+    public CompressedFile(ArchiveEntry archiveEntry, IFile archiveFile, FileFactory fileFactory) {
+        this(archiveEntry, fileFactory);
         this.archiveFile = archiveFile;
     }
 
-    public CompressedFile(ArchiveEntry archiveEntry) {
+    public CompressedFile(ArchiveEntry archiveEntry, FileFactory fileFactory) {
+        this.fileFactory = fileFactory;
         this.archiveEntry = archiveEntry;
         windowsAttributes = new HashSet<>();
         children = new HashSet<>();
@@ -73,7 +72,7 @@ public class CompressedFile implements IFile<ArchiveEntry>, Archivable {
 
     @Override
     public IPath toPath() {
-        return new CompressedPath(this);
+        return new CompressedPath(this, fileFactory);
     }
 
     @Override
@@ -94,7 +93,7 @@ public class CompressedFile implements IFile<ArchiveEntry>, Archivable {
     @Override
     public List<IFile> list() {
         List<IFile> files = new ArrayList<>();
-        IFile backFile = FileFactory.newInstance(createEmptyArchiveEntry(), this.archiveFile);
+        IFile backFile = fileFactory.newInstance(createEmptyArchiveEntry(), this.archiveFile);
         backFile.setParentFile(this.parentFile);
 
         files.add(backFile);
@@ -103,6 +102,11 @@ public class CompressedFile implements IFile<ArchiveEntry>, Archivable {
         }
 
         return files;
+    }
+
+    @Override
+    public String getPath() {
+        throw new NotImplementedException("");
     }
 
     @Override
@@ -137,6 +141,21 @@ public class CompressedFile implements IFile<ArchiveEntry>, Archivable {
 
     @Override
     public byte[] checksum() {
+        throw new NotImplementedException("");
+    }
+
+    @Override
+    public void copy(IFile targetFile, CopyListener listener) throws IOException {
+        throw new NotImplementedException("");
+    }
+
+    @Override
+    public boolean create() throws IOException {
+        throw new NotImplementedException("");
+    }
+
+    @Override
+    public void refresh() throws IOException {
         throw new NotImplementedException("");
     }
 

@@ -10,13 +10,11 @@
 package at.beris.jarcommander.action;
 
 import at.beris.jarcommander.ApplicationContext;
-import at.beris.jarcommander.filesystem.file.FileFactory;
 import at.beris.jarcommander.ui.NavigationPanel;
 import at.beris.jarcommander.ui.SessionPanel;
 import org.apache.log4j.Logger;
 
-import javax.swing.Action;
-import javax.swing.KeyStroke;
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
@@ -41,6 +39,6 @@ public class NavigatePathUpAction extends CustomAction {
         SessionPanel sessionPanel = (SessionPanel) context.getSessionsPanel().getSelectedComponent();
         NavigationPanel navigationPanel = sessionPanel.getSelectedNavigationPanel();
 
-        navigationPanel.changeDirectory(FileFactory.newInstance(new File("..")).toPath());
+        navigationPanel.changeDirectory(context.getFileFactory().newInstance(new File("..")).toPath());
     }
 }

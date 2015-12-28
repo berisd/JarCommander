@@ -10,8 +10,8 @@
 package at.beris.jarcommander.filesystem.path;
 
 import at.beris.jarcommander.Application;
-import at.beris.jarcommander.filesystem.file.IFile;
 import at.beris.jarcommander.filesystem.file.FileFactory;
+import at.beris.jarcommander.filesystem.file.IFile;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
@@ -24,9 +24,11 @@ import java.util.List;
 
 public class LocalPath implements IPath<Path> {
     private Path path;
+    private FileFactory fileFactory;
 
-    public LocalPath(Path path) {
+    public LocalPath(Path path, FileFactory fileFactory) {
         this.path = path;
+        this.fileFactory = fileFactory;
     }
 
     @Override
@@ -39,12 +41,12 @@ public class LocalPath implements IPath<Path> {
         List<IFile> entryList = new ArrayList<>();
         try {
             if (!path.toString().equals("/") && StringUtils.countMatches(path.toString(), FileSystems.getDefault().getSeparator()) >= 1) {
-                entryList.add(FileFactory.newInstance(new File("..")));
+                entryList.add(fileFactory.newInstance(new File("..")));
             }
 
             for (Path childPath : Files.newDirectoryStream(path)) {
                 File file = childPath.toFile();
-                entryList.add(FileFactory.newInstance(file));
+                entryList.add(fileFactory.newInstance(file));
             }
         } catch (IOException e) {
             Application.logException(e);
@@ -54,22 +56,22 @@ public class LocalPath implements IPath<Path> {
 
     @Override
     public IPath normalize() {
-        return new LocalPath(path.normalize());
+        return new LocalPath(path.normalize(), fileFactory);
     }
 
     @Override
     public IPath getRoot() {
-        return new LocalPath(path.getRoot());
+        return new LocalPath(path.getRoot(), fileFactory);
     }
 
     @Override
     public IPath getParent() {
-        return new LocalPath(path.getParent());
+        return new LocalPath(path.getParent(), fileFactory);
     }
 
     @Override
     public IFile toFile() {
-        return FileFactory.newInstance(path.toFile());
+        return fileFactory.newInstance(path.toFile());
     }
 
     @Override

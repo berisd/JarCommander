@@ -9,6 +9,7 @@
 
 package at.beris.jarcommander.ui.dialog;
 
+import at.beris.jarcommander.ApplicationContext;
 import at.beris.jarcommander.filesystem.file.IFile;
 import at.beris.jarcommander.task.CopyTask;
 import at.beris.jarcommander.task.CopyTaskListener;
@@ -34,10 +35,12 @@ public class CopyTaskDialog extends JDialog implements ActionListener, CopyTaskL
 
     private NavigationPanel targetPanel;
     private List<IFile> fileList;
+    private ApplicationContext context;
 
-    public CopyTaskDialog(List<IFile> fileList, NavigationPanel targetPanel) {
+    public CopyTaskDialog(List<IFile> fileList, NavigationPanel targetPanel, ApplicationContext context) {
         this.fileList = fileList;
         this.targetPanel = targetPanel;
+        this.context = context;
 
         setTitle("Copy");
         setModalityType(ModalityType.APPLICATION_MODAL);
@@ -125,7 +128,7 @@ public class CopyTaskDialog extends JDialog implements ActionListener, CopyTaskL
 
     public void startWorker() {
         LOGGER.debug("startWorker");
-        copyTask = new CopyTask(fileList, targetPanel.getCurrentPath(), this);
+        copyTask = new CopyTask(fileList, targetPanel.getCurrentPath(), this, context.getFileFactory());
         copyTask.execute();
     }
 
@@ -151,8 +154,8 @@ public class CopyTaskDialog extends JDialog implements ActionListener, CopyTaskL
     }
 
     @Override
-    public void startCopyFile(IFile sourceFile, long currentFileNumber, long totalCountFiles) {
-        String infoText = "Copying " + sourceFile.getAbsolutePath() + " ... ";
+    public void startCopyFile(String fileName, long currentFileNumber, long totalCountFiles) {
+        String infoText = "Copying " + fileName + " ... ";
         labelInfo.setText(infoText);
         labelInfo.setToolTipText(infoText);
         String statusText = "Item " + currentFileNumber + " of  " + totalCountFiles + " processed.";

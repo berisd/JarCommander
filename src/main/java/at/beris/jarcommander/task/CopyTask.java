@@ -10,42 +10,38 @@
 package at.beris.jarcommander.task;
 
 import at.beris.jarcommander.Application;
-import at.beris.jarcommander.filesystem.FileUtils;
-import at.beris.jarcommander.filesystem.IBlockCopy;
+import at.beris.jarcommander.filesystem.file.CopyListener;
 import at.beris.jarcommander.filesystem.file.FileFactory;
 import at.beris.jarcommander.filesystem.file.IFile;
 import at.beris.jarcommander.filesystem.path.IPath;
 import org.apache.log4j.Logger;
 
 import javax.swing.*;
-import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
 import static at.beris.jarcommander.Application.logException;
 
-public class CopyTask extends SwingWorker<Void, Integer> {
+public class CopyTask extends SwingWorker<Void, Integer> implements CopyListener {
     private final static Logger LOGGER = org.apache.log4j.Logger.getLogger(CopyTask.class);
 
+    private FileFactory fileFactory;
     private List<IFile> sourceList;
     private IPath targetPath;
     private long bytesTotal = 0L;
     private long bytesCopied = 0L;
     private long totalCountFiles = 0;
-    private long currentFileNumber = 0;
     private CopyTaskListener listener;
-    private IBlockCopy blockCopy;
 
-    public CopyTask(List<IFile> sourceList, IPath targetPath, CopyTaskListener listener) {
+    public CopyTask(List<IFile> sourceList, IPath targetPath, CopyTaskListener listener, FileFactory fileFactory) {
         this.sourceList = sourceList;
         this.targetPath = targetPath;
         this.listener = listener;
+        this.fileFactory = fileFactory;
 
         listener.setCurrentProgressBar(0);
         listener.setAllProgressBar(0);
-
-        blockCopy = FileUtils.createBlockCopyInstance(sourceList.get(0), targetPath);
     }
 
     @Override
@@ -63,14 +59,13 @@ public class CopyTask extends SwingWorker<Void, Integer> {
                     break;
                 if (sourceFile.getName().equals(".."))
                     continue;
-                IFile targetFile = FileFactory.newInstance(targetPath.toFile(), sourceFile.getName());
+                IFile targetFile = fileFactory.newInstance(targetPath.toFile(), sourceFile.getName());
                 copyFiles(sourceFile, targetFile);
             }
         } catch (Exception ex) {
             logException(ex);
-        } finally {
-            blockCopy.close();
         }
+
         return null;
     }
 
@@ -112,69 +107,54 @@ public class CopyTask extends SwingWorker<Void, Integer> {
     }
 
     private void copyFiles(IFile sourceFile, IFile targetFile) throws IOException {
-        if (sourceFile.getName().equals(".."))
-            return;
-
-        LOGGER.debug("CopyFile " + sourceFile + " to " + targetFile);
-
-        if (sourceFile.isDirectory()) {
-            if (!targetFile.exists())
-                targetFile.mkdirs();
-            else
-                listener.fileExists(targetFile);
-
-            for (IFile sourceChildFile : (List<IFile>) sourceFile.list()) {
-                if (sourceChildFile.toString().equals(".."))
-                    continue;
-                IFile destFile = FileFactory.newInstance(new File((File) targetFile.getBaseObject(), sourceChildFile.getName()));
-                copyFiles(sourceChildFile, destFile);
+        try {
+            sourceFile.copy(targetFile, this);
+        } catch (RuntimeException ex) {
+            LOGGER.error(ex.getMessage());
+            int result = listener.showError(ex.getMessage());
+            if (result == JOptionPane.CANCEL_OPTION)
+                cancel(true);
+        } catch (Exception ex) {
+            Application.logException(ex);
+        } finally {
+            if (isCancelled() && sourceFile.getSize() != targetFile.getSize()) {
+                targetFile.delete();
             }
-        } else {
-            currentFileNumber++;
-            listener.startCopyFile(sourceFile, currentFileNumber, totalCountFiles);
+        }
 
-            if (targetFile.exists()) {
-                int result = listener.fileExists(targetFile);
-                switch (result) {
-                    case JOptionPane.NO_OPTION:
-                        bytesCopied += targetFile.getSize();
-                        listener.setAllProgressBar((int) (bytesCopied * 100 / bytesTotal));
-                        return;
-                    case JOptionPane.CANCEL_OPTION:
-                        cancel(true);
-                    default:
-                        targetFile.delete();
-                }
-            }
+        publish(100);
+    }
 
-            IFile targetParentFile = targetFile.getParentFile();
-            if (targetParentFile != null) {
-                targetParentFile.mkdirs();
-            }
+    @Override
+    public void startCopyFile(String fileName, long currentFileNumber) {
+        listener.startCopyFile(fileName, currentFileNumber, totalCountFiles);
+    }
 
-            try {
-                blockCopy.init(sourceFile, targetFile);
+    @Override
+    public void afterBlockCopied(long fileSize, long bytesCopiedBlock, long bytesCopiedTotal) {
+        bytesCopied += bytesCopiedBlock;
 
-                while ((blockCopy.read() >= 0 || blockCopy.positionBuffer() != 0) && !isCancelled()) {
-                    bytesCopied += blockCopy.write();
-                    listener.setAllProgressBar((int) (bytesCopied * 100 / bytesTotal));
-                    publish((int) (blockCopy.bytesWritten() * 100 / blockCopy.size()));
-                }
-            } catch (RuntimeException ex) {
-                LOGGER.error(ex.getMessage());
-                int result = listener.showError(ex.getMessage());
-                if (result == JOptionPane.CANCEL_OPTION)
-                    cancel(true);
-            } catch (Exception ex) {
-                Application.logException(ex);
-            } finally {
-                blockCopy.close();
-                if (isCancelled() && blockCopy.size() != blockCopy.bytesWritten()) {
-                    targetFile.delete();
-                }
-            }
+        listener.setAllProgressBar((int) (bytesCopied * 100 / bytesTotal));
+        publish((int) (bytesCopiedTotal * 100 / fileSize));
+    }
 
-            publish(100);
+    @Override
+    public boolean interrupt() {
+        return isCancelled();
+    }
+
+    @Override
+    public void fileExists(IFile file) {
+        int result = listener.fileExists(file);
+        switch (result) {
+            case JOptionPane.NO_OPTION:
+                bytesCopied += file.getSize();
+                listener.setAllProgressBar((int) (bytesCopied * 100 / bytesTotal));
+                return;
+            case JOptionPane.CANCEL_OPTION:
+                cancel(true);
+            default:
+                file.delete();
         }
     }
 }

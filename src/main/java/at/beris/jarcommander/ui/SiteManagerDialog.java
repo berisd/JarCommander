@@ -18,25 +18,14 @@ import at.beris.jarcommander.model.SiteModel;
 import at.beris.jarcommander.ui.list.SiteCellRenderer;
 import org.apache.log4j.Logger;
 
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JPasswordField;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
-import javax.swing.ListSelectionModel;
+import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
@@ -225,7 +214,7 @@ public class SiteManagerDialog extends JDialog {
         sshContext.setUsername(currentSite.getUsername());
         sshContext.setPassword(String.valueOf(currentSite.getPassword()));
 
-        SessionPanel sessionPanel = context.getUiFactory().createSessionPanel(currentSite.getHostname(), new SshFileSystem(sshContext));
+        SessionPanel sessionPanel = context.getUiFactory().createSessionPanel(currentSite.getHostname(), new SshFileSystem(sshContext, context.getFileFactory()));
         if (sessionPanel != null) {
             context.getSessionsPanel().setSelectedIndex(context.getSessionsPanel().getTabCount() - 1);
             sessionPanel.selectRightNavigationPanel();

@@ -81,7 +81,6 @@ public class SshBlockCopy implements IBlockCopy {
                 command = "scp -t " + targetFile.getAbsolutePath();
             }
 
-
             channel = session.openChannel("exec");
             ((ChannelExec) channel).setCommand(command);
 
@@ -94,8 +93,6 @@ public class SshBlockCopy implements IBlockCopy {
                 initFromRemote();
             else
                 initToRemote();
-
-
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         } catch (IOException e) {
@@ -109,7 +106,6 @@ public class SshBlockCopy implements IBlockCopy {
         if (checkAck(in) != SUCCESS) {
             throw new RuntimeException("Error with file transfer.");
         }
-
 
         fileSize = sourceFile.getSize();
         // send "C0644 filesize filename", where filename should not include '/'
@@ -155,8 +151,6 @@ public class SshBlockCopy implements IBlockCopy {
                 break;
             }
         }
-
-        LOGGER.info("fileSize=" + fileSize + ", file=" + file);
 
         buf[0] = 0;
         out.write(buf, 0, 1);

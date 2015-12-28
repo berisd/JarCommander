@@ -25,7 +25,7 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
-public class CompressedFileTest {
+public class CompressedFileTest extends AbstractFileTest {
 
     public static final String ZIP_FILENAME = "test.zip";
 
@@ -51,7 +51,7 @@ public class CompressedFileTest {
 
     @Test
     public void readFilesInRootDirectory() {
-        List<IFile> fileList = FileFactory.createListFromArchive(new File(ZIP_FILENAME));
+        List<IFile> fileList = fileFactory.createListFromArchive(new File(ZIP_FILENAME));
         assertEquals(3, fileList.size());
     }
 
@@ -69,7 +69,7 @@ public class CompressedFileTest {
     }
 
     private List<IFile> getFilesInSubDirectory() {
-        List<IFile> fileList = FileFactory.createListFromArchive(new File(ZIP_FILENAME));
+        List<IFile> fileList = fileFactory.createListFromArchive(new File(ZIP_FILENAME));
         return fileList.get(0).toPath().getEntries();
     }
 

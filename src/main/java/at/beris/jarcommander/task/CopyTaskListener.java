@@ -18,7 +18,7 @@ public interface CopyTaskListener {
 
     void done();
 
-    void startCopyFile(IFile sourceFile, long currentFileNumber, long totalCountFiles);
+    void startCopyFile(String fileName, long currentFileNumber, long totalCountFiles);
 
     int fileExists(IFile file);
 

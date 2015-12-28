@@ -14,30 +14,57 @@ import at.beris.jarcommander.filesystem.SshContext;
 import at.beris.jarcommander.filesystem.path.IPath;
 import at.beris.jarcommander.filesystem.path.SshPath;
 import com.jcraft.jsch.ChannelSftp;
+import com.jcraft.jsch.SftpATTRS;
 import com.jcraft.jsch.SftpException;
 import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 
 import java.io.File;
-import java.util.*;
+import java.io.IOException;
+import java.util.Date;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 
 
 public class SshFile implements IFile<ChannelSftp.LsEntry> {
+    private final static Logger LOGGER = Logger.getLogger(SshFile.class);
+
     private SshContext context;
     private ChannelSftp.LsEntry file;
+    private String fileName;
+    private SftpATTRS sftpAttrs;
     private String path;
     private ChannelSftp.LsEntry parentFile;
-    private Date lastModified;
+    private SshFileOperationProvider fileOperationProvider;
     private Set<Attribute> attributes;
+    private FileFactory fileFactory;
 
-
-    public SshFile(SshContext context, String path, ChannelSftp.LsEntry file) {
-        this.context = context;
+    public SshFile(SshContext context, String path, ChannelSftp.LsEntry file, FileFactory fileFactory) {
+        this(context, path, fileFactory);
         this.file = file;
-        this.path = path;
+        this.fileName = file.getFilename();
+        this.sftpAttrs = file.getAttrs();
+
         attributes = new LinkedHashSet<>();
-        lastModified = new Date(((long) file.getAttrs().getMTime()) * 1000L);
         setPermissions();
+    }
+
+    public SshFile(SshContext context, String path, FileFactory fileFactory) {
+        this.context = context;
+        this.path = path;
+        this.fileFactory = fileFactory;
+        this.fileOperationProvider = new SshFileOperationProvider();
+        this.fileName = path.substring(path.lastIndexOf(File.separatorChar) + 1);
+
+        try {
+            ChannelSftp channel = (ChannelSftp) this.context.getChannel();
+            sftpAttrs = channel.stat(path);
+        } catch (SftpException e) {
+            if (ChannelSftp.SSH_FX_NO_SUCH_FILE != e.id)
+                Application.logException(e);
+        }
     }
 
     @Override
@@ -47,22 +74,22 @@ public class SshFile implements IFile<ChannelSftp.LsEntry> {
 
     @Override
     public String getName() {
-        return file.getFilename();
+        return fileName;
     }
 
     @Override
     public Date getLastModified() {
-        return lastModified;
+        return new Date(((long) sftpAttrs.getMTime()) * 1000L);
     }
 
     @Override
     public long getSize() {
-        return file.getAttrs().getSize();
+        return sftpAttrs.getSize();
     }
 
     @Override
     public boolean isDirectory() {
-        return file.getAttrs().isDir();
+        return sftpAttrs.isDir();
     }
 
     @Override
@@ -74,7 +101,7 @@ public class SshFile implements IFile<ChannelSftp.LsEntry> {
     public IFile getParentFile() {
         String[] pathParts = path.split(File.separator);
         String parentPath = StringUtils.join(pathParts, File.separator, 0, pathParts.length - 2);
-        return FileFactory.newSshFileInstance(context, parentPath, this.parentFile);
+        return fileFactory.newSshFileInstance(context, parentPath, this.parentFile);
     }
 
     @Override
@@ -89,19 +116,12 @@ public class SshFile implements IFile<ChannelSftp.LsEntry> {
         ChannelSftp channel = (ChannelSftp) context.getChannel();
 
         if (channel != null) {
-            Vector<ChannelSftp.LsEntry> dirEntries = null;
             try {
-                channel.cd(path);
-                dirEntries = channel.ls(path);
+                channel.stat(path);
+                exists = true;
             } catch (SftpException e) {
-                Application.logException(e);
-            }
-
-            for (ChannelSftp.LsEntry dirEntry : dirEntries) {
-                if (dirEntry.getFilename().equals(file.getFilename())) {
-                    exists = true;
-                    break;
-                }
+                if (ChannelSftp.SSH_FX_NO_SUCH_FILE != e.id)
+                    Application.logException(e);
             }
         }
         return exists;
@@ -123,18 +143,23 @@ public class SshFile implements IFile<ChannelSftp.LsEntry> {
     }
 
     @Override
+    public String getPath() {
+        throw new NotImplementedException("");
+    }
+
+    @Override
     public String getAbsolutePath() {
         return this.path;
     }
 
     @Override
     public IPath toPath() {
-        return new SshPath(context, path);
+        return new SshPath(context, path, fileFactory);
     }
 
     @Override
     public void delete() {
-        throw new NotImplementedException("");
+        fileOperationProvider.delete(this);
     }
 
     @Override
@@ -145,6 +170,31 @@ public class SshFile implements IFile<ChannelSftp.LsEntry> {
     @Override
     public byte[] checksum() {
         throw new NotImplementedException("");
+    }
+
+    @Override
+    public void copy(IFile targetFile, CopyListener listener) throws IOException {
+        fileOperationProvider.copy(this, targetFile, listener);
+        refresh();
+    }
+
+    @Override
+    public boolean create() throws IOException {
+        throw new NotImplementedException("");
+    }
+
+    @Override
+    public void refresh() throws IOException {
+        try {
+            ChannelSftp channelSftp = (ChannelSftp) context.getChannel();
+            // fixes empty sftpAttrs (e.g. filesize=0)
+            channelSftp.pwd();
+            sftpAttrs = channelSftp.stat(path);
+        } catch (SftpException e) {
+            throw new IOException(e);
+//        } catch (JSchException e) {
+//            throw new IOException(e);
+        }
     }
 
     private void setPermissions() {

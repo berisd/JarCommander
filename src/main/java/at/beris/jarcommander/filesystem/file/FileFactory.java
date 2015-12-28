@@ -24,7 +24,7 @@ import java.util.*;
 import static at.beris.jarcommander.Application.logException;
 
 public class FileFactory {
-    public static IFile newInstance(IFile parent, String child) {
+    public IFile newInstance(IFile parent, String child) {
         if (parent instanceof LocalFile) {
             return newInstance(new File((File) parent.getBaseObject(), child));
         }
@@ -39,11 +39,11 @@ public class FileFactory {
             throw new RuntimeException("Can't create IFile with given parent and child.");
     }
 
-    public static IFile newInstance(File file) {
+    public IFile newInstance(File file) {
         if (file == null)
             return null;
 
-        IFile<File> iFile = new LocalFile(file);
+        IFile<File> iFile = new LocalFile(file, this);
 
         File parent = file.getParentFile();
         IFile virtualChild = iFile;
@@ -56,25 +56,25 @@ public class FileFactory {
         return iFile;
     }
 
-    public static IFile newInstance(ArchiveEntry archiveEntry, File archiveFile) {
+    public IFile newInstance(ArchiveEntry archiveEntry, File archiveFile) {
         if (archiveEntry == null)
             return null;
-        return newInstance(archiveEntry, FileFactory.newInstance(archiveFile));
+        return newInstance(archiveEntry, newInstance(archiveFile));
     }
 
-    public static IFile newInstance(ArchiveEntry archiveEntry, IFile archiveFile) {
+    public IFile newInstance(ArchiveEntry archiveEntry, IFile archiveFile) {
         if (archiveEntry == null)
             return null;
-        return new CompressedFile(archiveEntry, archiveFile);
+        return new CompressedFile(archiveEntry, archiveFile, this);
     }
 
-    public static IFile newSshFileInstance(SshContext context, String path, ChannelSftp.LsEntry file) {
+    public IFile newSshFileInstance(SshContext context, String path, ChannelSftp.LsEntry file) {
         if (file == null)
             return null;
-        return new SshFile(context, path, file);
+        return new SshFile(context, path, file, this);
     }
 
-    public static List<IFile> createListFromArchive(File archiveFile) {
+    public List<IFile> createListFromArchive(File archiveFile) {
         List<IFile> fileList = new ArrayList<>();
         try {
 
@@ -87,7 +87,7 @@ public class FileFactory {
             Map<String, Set<IFile>> archiveEntryToChildrenMap = new HashMap<>();
 
             while ((ae = ais.getNextEntry()) != null) {
-                IFile file = FileFactory.newInstance(ae, archiveFile);
+                IFile file = newInstance(ae, archiveFile);
 
                 String[] parts = ae.getName().split(File.separator);
                 pathToArchiveEntryMap.put(parts[parts.length - 1], file);
@@ -115,7 +115,7 @@ public class FileFactory {
                     }
 
                 } else {
-                    file.setParentFile(FileFactory.newInstance(archiveFile));
+                    file.setParentFile(newInstance(archiveFile));
                     fileList.add(file);
                 }
             }

@@ -11,8 +11,8 @@ package at.beris.jarcommander.filesystem.path;
 
 import at.beris.jarcommander.filesystem.file.Archivable;
 import at.beris.jarcommander.filesystem.file.CompressedFile;
-import at.beris.jarcommander.filesystem.file.IFile;
 import at.beris.jarcommander.filesystem.file.FileFactory;
+import at.beris.jarcommander.filesystem.file.IFile;
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
@@ -23,9 +23,11 @@ import java.util.List;
 
 public class CompressedPath implements IPath<ArchiveEntry> {
     private IFile file;
+    private FileFactory fileFactory;
 
-    public CompressedPath(IFile file) {
+    public CompressedPath(IFile file, FileFactory fileFactory) {
         this.file = file;
+        this.fileFactory = fileFactory;
     }
 
     @Override
@@ -64,8 +66,8 @@ public class CompressedPath implements IPath<ArchiveEntry> {
                 public Date getLastModifiedDate() {
                     return new Date();
                 }
-            }, ((CompressedFile) file).getArchiveFile());
-            return new CompressedPath(backFile);
+            }, ((CompressedFile) file).getArchiveFile(), fileFactory);
+            return new CompressedPath(backFile, fileFactory);
         } else
             return this;
     }
@@ -73,7 +75,7 @@ public class CompressedPath implements IPath<ArchiveEntry> {
     @Override
     public IPath getRoot() {
         if (file instanceof Archivable) {
-            return new CompressedPath(FileFactory.newInstance(new ArchiveEntry() {
+            return new CompressedPath(fileFactory.newInstance(new ArchiveEntry() {
                 @Override
                 public String getName() {
                     return "";
@@ -93,9 +95,9 @@ public class CompressedPath implements IPath<ArchiveEntry> {
                 public Date getLastModifiedDate() {
                     return null;
                 }
-            }, ((Archivable) file).getArchive()));
+            }, ((Archivable) file).getArchive()), fileFactory);
         } else {
-            return new LocalPath(new File(File.separator).toPath());
+            return new LocalPath(new File(File.separator).toPath(), fileFactory);
         }
     }
 
@@ -108,7 +110,7 @@ public class CompressedPath implements IPath<ArchiveEntry> {
             return archivefile.toPath();
         }
 
-        return new CompressedPath(file.getParentFile());
+        return new CompressedPath(file.getParentFile(), fileFactory);
     }
 
     @Override

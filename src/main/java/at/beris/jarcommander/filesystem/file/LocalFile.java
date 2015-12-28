@@ -17,8 +17,9 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.*;
-import java.nio.file.attribute.BasicFileAttributes;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
@@ -28,10 +29,14 @@ import static at.beris.jarcommander.filesystem.file.FileHelper.isArchive;
 public class LocalFile implements IFile<File> {
     private File file;
     private File parentFile;
+    private LocalFileOperationProvider fileOperationProvider;
     private Set<Attribute> windowsAttributes;
+    private FileFactory fileFactory;
 
-    public LocalFile(File file) {
+    public LocalFile(File file, FileFactory fileFactory) {
         this.file = file;
+        this.fileFactory = fileFactory;
+        this.fileOperationProvider = new LocalFileOperationProvider(fileFactory);
         fillAttributes();
     }
 
@@ -62,22 +67,22 @@ public class LocalFile implements IFile<File> {
 
     @Override
     public IFile getParentFile() {
-        return FileFactory.newInstance(parentFile);
+        return fileFactory.newInstance(parentFile);
     }
 
     @Override
     public IPath toPath() {
-        return new LocalPath(file.toPath());
+        return new LocalPath(file.toPath(), fileFactory);
     }
 
     @Override
     public boolean exists() {
-        return file.exists();
+        return fileOperationProvider.exists(file);
     }
 
     @Override
     public boolean mkdirs() {
-        return file.mkdirs();
+        return fileOperationProvider.mkdirs(file);
     }
 
     @Override
@@ -102,7 +107,7 @@ public class LocalFile implements IFile<File> {
         if (file.isDirectory() || isArchive(this)) {
             Path path = file.toPath();
             if (!path.toString().equals(File.separator) && StringUtils.countMatches(path.toString(), FileSystems.getDefault().getSeparator()) >= 1) {
-                IFile backFile = FileFactory.newInstance(new File(".."));
+                IFile backFile = fileFactory.newInstance(new File(".."));
                 backFile.setParentFile(this);
                 fileList.add(backFile);
             }
@@ -110,13 +115,18 @@ public class LocalFile implements IFile<File> {
 
         if (file.isDirectory()) {
             for (File childFile : file.listFiles()) {
-                fileList.add(FileFactory.newInstance(childFile));
+                fileList.add(fileFactory.newInstance(childFile));
             }
         } else if (FileHelper.isArchive(this)) {
-            fileList.addAll(FileFactory.createListFromArchive(this.file));
+            fileList.addAll(fileFactory.createListFromArchive(this.file));
         }
 
         return fileList;
+    }
+
+    @Override
+    public String getPath() {
+        return file.getPath();
     }
 
     @Override
@@ -131,13 +141,7 @@ public class LocalFile implements IFile<File> {
 
     @Override
     public void delete() {
-        try {
-            if (file.exists()) {
-                Files.walkFileTree(file.toPath(), new DeletingFileVisitor());
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        fileOperationProvider.delete(file);
     }
 
     @Override
@@ -148,7 +152,7 @@ public class LocalFile implements IFile<File> {
 
         if (files != null) {
             for (File file : files) {
-                fileList.add(FileFactory.newInstance(file));
+                fileList.add(fileFactory.newInstance(file));
             }
         }
 
@@ -170,6 +174,20 @@ public class LocalFile implements IFile<File> {
         return null;
     }
 
+    public void copy(IFile targetFile, CopyListener listener) throws IOException {
+        fileOperationProvider.copy(file, targetFile, listener);
+    }
+
+    @Override
+    public boolean create() throws IOException {
+        return file.createNewFile();
+    }
+
+    @Override
+    public void refresh() {
+        file = new File(file.getAbsolutePath());
+    }
+
     private void fillAttributes() {
         windowsAttributes = new LinkedHashSet<>();
         if (file.canRead()) {
@@ -183,32 +201,6 @@ public class LocalFile implements IFile<File> {
         }
         if (file.isHidden()) {
             windowsAttributes.add(WindowsAttribute.HIDDEN);
-        }
-    }
-
-    private class DeletingFileVisitor extends SimpleFileVisitor<Path> {
-
-        @Override
-        public FileVisitResult visitFile(Path file, BasicFileAttributes attributes)
-                throws IOException {
-            if (attributes.isRegularFile()) {
-                Files.delete(file);
-            }
-            return FileVisitResult.CONTINUE;
-        }
-
-        @Override
-        public FileVisitResult postVisitDirectory(Path directory, IOException ioe)
-                throws IOException {
-            Files.delete(directory);
-            return FileVisitResult.CONTINUE;
-        }
-
-        @Override
-        public FileVisitResult visitFileFailed(Path file, IOException ioe)
-                throws IOException {
-            Application.logException(ioe);
-            return FileVisitResult.CONTINUE;
         }
     }
 }

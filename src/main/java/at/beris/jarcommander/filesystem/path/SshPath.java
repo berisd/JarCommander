@@ -28,10 +28,12 @@ public class SshPath implements IPath<String> {
 
     private SshContext context;
     private String path;
+    private FileFactory fileFactory;
 
-    public SshPath(SshContext context, String path) {
+    public SshPath(SshContext context, String path, FileFactory fileFactory) {
         this.context = context;
         this.path = path;
+        this.fileFactory = fileFactory;
     }
 
     @Override
@@ -58,7 +60,7 @@ public class SshPath implements IPath<String> {
                 if (dirEntry.getFilename().equals(".") || (path.equals(File.separator) && dirEntry.getFilename().equals("..")))
                     continue;
 
-                IFile file = FileFactory.newSshFileInstance(context, path + (!path.equals(File.separator) ? File.separator : "") + dirEntry.getFilename(), dirEntry);
+                IFile file = fileFactory.newSshFileInstance(context, path + (!path.equals(File.separator) ? File.separator : "") + dirEntry.getFilename(), dirEntry);
                 fileList.add(file);
             }
         }
@@ -68,21 +70,21 @@ public class SshPath implements IPath<String> {
 
     @Override
     public IPath normalize() {
-        return new SshPath(context, path.replace(".." + File.separator, ""));
+        return new SshPath(context, path.replace(".." + File.separator, ""), fileFactory);
     }
 
     @Override
     public IPath getRoot() {
         String[] pathParts = path.split(File.separator);
         String rootPath = pathParts[0];
-        return new SshPath(context, rootPath);
+        return new SshPath(context, rootPath, fileFactory);
     }
 
     @Override
     public IPath getParent() {
         String[] pathParts = path.split(File.separator);
         String parentPath = StringUtils.join(pathParts, File.separator, 0, pathParts.length - 1);
-        return new SshPath(context, parentPath + File.separator);
+        return new SshPath(context, parentPath + File.separator, fileFactory);
     }
 
     @Override
@@ -92,7 +94,7 @@ public class SshPath implements IPath<String> {
         buf.putInt(0);
         ChannelSftp.LsEntry lsEntry = c.new CustomLsEntry("", "", c.getATTR(buf));
 
-        return FileFactory.newSshFileInstance(context, path, lsEntry);
+        return fileFactory.newSshFileInstance(context, path, lsEntry);
     }
 
     @Override

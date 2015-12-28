@@ -11,6 +11,7 @@ package at.beris.jarcommander.filesystem;
 
 import at.beris.jarcommander.filesystem.drive.IDrive;
 import at.beris.jarcommander.filesystem.drive.LocalDrive;
+import at.beris.jarcommander.filesystem.file.FileFactory;
 import at.beris.jarcommander.filesystem.path.LocalPath;
 
 import java.io.File;
@@ -27,8 +28,10 @@ import static at.beris.jarcommander.Application.logException;
 
 public class LocalFileSystem implements IFileSystem {
     private List<IDrive> driveList;
+    private FileFactory fileFactory;
 
-    public LocalFileSystem() {
+    public LocalFileSystem(FileFactory fileFactory) {
+        this.fileFactory = fileFactory;
         driveList = createDriveList();
     }
 
@@ -42,8 +45,8 @@ public class LocalFileSystem implements IFileSystem {
             if (isOsWindows) {
                 for (Path path : FileSystems.getDefault().getRootDirectories()) {
                     FileStore fileStore = Files.getFileStore(path);
-                    LocalDrive driveInfo = new LocalDrive();
-                    driveInfo.setPath(new LocalPath(path));
+                    LocalDrive driveInfo = new LocalDrive(fileFactory);
+                    driveInfo.setPath(new LocalPath(path, fileFactory));
                     driveInfo.setSpaceTotal(fileStore.getTotalSpace());
                     driveInfo.setSpaceLeft(fileStore.getUsableSpace());
                     driveList.add(driveInfo);
@@ -53,8 +56,8 @@ public class LocalFileSystem implements IFileSystem {
                     String[] parts = fileStore.toString().split(" ");
                     Path path = new File(parts[0]).toPath();
 
-                    LocalDrive driveInfo = new LocalDrive();
-                    driveInfo.setPath(new LocalPath(path));
+                    LocalDrive driveInfo = new LocalDrive(fileFactory);
+                    driveInfo.setPath(new LocalPath(path, fileFactory));
                     driveInfo.setSpaceTotal(fileStore.getTotalSpace());
                     driveInfo.setSpaceLeft(fileStore.getUsableSpace());
                     driveList.add(driveInfo);

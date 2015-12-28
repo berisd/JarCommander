@@ -10,15 +10,12 @@
 package at.beris.jarcommander.action;
 
 import at.beris.jarcommander.ApplicationContext;
-import at.beris.jarcommander.ui.dialog.CopyTaskDialog;
 import at.beris.jarcommander.ui.NavigationPanel;
 import at.beris.jarcommander.ui.SessionPanel;
+import at.beris.jarcommander.ui.dialog.CopyTaskDialog;
 import org.apache.log4j.Logger;
 
-import javax.swing.Action;
-import javax.swing.JOptionPane;
-import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
@@ -54,7 +51,7 @@ public class CopyAction extends CustomAction {
             SwingUtilities.invokeLater(new Runnable() {
                 @Override
                 public void run() {
-                    CopyTaskDialog copyDialog = new CopyTaskDialog(sourcePanel.getSelection(), targetPanel);
+                    CopyTaskDialog copyDialog = new CopyTaskDialog(sourcePanel.getSelection(), targetPanel, context);
                     copyDialog.setVisible(true);
                 }
             });
