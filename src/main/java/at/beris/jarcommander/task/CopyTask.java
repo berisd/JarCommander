@@ -11,7 +11,7 @@ package at.beris.jarcommander.task;
 
 import at.beris.jarcommander.Application;
 import at.beris.jarcommander.filesystem.file.CopyListener;
-import at.beris.jarcommander.filesystem.file.FileFactory;
+import at.beris.jarcommander.filesystem.file.FileManager;
 import at.beris.jarcommander.filesystem.file.IFile;
 import at.beris.jarcommander.filesystem.path.IPath;
 import org.apache.log4j.Logger;
@@ -26,7 +26,6 @@ import static at.beris.jarcommander.Application.logException;
 public class CopyTask extends SwingWorker<Void, Integer> implements CopyListener {
     private final static Logger LOGGER = org.apache.log4j.Logger.getLogger(CopyTask.class);
 
-    private FileFactory fileFactory;
     private List<IFile> sourceList;
     private IPath targetPath;
     private long bytesTotal = 0L;
@@ -34,11 +33,10 @@ public class CopyTask extends SwingWorker<Void, Integer> implements CopyListener
     private long totalCountFiles = 0;
     private CopyTaskListener listener;
 
-    public CopyTask(List<IFile> sourceList, IPath targetPath, CopyTaskListener listener, FileFactory fileFactory) {
+    public CopyTask(List<IFile> sourceList, IPath targetPath, CopyTaskListener listener) {
         this.sourceList = sourceList;
         this.targetPath = targetPath;
         this.listener = listener;
-        this.fileFactory = fileFactory;
 
         listener.setCurrentProgressBar(0);
         listener.setAllProgressBar(0);
@@ -59,7 +57,7 @@ public class CopyTask extends SwingWorker<Void, Integer> implements CopyListener
                     break;
                 if (sourceFile.getName().equals(".."))
                     continue;
-                IFile targetFile = fileFactory.newInstance(targetPath.toFile(), sourceFile.getName());
+                IFile targetFile = FileManager.newFile(targetPath.toFile(), sourceFile.getUrl());
                 copyFiles(sourceFile, targetFile);
             }
         } catch (Exception ex) {
@@ -89,7 +87,11 @@ public class CopyTask extends SwingWorker<Void, Integer> implements CopyListener
 
         List<IFile> fileList;
         if (sourceFile.isDirectory()) {
-            fileList = sourceFile.listFiles();
+            try {
+                fileList = sourceFile.list();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         } else {
             fileList = Collections.singletonList(sourceFile);
         }

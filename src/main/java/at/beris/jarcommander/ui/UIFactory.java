@@ -34,14 +34,14 @@ public class UIFactory {
     public JTabbedPane createSessionsPanel() {
         JTabbedPane sessionsPanel = new JTabbedPane();
         context.setSessionsPanel(sessionsPanel);
-        createSessionPanel("Local", new LocalFileSystem(context.getFileFactory()));
+        createSessionPanel("Local", new LocalFileSystem());
         return sessionsPanel;
     }
 
     public SessionPanel createSessionPanel(String title, IFileSystem fileSystem) {
         SessionPanel sessionPanel = null;
         try {
-            sessionPanel = new SessionPanel(createNavigationPanel(new LocalFileSystem(context.getFileFactory())), createNavigationPanel(fileSystem));
+            sessionPanel = new SessionPanel(createNavigationPanel(new LocalFileSystem()), createNavigationPanel(fileSystem));
             context.getSessionsPanel().addTab(title, sessionPanel);
         } catch (ApplicationException e) {
             e.show();

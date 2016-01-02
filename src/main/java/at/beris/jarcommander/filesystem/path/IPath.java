@@ -11,12 +11,11 @@ package at.beris.jarcommander.filesystem.path;
 
 import at.beris.jarcommander.filesystem.file.IFile;
 
+import java.io.IOException;
 import java.util.List;
 
-public interface IPath<T> {
-    T getBaseObject();
-
-    List<IFile> getEntries();
+public interface IPath {
+    List<IFile> getEntries() throws IOException;
 
     IPath normalize();
 

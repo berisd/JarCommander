@@ -9,11 +9,13 @@
 
 package at.beris.jarcommander.ui.table;
 
+import at.beris.jarcommander.Application;
 import at.beris.jarcommander.filesystem.file.IFile;
 import at.beris.jarcommander.filesystem.path.IPath;
 import org.apache.log4j.Logger;
 
 import javax.swing.table.AbstractTableModel;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -34,13 +36,21 @@ public class PathTableModel extends AbstractTableModel {
         LOGGER.debug("setPath");
         this.path = path;
         fileList.clear();
-        fileList.addAll(path.getEntries());
+        try {
+            fileList.addAll(path.getEntries());
+        } catch (IOException e) {
+            Application.logException(e);
+        }
     }
 
     public void listFile(IFile file) {
         LOGGER.debug("listFile " + file);
         fileList.clear();
-        fileList.addAll(file.list());
+        try {
+            fileList.addAll(file.list());
+        } catch (IOException e) {
+            Application.logException(e);
+        }
     }
 
     @Override
@@ -97,7 +107,7 @@ public class PathTableModel extends AbstractTableModel {
             case 2:
                 return file.getSize();
             case 3:
-                return file.attributes();
+                return file.getAttributes();
         }
         return null;
     }

@@ -10,30 +10,24 @@
 package at.beris.jarcommander.filesystem.path;
 
 import at.beris.jarcommander.Application;
-import at.beris.jarcommander.filesystem.file.FileFactory;
+import at.beris.jarcommander.filesystem.file.FileManager;
 import at.beris.jarcommander.filesystem.file.IFile;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LocalPath implements IPath<Path> {
+public class LocalPath implements IPath {
     private Path path;
-    private FileFactory fileFactory;
 
-    public LocalPath(Path path, FileFactory fileFactory) {
+    public LocalPath(Path path) {
         this.path = path;
-        this.fileFactory = fileFactory;
-    }
-
-    @Override
-    public Path getBaseObject() {
-        return path;
     }
 
     @Override
@@ -41,12 +35,12 @@ public class LocalPath implements IPath<Path> {
         List<IFile> entryList = new ArrayList<>();
         try {
             if (!path.toString().equals("/") && StringUtils.countMatches(path.toString(), FileSystems.getDefault().getSeparator()) >= 1) {
-                entryList.add(fileFactory.newInstance(new File("..")));
+                entryList.add(FileManager.newFile(new File("..").toURI().toURL()));
             }
 
             for (Path childPath : Files.newDirectoryStream(path)) {
                 File file = childPath.toFile();
-                entryList.add(fileFactory.newInstance(file));
+                entryList.add(FileManager.newFile(file.toURI().toURL()));
             }
         } catch (IOException e) {
             Application.logException(e);
@@ -56,22 +50,26 @@ public class LocalPath implements IPath<Path> {
 
     @Override
     public IPath normalize() {
-        return new LocalPath(path.normalize(), fileFactory);
+        return new LocalPath(path.normalize());
     }
 
     @Override
     public IPath getRoot() {
-        return new LocalPath(path.getRoot(), fileFactory);
+        return new LocalPath(path.getRoot());
     }
 
     @Override
     public IPath getParent() {
-        return new LocalPath(path.getParent(), fileFactory);
+        return new LocalPath(path.getParent());
     }
 
     @Override
     public IFile toFile() {
-        return fileFactory.newInstance(path.toFile());
+        try {
+            return FileManager.newFile(path.toUri().toURL());
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -81,6 +79,6 @@ public class LocalPath implements IPath<Path> {
 
     @Override
     public int compareTo(IPath iPath) {
-        return path.compareTo((Path) iPath.getBaseObject());
+        return path.toString().compareTo(iPath.toString());
     }
 }

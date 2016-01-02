@@ -9,9 +9,7 @@
 
 package at.beris.jarcommander.filesystem.file;
 
-import at.beris.jarcommander.filesystem.SshContext;
-import at.beris.jarcommander.helper.SiteManager;
-import at.beris.jarcommander.model.SiteModel;
+import at.beris.jarcommander.filesystem.file.client.SftpClient;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
@@ -24,7 +22,7 @@ import java.util.List;
 
 import static at.beris.jarcommander.ApplicationContext.HOME_DIRECTORY;
 import static at.beris.jarcommander.filesystem.IBlockCopy.COPY_BUFFER_SIZE;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.times;
 
 public abstract class AbstractFileTest {
@@ -40,14 +38,13 @@ public abstract class AbstractFileTest {
 
     public static final String SSH_HOME_DIRECTORY = "/home/sshtest";
 
-    protected static FileFactory fileFactory;
+    protected static FileManager fileManager;
 
     public static void initTest() throws Exception {
         org.junit.Assume.assumeTrue("Integration Test Data directory could not be found.", Files.exists(new File(TEST_SITES_FILENAME).toPath()));
-        fileFactory = new FileFactory();
     }
 
-    public static LocalFile createLocalSourceFile() throws IOException {
+    public static IFile createLocalSourceFile() throws IOException {
         File file = new File(TEST_SOURCE_FILE_NAME);
 
         StringBuilder dataString = new StringBuilder("t");
@@ -58,18 +55,20 @@ public abstract class AbstractFileTest {
         Files.write(file.toPath(), dataString.toString().getBytes());
         Files.setLastModifiedTime(file.toPath(), FileTime.from(TEST_SOURCE_FILE_LAST_MODIFIED));
 
-        return (LocalFile) fileFactory.newInstance(file);
+        return FileManager.newFile(file.toURI().toURL());
     }
 
-    public static SshFile createSshFile(SshContext sshContext, String path) throws IOException {
-        LocalFile localFile = createLocalSourceFile();
-        SshFile sshFile = new SshFile(sshContext, path, fileFactory);
-        CopyListener copyListener = Mockito.mock(CopyListener.class);
-
-        localFile.copy(sshFile, copyListener);
-        localFile.delete();
-
-        return new SshFile(sshContext, path, fileFactory);
+    public static IFile createSshFile(SftpClient sftpClient, String path) throws IOException {
+//        LocalFile localFile = createLocalSourceFile();
+//        URL url = new URL("file", "1.1.1.1", 80, path);
+//        SshFile sshFile = new SshFile(url, sftpClient);
+//        CopyListener copyListener = Mockito.mock(CopyListener.class);
+//
+//        localFile.copy(sshFile, copyListener);
+//        localFile.delete();
+//
+//        return new SshFile(url, sftpClient);
+        return null;
     }
 
     public void assertCopyListener(CopyListener copyListener) {
@@ -89,54 +88,4 @@ public abstract class AbstractFileTest {
         assertEquals(TEST_SOURCE_FILE_SIZE, bytesCopiedTotalList.get(1).intValue());
     }
 
-    public void copyFileToLocalHostSuccessfully(IFile sourceFile, IFile targetFile) {
-        CopyListener copyListener = Mockito.mock(CopyListener.class);
-        Mockito.when(copyListener.interrupt()).thenReturn(false);
-
-        try {
-            sourceFile.copy(targetFile, copyListener);
-            assertCopyListener(copyListener);
-            assertEquals(sourceFile.getSize(), targetFile.getSize());
-        } catch (IOException e) {
-            fail();
-        } finally {
-            targetFile.delete();
-        }
-    }
-
-    public void copyFileToLocalHostCancelled(IFile sourceFile, IFile targetFile) {
-        CopyListener copyListener = Mockito.mock(CopyListener.class);
-        Mockito.when(copyListener.interrupt()).thenReturn(true);
-
-        try {
-            sourceFile.copy(targetFile, copyListener);
-            assertTrue(targetFile.getSize() > 0);
-            assertTrue(sourceFile.getSize() != targetFile.getSize());
-        } catch (IOException e) {
-            fail();
-        } finally {
-            targetFile.delete();
-        }
-    }
-
-    private static SiteModel getSshSiteModel() {
-        SiteManager siteManager = new SiteManager(TEST_SITES_FILENAME);
-        siteManager.load();
-
-        return siteManager.getSiteListModel().getElementAt(0);
-    }
-
-    public static SshContext createSshContext() {
-        SiteModel sshSite = getSshSiteModel();
-        SshContext sshContext = new SshContext();
-        sshContext.setHost(sshSite.getHostname());
-        sshContext.setPort(sshSite.getPortNumber());
-        sshContext.setUsername(sshSite.getUsername());
-        sshContext.setPassword(String.valueOf(sshSite.getPassword()));
-
-        sshContext.init();
-        sshContext.connect();
-
-        return sshContext;
-    }
 }

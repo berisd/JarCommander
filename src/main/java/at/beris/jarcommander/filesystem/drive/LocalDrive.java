@@ -9,7 +9,6 @@
 
 package at.beris.jarcommander.filesystem.drive;
 
-import at.beris.jarcommander.filesystem.file.FileFactory;
 import at.beris.jarcommander.filesystem.path.IPath;
 import at.beris.jarcommander.filesystem.path.LocalPath;
 
@@ -19,11 +18,6 @@ public class LocalDrive implements IDrive {
     private IPath path;
     private long spaceTotal;
     private long spaceLeft;
-    private FileFactory fileFactory;
-
-    public LocalDrive(FileFactory fileFactory) {
-        this.fileFactory = fileFactory;
-    }
 
     public IPath getPath() {
         return path;
@@ -50,6 +44,6 @@ public class LocalDrive implements IDrive {
     }
 
     public IPath getPath(String path) {
-        return new LocalPath(Paths.get(path), fileFactory);
+        return new LocalPath(Paths.get(path));
     }
 }

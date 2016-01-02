@@ -11,11 +11,7 @@ package at.beris.jarcommander.filesystem;
 
 import at.beris.jarcommander.Application;
 import at.beris.jarcommander.filesystem.file.IFile;
-import at.beris.jarcommander.filesystem.file.SshFile;
 import com.jcraft.jsch.Channel;
-import com.jcraft.jsch.ChannelExec;
-import com.jcraft.jsch.JSchException;
-import com.jcraft.jsch.Session;
 import org.apache.log4j.Logger;
 
 import java.io.*;
@@ -55,49 +51,49 @@ public class SshBlockCopy implements IBlockCopy {
 
     @Override
     public void init(IFile sourceFile, IFile targetFile) {
-        if ((sourceFile instanceof SshFile && targetFile instanceof SshFile) ||
-                (!(sourceFile instanceof SshFile) && !(targetFile instanceof SshFile))) {
-            throw new IllegalArgumentException("BlockCopy from " + sourceFile.getClass() + " to " + targetFile.getClass() + " not possible.");
-        }
-
-        this.sourceFile = sourceFile;
-        this.targetFile = targetFile;
-
-        bytesRead = 0;
-        bytesReadTotal = 0;
-        fileSize = 0;
-        Session session;
-        String command;
-        try {
-            if (sourceFile instanceof SshFile) {
-                transferMode = TransferMode.FROM_REMOTE;
-                session = ((SshFile) sourceFile).getContext().getSession();
-                command = "scp -f " + sourceFile.getAbsolutePath();
-            } else {
-                transferMode = TransferMode.TO_REMOTE;
-                session = ((SshFile) targetFile).getContext().getSession();
-                command = "scp -t " + targetFile.getAbsolutePath();
-            }
-
-            channel = session.openChannel("exec");
-            ((ChannelExec) channel).setCommand(command);
-
-            out = channel.getOutputStream();
-            in = channel.getInputStream();
-
-            channel.connect();
-
-            if (transferMode == TransferMode.FROM_REMOTE)
-                initFromRemote();
-            else
-                initToRemote();
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (JSchException e) {
-            throw new RuntimeException(e);
-        }
+//        if ((sourceFile instanceof SshFile && targetFile instanceof SshFile) ||
+//                (!(sourceFile instanceof SshFile) && !(targetFile instanceof SshFile))) {
+//            throw new IllegalArgumentException("BlockCopy from " + sourceFile.getClass() + " to " + targetFile.getClass() + " not possible.");
+//        }
+//
+//        this.sourceFile = sourceFile;
+//        this.targetFile = targetFile;
+//
+//        bytesRead = 0;
+//        bytesReadTotal = 0;
+//        fileSize = 0;
+//        Session session;
+//        String command;
+//        try {
+//            if (sourceFile instanceof SshFile) {
+//                transferMode = TransferMode.FROM_REMOTE;
+//                session = ((SshFile) sourceFile).getContext().getSession();
+//                command = "scp -f " + sourceFile.getPath();
+//            } else {
+//                transferMode = TransferMode.TO_REMOTE;
+//                session = ((SshFile) targetFile).getContext().getSession();
+//                command = "scp -t " + targetFile.getPath();
+//            }
+//
+//            channel = session.openChannel("exec");
+//            ((ChannelExec) channel).setCommand(command);
+//
+//            out = channel.getOutputStream();
+//            in = channel.getInputStream();
+//
+//            channel.connect();
+//
+//            if (transferMode == TransferMode.FROM_REMOTE)
+//                initFromRemote();
+//            else
+//                initToRemote();
+//        } catch (FileNotFoundException e) {
+//            throw new RuntimeException(e);
+//        } catch (IOException e) {
+//            throw new RuntimeException(e);
+//        } catch (JSchException e) {
+//            throw new RuntimeException(e);
+//        }
     }
 
     private void initToRemote() throws IOException {
@@ -116,7 +112,7 @@ public class SshBlockCopy implements IBlockCopy {
             throw new RuntimeException("Error with file transfer.");
         }
 
-        fis = new FileInputStream(sourceFile.getAbsolutePath());
+        fis = new FileInputStream(sourceFile.getPath());
     }
 
     private void initFromRemote() throws IOException {
@@ -154,7 +150,7 @@ public class SshBlockCopy implements IBlockCopy {
         out.write(buf, 0, 1);
         out.flush();
 
-        fos = new FileOutputStream(targetFile.getAbsolutePath());
+        fos = new FileOutputStream(targetFile.getPath());
     }
 
     @Override

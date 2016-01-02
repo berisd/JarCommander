@@ -1,14 +1,14 @@
 /*
  * This file is part of JarCommander.
  *
- * Copyright 2015 by Bernd Riedl <bernd.riedl@gmail.com>
+ * Copyright 2016 by Bernd Riedl <bernd.riedl@gmail.com>
  *
  * Licensed under GNU General Public License 3.0 or later.
  * Some rights reserved. See COPYING, AUTHORS.
  */
 
-package at.beris.jarcommander.filesystem.file;
+package at.beris.jarcommander.filesystem.protocol;
 
-public interface Archivable {
-    IFile getArchive();
+public enum Protocol {
+    FILE, SFTP
 }

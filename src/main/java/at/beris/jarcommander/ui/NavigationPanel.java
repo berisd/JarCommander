@@ -11,7 +11,6 @@ package at.beris.jarcommander.ui;
 
 import at.beris.jarcommander.filesystem.IFileSystem;
 import at.beris.jarcommander.filesystem.drive.IDrive;
-import at.beris.jarcommander.filesystem.file.FileHelper;
 import at.beris.jarcommander.filesystem.file.IFile;
 import at.beris.jarcommander.filesystem.path.IPath;
 import at.beris.jarcommander.ui.combobox.DriveComboBox;
@@ -126,7 +125,7 @@ public class NavigationPanel extends JPanel {
     public void executeFile(IFile file) {
         IPath path = file.toPath();
 
-        if (FileHelper.isArchive(file)) {
+        if (file.isArchive()) {
             currentPath = path;
         }
 

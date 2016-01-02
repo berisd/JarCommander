@@ -7,79 +7,53 @@
  * Some rights reserved. See COPYING, AUTHORS.
  */
 
-package at.beris.jarcommander.filesystem.file;
+package at.beris.jarcommander.filesystem.file.provider;
 
-import at.beris.jarcommander.filesystem.SshContext;
-import com.jcraft.jsch.Buffer;
-import com.jcraft.jsch.ChannelSftp;
-import com.jcraft.jsch.CustomChannelSftp;
+import at.beris.jarcommander.filesystem.file.FileManager;
+import at.beris.jarcommander.filesystem.file.IFile;
+import at.beris.jarcommander.filesystem.file.client.IClient;
+import at.beris.jarcommander.filesystem.model.FileModel;
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.ArchiveException;
 import org.apache.commons.compress.archivers.ArchiveInputStream;
 import org.apache.commons.compress.archivers.ArchiveStreamFactory;
 
 import java.io.*;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.*;
 
 import static at.beris.jarcommander.Application.logException;
 
-public class FileFactory {
-    public IFile newInstance(IFile parent, String child) {
-        if (parent instanceof LocalFile) {
-            return newInstance(new File((File) parent.getBaseObject(), child));
-        }
-        if (parent instanceof SshFile) {
-            CustomChannelSftp c = new CustomChannelSftp();
-            Buffer buf = new Buffer();
-            buf.putInt(0);
-            ChannelSftp.LsEntry lsEntry = c.new CustomLsEntry(child, child, c.getATTR(buf));
+public class LocalArchiveOperationProvider extends LocalFileOperationProvider {
+    @Override
+    public List<IFile> list(IClient client, FileModel model) throws IOException {
+        List<IFile> fileList = new ArrayList<>();
 
-            return newSshFileInstance(((SshFile) parent).getContext(), parent.getAbsolutePath(), lsEntry);
-        } else
-            throw new RuntimeException("Can't create IFile with given parent and child.");
+//        if (file.isDirectory() || file.isArchive()) {
+//            Path path = new File (file.getPath()).toPath();
+//            if (!path.toString().equals(File.separator) && StringUtils.countMatches(path.toString(), FileSystems.getDefault().getSeparator()) >= 1) {
+//                IFile backFile = FileManager.newFile(file, new File("..").toURI().toURL());
+//                fileList.add(backFile);
+//            }
+//        }
+//
+//        if (file.isDirectory()) {
+//            for (IFile childFile : file.list()) {
+//                fileList.add(childFile);
+//            }
+//        } else if (FileUtils.isArchive(file.getName())) {
+//            fileList.addAll(createFileTreeFromArchive(file));
+//        }
+
+        return fileList;
     }
 
-    public IFile newInstance(File file) {
-        if (file == null)
-            return null;
-
-        IFile<File> iFile = new LocalFile(file, this);
-
-        File parent = file.getParentFile();
-        IFile virtualChild = iFile;
-        while (parent != null) {
-            IFile virtualParent = newInstance(parent);
-            virtualChild.setParentFile(virtualParent);
-            virtualChild = virtualParent;
-            parent = parent.getParentFile();
-        }
-        return iFile;
-    }
-
-    public IFile newInstance(ArchiveEntry archiveEntry, File archiveFile) {
-        if (archiveEntry == null)
-            return null;
-        return newInstance(archiveEntry, newInstance(archiveFile));
-    }
-
-    public IFile newInstance(ArchiveEntry archiveEntry, IFile archiveFile) {
-        if (archiveEntry == null)
-            return null;
-        return new CompressedFile(archiveEntry, archiveFile, this);
-    }
-
-    public IFile newSshFileInstance(SshContext context, String path, ChannelSftp.LsEntry file) {
-        if (file == null)
-            return null;
-        return new SshFile(context, path, file, this);
-    }
-
-    public List<IFile> createListFromArchive(File archiveFile) {
+    public List<IFile> createFileTreeFromArchive(IFile archiveFile) {
         List<IFile> fileList = new ArrayList<>();
         try {
-
             ArchiveStreamFactory factory = new ArchiveStreamFactory();
-            InputStream fis = new BufferedInputStream(new FileInputStream(archiveFile));
+            InputStream fis = new BufferedInputStream(new FileInputStream(new File(archiveFile.getPath())));
             ArchiveInputStream ais = factory.createArchiveInputStream(fis);
 
             ArchiveEntry ae;
@@ -87,7 +61,7 @@ public class FileFactory {
             Map<String, Set<IFile>> archiveEntryToChildrenMap = new HashMap<>();
 
             while ((ae = ais.getNextEntry()) != null) {
-                IFile file = newInstance(ae, archiveFile);
+                IFile file = createArchivedFile(ae, archiveFile);
 
                 String[] parts = ae.getName().split(File.separator);
                 pathToArchiveEntryMap.put(parts[parts.length - 1], file);
@@ -96,14 +70,14 @@ public class FileFactory {
                     IFile currentFile = file;
                     for (int i = parts.length - 2; i >= 0; i--) {
                         IFile parentFile = pathToArchiveEntryMap.get(parts[i]);
-                        currentFile.setParentFile(parentFile);
+                        currentFile.setParent(parentFile);
                         currentFile = parentFile;
                     }
 
                     for (int i = 0; i < parts.length - 1; i++) {
                         if (i + 1 < parts.length) {
                             if (archiveEntryToChildrenMap.get(parts[i]) == null) {
-                                archiveEntryToChildrenMap.put(parts[i], new LinkedHashSet<IFile>());
+                                archiveEntryToChildrenMap.put(parts[i], new LinkedHashSet<>());
                             }
                             archiveEntryToChildrenMap.get(parts[i]).add(pathToArchiveEntryMap.get(parts[i + 1]));
                         }
@@ -115,7 +89,7 @@ public class FileFactory {
                     }
 
                 } else {
-                    file.setParentFile(newInstance(archiveFile));
+                    file.setParent(archiveFile);
                     fileList.add(file);
                 }
             }
@@ -130,5 +104,15 @@ public class FileFactory {
         }
 
         return fileList;
+    }
+
+    private IFile createArchivedFile(ArchiveEntry archiveEntry, IFile archiveFile) {
+        try {
+            URL parentUrl = archiveFile.getUrl();
+            URL url = new URL(parentUrl.getProtocol(), parentUrl.getHost(), parentUrl.getPort(), parentUrl.getFile() + "/" + archiveEntry.getName());
+            return FileManager.newFile(archiveFile, url);
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

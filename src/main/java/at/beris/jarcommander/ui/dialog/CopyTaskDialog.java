@@ -128,7 +128,7 @@ public class CopyTaskDialog extends JDialog implements ActionListener, CopyTaskL
 
     public void startWorker() {
         LOGGER.debug("startWorker");
-        copyTask = new CopyTask(fileList, targetPanel.getCurrentPath(), this, context.getFileFactory());
+        copyTask = new CopyTask(fileList, targetPanel.getCurrentPath(), this);
         copyTask.execute();
     }
 
@@ -165,7 +165,7 @@ public class CopyTaskDialog extends JDialog implements ActionListener, CopyTaskL
 
     @Override
     public int fileExists(IFile file) {
-        return JOptionPane.showConfirmDialog(this, file.getAbsolutePath() + " already exists! " +
+        return JOptionPane.showConfirmDialog(this, file.getPath() + " already exists! " +
                         System.lineSeparator() + "Would you like to overwrite it?", "File exists",
                 JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
     }

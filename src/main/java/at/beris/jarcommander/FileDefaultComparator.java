@@ -25,7 +25,7 @@ public class FileDefaultComparator implements Comparator<IFile> {
         } else if (file1 == null || file2 == null) {
             return file1 == null ? -1 : 1;
         }
-        int cmp = compareTo(file1.getParentFile(), file2.getParentFile());
+        int cmp = compareTo(file1.getParent(), file2.getParent());
         if (cmp == 0) {
             if (file1.isDirectory() != file2.isDirectory()) {
                 return file1.isDirectory() ? -1 : 1;

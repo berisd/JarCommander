@@ -10,7 +10,7 @@
 package at.beris.jarcommander.task;
 
 import at.beris.jarcommander.filesystem.file.CopyListener;
-import at.beris.jarcommander.filesystem.file.FileFactory;
+import at.beris.jarcommander.filesystem.file.FileManager;
 import at.beris.jarcommander.filesystem.file.IFile;
 import at.beris.jarcommander.filesystem.path.IPath;
 import org.junit.Test;
@@ -30,9 +30,9 @@ public class CopyTaskTest {
         CopyTaskListener copyTaskListener = Mockito.mock(CopyTaskListener.class);
         IPath targetPath = createPathMock();
         List<IFile> sourceFiles = createSourceFileMockList();
-        FileFactory fileFactory = createFileFactoryMock();
+        FileManager fileManager = createFileFactoryMock();
 
-        CopyTask copyTask = new CopyTask(sourceFiles, targetPath, copyTaskListener, fileFactory);
+        CopyTask copyTask = new CopyTask(sourceFiles, targetPath, copyTaskListener);
         copyTask.execute();
         copyTask.get();
 
@@ -40,10 +40,10 @@ public class CopyTaskTest {
             Mockito.verify(sourceFile, times(1)).copy(any(IFile.class), any(CopyListener.class));
     }
 
-    private FileFactory createFileFactoryMock() {
-        FileFactory fileFactory = Mockito.mock(FileFactory.class);
-        Mockito.when(fileFactory.newInstance(any(IFile.class), any(String.class))).thenReturn(Mockito.mock(IFile.class));
-        return fileFactory;
+    private FileManager createFileFactoryMock() {
+        FileManager fileManager = Mockito.mock(FileManager.class);
+//        Mockito.when(fileManager.newInstance(any(IFile.class), any(String.class))).thenReturn(Mockito.mock(IFile.class));
+        return fileManager;
     }
 
     private IPath createPathMock() {

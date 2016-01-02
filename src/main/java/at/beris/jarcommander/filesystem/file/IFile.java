@@ -9,49 +9,71 @@
 
 package at.beris.jarcommander.filesystem.file;
 
+import at.beris.jarcommander.filesystem.file.client.IClient;
+import at.beris.jarcommander.filesystem.file.provider.IFileOperationProvider;
+import at.beris.jarcommander.filesystem.model.FileModel;
 import at.beris.jarcommander.filesystem.path.IPath;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URL;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-public interface IFile<T> {
-    T getBaseObject();
+public interface IFile {
+    URL getUrl();
+
+    FileModel getModel();
+
+    IClient getClient();
+
+    IFileOperationProvider getFileOperationProvider();
 
     String getName();
 
     Date getLastModified();
 
+    void setLastModified(Date lastModified);
+
     long getSize();
+
+    void setSize(long size);
 
     boolean isDirectory();
 
-    void setParentFile(IFile parentFile);
+    void setParent(IFile parent);
 
-    IFile getParentFile();
+    IFile getParent();
 
     void addFile(Set<IFile> files);
 
+    void add(IFile file);
+
     boolean exists();
 
-    boolean mkdirs();
+    Set<Attribute> getAttributes();
 
-    Set<Attribute> attributes();
-
-    List<IFile> list();
+    List<IFile> list() throws IOException;
 
     String getPath();
-
-    String getAbsolutePath();
 
     IPath toPath();
 
     void delete();
 
-    List<IFile> listFiles();
+    byte[] checksum() throws IOException;
 
-    byte[] checksum();
+    /**
+     * File is an archive
+     */
+    boolean isArchive();
+
+    /**
+     * File is archived within an archive
+     */
+    boolean isArchived();
 
     void copy(IFile targetFile, CopyListener listener) throws IOException;
 
@@ -61,10 +83,9 @@ public interface IFile<T> {
      * @return true if the named file does not exist and was successfully created; false if the named file already exists
      * @throws IOException
      */
-    boolean create() throws IOException;
+    void create() throws IOException;
 
-    /**
-     * Updates file information
-     */
-    void refresh() throws IOException;
+    InputStream getInputStream() throws IOException;
+
+    OutputStream getOutputStream() throws IOException;
 }
