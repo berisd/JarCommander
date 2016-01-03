@@ -19,8 +19,12 @@ import org.apache.commons.lang3.NotImplementedException;
 import org.apache.log4j.Logger;
 
 import java.io.*;
+import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.file.*;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -38,15 +42,19 @@ public class LocalFileOperationProvider implements IFileOperationProvider {
     }
 
     @Override
-    public IFile create(IClient client, FileModel model) throws IOException {
+    public IFile create(IClient client, FileModel model) {
         String pathName = model.getPath();
         File file = new File(pathName);
         if (model.isDirectory()) {
             if (!file.mkdirs())
-                throw new FileAlreadyExistsException(pathName);
+                throw new at.beris.jarcommander.filesystem.exception.FileAlreadyExistsException(pathName);
         } else {
-            if (!file.createNewFile())
-                throw new FileAlreadyExistsException(pathName);
+            try {
+                if (!file.createNewFile())
+                    throw new at.beris.jarcommander.filesystem.exception.FileAlreadyExistsException(pathName);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
         return null;
     }
@@ -57,11 +65,15 @@ public class LocalFileOperationProvider implements IFileOperationProvider {
     }
 
     @Override
-    public List<IFile> list(IClient client, FileModel model) throws IOException {
+    public List<IFile> list(IClient client, FileModel model) {
         List<IFile> fileList = new ArrayList<>();
         if (model.isDirectory()) {
             for (File childFile : new File(model.getPath()).listFiles()) {
-                fileList.add(FileManager.newFile(childFile.toURI().toURL()));
+                try {
+                    fileList.add(FileManager.newFile(childFile.toURI().toURL()));
+                } catch (MalformedURLException e) {
+                    throw new RuntimeException(e);
+                }
             }
         }
 

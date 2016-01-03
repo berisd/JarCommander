@@ -27,7 +27,7 @@ import static at.beris.jarcommander.Application.logException;
 
 public class LocalArchiveOperationProvider extends LocalFileOperationProvider {
     @Override
-    public List<IFile> list(IClient client, FileModel model) throws IOException {
+    public List<IFile> list(IClient client, FileModel model) {
         List<IFile> fileList = new ArrayList<>();
 
 //        if (file.isDirectory() || file.isArchive()) {

@@ -10,10 +10,11 @@
 package at.beris.jarcommander.filesystem.file.client;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-public interface IClient<T> {
+public interface IClient {
     void init();
 
     String getHost();
@@ -36,17 +37,19 @@ public interface IClient<T> {
 
     void disconnect();
 
-    void delete(String Path);
+    void deleteFile(String Path);
 
     void createFile(String path);
 
     boolean exists(String path);
 
-    void makeDirectory(String path);
+    void createDirectory(String path);
+
+    void deleteDirectory(String Path);
 
     InputStream getInputStream(String path);
 
     OutputStream getOutputStream(String path);
 
-    T getFileInfo(String path) throws FileNotFoundException;
+    FileInfo getFileInfo(String path);
 }

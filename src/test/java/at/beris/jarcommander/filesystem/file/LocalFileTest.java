@@ -49,7 +49,7 @@ public class LocalFileTest extends AbstractFileTest {
 //        LocalFile testDirectory = (LocalFile) fileManager.newInstance(Files.createDirectory(new File(TEST_SOURCE_DIRECTORY_NAME).toPath()).toFile());
 //        assertEquals(TEST_SOURCE_DIRECTORY_NAME, testDirectory.getName());
 //        assertTrue(testDirectory.isDirectory());
-//        testDirectory.delete();
+//        testDirectory.deleteFile();
 //    }
 //
 //    @Test
@@ -93,8 +93,8 @@ public class LocalFileTest extends AbstractFileTest {
 //        for (long i = 1; i <= capturedIndexes.size(); i++)
 //            assertEquals(i, capturedIndexes.get((int) i - 1).longValue());
 //
-//        sourceDirectory.delete();
-//        targetDirectory.delete();
+//        sourceDirectory.deleteFile();
+//        targetDirectory.deleteFile();
 //    }
 
 //    @Test
@@ -130,8 +130,8 @@ public class LocalFileTest extends AbstractFileTest {
 //        assertEquals(targetFileNameList.size(), capturedFileNameList.size());
 //        assertTrue(targetFileNameList.containsAll(capturedFileNameList));
 //
-//        sourceDirectory.delete();
-//        targetDirectory.delete();
+//        sourceDirectory.deleteFile();
+//        targetDirectory.deleteFile();
 //    }
 
 //    @Test
@@ -147,8 +147,8 @@ public class LocalFileTest extends AbstractFileTest {
 //        assertEquals(sourceFile.getSize(), targetFile.getSize());
 //        assertTrue(targetFile.exists());
 //
-//        sourceFile.delete();
-//        targetFile.delete();
+//        sourceFile.deleteFile();
+//        targetFile.deleteFile();
 //    }
 
     @Test

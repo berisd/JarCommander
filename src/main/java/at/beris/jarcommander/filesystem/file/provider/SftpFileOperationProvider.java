@@ -11,22 +11,21 @@ package at.beris.jarcommander.filesystem.file.provider;
 
 import at.beris.jarcommander.filesystem.file.FileManager;
 import at.beris.jarcommander.filesystem.file.IFile;
+import at.beris.jarcommander.filesystem.file.client.FileInfo;
 import at.beris.jarcommander.filesystem.file.client.IClient;
 import at.beris.jarcommander.filesystem.model.FileModel;
-import com.jcraft.jsch.SftpATTRS;
 import org.apache.commons.lang3.NotImplementedException;
 
 import java.io.*;
 import java.net.URL;
-import java.util.Date;
 import java.util.List;
 
 public class SftpFileOperationProvider implements IFileOperationProvider {
 
     @Override
-    public IFile create(IClient client, FileModel model) throws IOException {
+    public IFile create(IClient client, FileModel model) {
         if (model.isDirectory())
-            client.makeDirectory(model.getPath());
+            client.createDirectory(model.getPath());
         else {
             client.createFile(model.getPath());
         }
@@ -40,7 +39,10 @@ public class SftpFileOperationProvider implements IFileOperationProvider {
 
     @Override
     public void delete(IClient client, FileModel model) {
-        client.delete(model.getPath());
+        if (model.isDirectory())
+            client.deleteDirectory(model.getPath());
+        else
+            client.deleteFile(model.getPath());
     }
 
     @Override
@@ -49,28 +51,28 @@ public class SftpFileOperationProvider implements IFileOperationProvider {
     }
 
     @Override
-    public byte[] checksum(IClient client, FileModel model) throws IOException {
+    public byte[] checksum(IClient client, FileModel model) {
         String tempDir = System.getProperty("java.io.tmpdir");
         String tempFilePath = tempDir + File.separator + "tmpfile_" + Thread.currentThread().getName() + "_" + System.currentTimeMillis();
         IFile tempFile = copyToLocalFile(client, model, tempFilePath);
-        return tempFile.checksum();
+        try {
+            return tempFile.checksum();
+        } catch (IOException e) {
+            new RuntimeException(e);
+        }
+        return null;
     }
 
     @Override
-    public List<IFile> list(IClient client, FileModel model) throws IOException {
+    public List<IFile> list(IClient client, FileModel model) {
         return null;
     }
 
     @Override
     public void updateModel(IClient client, FileModel model) {
-        SftpATTRS sftpATTRS;
-        try {
-            sftpATTRS = (SftpATTRS) client.getFileInfo(model.getPath());
-        } catch (FileNotFoundException e) {
-            return;
-        }
-        model.setLastModified(new Date(sftpATTRS.getMTime() * 1000L));
-        model.setSize(sftpATTRS.getSize());
+        FileInfo fileInfo = client.getFileInfo(model.getPath());
+        model.setLastModified(fileInfo.getLastModified());
+        model.setSize(fileInfo.getSize());
     }
 
     @Override
@@ -79,16 +81,16 @@ public class SftpFileOperationProvider implements IFileOperationProvider {
     }
 
     @Override
-    public InputStream getInputStream(IClient client, FileModel model) throws IOException {
+    public InputStream getInputStream(IClient client, FileModel model) {
         return client.getInputStream(model.getPath());
     }
 
     @Override
-    public OutputStream getOutputStream(IClient client, FileModel model) throws IOException {
+    public OutputStream getOutputStream(IClient client, FileModel model) {
         return client.getOutputStream(model.getPath());
     }
 
-    private IFile copyToLocalFile(IClient client, FileModel model, String path) throws IOException {
+    private IFile copyToLocalFile(IClient client, FileModel model, String path) {
         byte[] buffer = new byte[1024];
         int length;
 
@@ -99,6 +101,10 @@ public class SftpFileOperationProvider implements IFileOperationProvider {
             while ((length = inputStream.read(buffer)) > 0) {
                 outputStream.write(buffer, 0, length);
             }
+        } catch (FileNotFoundException e) {
+            throw new at.beris.jarcommander.filesystem.exception.FileNotFoundException(e);
+        } catch (IOException e) {
+            new RuntimeException(e);
         }
 
         return FileManager.newLocalFile(path);

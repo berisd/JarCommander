@@ -27,7 +27,7 @@ public interface IFileOperationProvider {
      * @return
      */
     //TODO void zurückgeben. calling object is what we want
-    IFile create(IClient client, FileModel model) throws IOException;
+    IFile create(IClient client, FileModel model);
 
     boolean exists(IClient client, FileModel model);
 
@@ -35,7 +35,7 @@ public interface IFileOperationProvider {
 
     void add(IFile parent, IFile child);
 
-    byte[] checksum(IClient client, FileModel model) throws IOException;
+    byte[] checksum(IClient client, FileModel model);
 
     /**
      * List files in this file
@@ -45,12 +45,12 @@ public interface IFileOperationProvider {
      * @return
      * @throws IOException
      */
-    List<IFile> list(IClient client, FileModel model) throws IOException;
+    List<IFile> list(IClient client, FileModel model);
 
     /**
      * Updates the Model with information from the physical file.
      *
-     * @param url
+     * @param client
      * @param model
      */
     void updateModel(IClient client, FileModel model);

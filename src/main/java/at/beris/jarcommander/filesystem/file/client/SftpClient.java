@@ -9,16 +9,16 @@
 
 package at.beris.jarcommander.filesystem.file.client;
 
+import at.beris.jarcommander.filesystem.exception.AccessDeniedException;
+import at.beris.jarcommander.filesystem.exception.FileNotFoundException;
 import com.jcraft.jsch.*;
 
 import java.io.ByteArrayInputStream;
-import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Date;
 
-import static at.beris.jarcommander.Application.logException;
-
-public class SftpClient implements IClient<SftpATTRS> {
+public class SftpClient implements IClient {
     private JSch jsch;
     private Session session;
     private ChannelSftp sftpChannel;
@@ -39,7 +39,7 @@ public class SftpClient implements IClient<SftpATTRS> {
             session.setConfig(config);
             session.setPassword(password);
         } catch (JSchException e) {
-            logException(e);
+            new RuntimeException(e);
         }
     }
 
@@ -103,12 +103,12 @@ public class SftpClient implements IClient<SftpATTRS> {
     }
 
     @Override
-    public void delete(String path) {
+    public void deleteFile(String path) {
         try {
             checkChannel();
             sftpChannel.rm(path);
         } catch (SftpException e) {
-            throw new RuntimeException(e);
+            handleSftpException(e);
         }
     }
 
@@ -118,7 +118,7 @@ public class SftpClient implements IClient<SftpATTRS> {
             checkChannel();
             sftpChannel.put(new ByteArrayInputStream(new byte[]{}), path);
         } catch (SftpException e) {
-            throw new RuntimeException(e);
+            handleSftpException(e);
         }
     }
 
@@ -127,56 +127,71 @@ public class SftpClient implements IClient<SftpATTRS> {
         try {
             checkChannel();
             sftpChannel.stat(path);
-            return true;
         } catch (SftpException e) {
             if (e.id == ChannelSftp.SSH_FX_NO_SUCH_FILE)
                 return false;
             else
-                throw new RuntimeException(e);
+                handleSftpException(e);
         }
+        return true;
     }
 
     @Override
-    public void makeDirectory(String path) {
+    public void createDirectory(String path) {
         try {
             checkChannel();
             sftpChannel.mkdir(path);
         } catch (SftpException e) {
-            throw new RuntimeException(e);
+            handleSftpException(e);
+        }
+    }
+
+    @Override
+    public void deleteDirectory(String path) {
+        try {
+            checkChannel();
+            sftpChannel.rmdir(path);
+        } catch (SftpException e) {
+            handleSftpException(e);
         }
     }
 
     @Override
     public InputStream getInputStream(String path) {
+        InputStream inputStream = null;
         try {
             checkChannel();
-            return sftpChannel.get(path);
+            inputStream = sftpChannel.get(path);
         } catch (SftpException e) {
-            throw new RuntimeException(e);
+            handleSftpException(e);
         }
+        return inputStream;
     }
 
     @Override
     public OutputStream getOutputStream(String path) {
+        OutputStream outputStream = null;
         try {
             checkChannel();
-            return sftpChannel.put(path);
+            outputStream = sftpChannel.put(path);
         } catch (SftpException e) {
-            throw new RuntimeException(e);
+            handleSftpException(e);
         }
+        return outputStream;
     }
 
     @Override
-    public SftpATTRS getFileInfo(String path) throws FileNotFoundException {
+    public FileInfo getFileInfo(String path) {
+        FileInfo fileInfo = new FileInfo();
         try {
             checkChannel();
-            return sftpChannel.stat(path);
+            SftpATTRS sftpATTRS = sftpChannel.stat(path);
+            fileInfo.setSize(sftpATTRS.getSize());
+            fileInfo.setLastModified(new Date(sftpATTRS.getMTime() * 1000L));
         } catch (SftpException e) {
-            if (e.id == ChannelSftp.SSH_FX_NO_SUCH_FILE)
-                throw new FileNotFoundException(path);
-            else
-                throw new RuntimeException(e);
+            handleSftpException(e);
         }
+        return fileInfo;
     }
 
     private void checkChannel() {
@@ -190,5 +205,14 @@ public class SftpClient implements IClient<SftpATTRS> {
         } catch (JSchException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private void handleSftpException(SftpException e) {
+        if (e.id == ChannelSftp.SSH_FX_PERMISSION_DENIED)
+            throw new AccessDeniedException(e);
+        else if (e.id == ChannelSftp.SSH_FX_NO_SUCH_FILE)
+            throw new FileNotFoundException(e);
+        else
+            throw new RuntimeException(e);
     }
 }

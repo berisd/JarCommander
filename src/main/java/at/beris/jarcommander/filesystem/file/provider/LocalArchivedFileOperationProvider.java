@@ -27,7 +27,7 @@ import java.util.List;
 
 public class LocalArchivedFileOperationProvider implements IFileOperationProvider {
     @Override
-    public List<IFile> list(IClient client, FileModel model) throws IOException {
+    public List<IFile> list(IClient client, FileModel model) {
         List<IFile> files = new ArrayList<>();
 //        IFile backFile = add(this.archiveFile, createEmptyArchiveEntry());
 //        backFile.setParent(this.parentFile);
@@ -42,7 +42,7 @@ public class LocalArchivedFileOperationProvider implements IFileOperationProvide
 
 
     @Override
-    public IFile create(IClient client, FileModel model) throws IOException {
+    public IFile create(IClient client, FileModel model) {
         try {
             // if not exists create Archive
             // insert or update ArchiveEntry
@@ -53,6 +53,10 @@ public class LocalArchivedFileOperationProvider implements IFileOperationProvide
             return null;
 
         } catch (ArchiveException e) {
+            throw new RuntimeException(e);
+        } catch (FileNotFoundException e) {
+            throw new at.beris.jarcommander.filesystem.exception.FileNotFoundException(e);
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }

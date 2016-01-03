@@ -65,7 +65,7 @@ public abstract class AbstractFileTest {
 //        CopyListener copyListener = Mockito.mock(CopyListener.class);
 //
 //        localFile.copy(sshFile, copyListener);
-//        localFile.delete();
+//        localFile.deleteFile();
 //
 //        return new SshFile(url, sftpClient);
         return null;
