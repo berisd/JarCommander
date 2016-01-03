@@ -12,7 +12,6 @@ package at.beris.jarcommander.filesystem.file;
 import at.beris.jarcommander.filesystem.file.client.IClient;
 import at.beris.jarcommander.filesystem.file.provider.IFileOperationProvider;
 import at.beris.jarcommander.filesystem.model.FileModel;
-import at.beris.jarcommander.filesystem.path.IPath;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -35,8 +34,6 @@ public interface IFile {
 
     Date getLastModified();
 
-    void setLastModified(Date lastModified);
-
     long getSize();
 
     void setSize(long size);
@@ -47,7 +44,9 @@ public interface IFile {
 
     IFile getParent();
 
-    void addFile(Set<IFile> files);
+    IFile getRoot();
+
+    boolean isRoot();
 
     void add(IFile file);
 
@@ -58,8 +57,6 @@ public interface IFile {
     List<IFile> list() throws IOException;
 
     String getPath();
-
-    IPath toPath();
 
     void delete();
 
@@ -76,6 +73,8 @@ public interface IFile {
     boolean isArchived();
 
     void copy(IFile targetFile, CopyListener listener) throws IOException;
+
+    int compareTo(IFile file);
 
     /**
      * Creates an empty file

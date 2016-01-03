@@ -9,11 +9,8 @@
 
 package at.beris.jarcommander.filesystem;
 
-import org.omg.SendingContext.RunTime;
-
 import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -50,6 +47,22 @@ public class FileUtils {
         try {
             URI uri = URI.create(url.toString());
             return uri.normalize().toURL();
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static URL newUrl(String url) {
+        try {
+            return new URL(url);
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static URL newUrl(URL context, String spec) {
+        try {
+            return new URL(context, spec);
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         }

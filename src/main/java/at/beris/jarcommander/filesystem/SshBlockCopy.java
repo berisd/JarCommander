@@ -68,11 +68,11 @@ public class SshBlockCopy implements IBlockCopy {
 //            if (sourceFile instanceof SshFile) {
 //                transferMode = TransferMode.FROM_REMOTE;
 //                session = ((SshFile) sourceFile).getContext().getSession();
-//                command = "scp -f " + sourceFile.getPath();
+//                command = "scp -f " + sourceFile.getFile();
 //            } else {
 //                transferMode = TransferMode.TO_REMOTE;
 //                session = ((SshFile) targetFile).getContext().getSession();
-//                command = "scp -t " + targetFile.getPath();
+//                command = "scp -t " + targetFile.getFile();
 //            }
 //
 //            channel = session.openChannel("exec");

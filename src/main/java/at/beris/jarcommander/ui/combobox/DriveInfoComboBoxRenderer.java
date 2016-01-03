@@ -11,10 +11,8 @@ package at.beris.jarcommander.ui.combobox;
 
 import at.beris.jarcommander.filesystem.drive.IDrive;
 
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.ListCellRenderer;
-import java.awt.Component;
+import javax.swing.*;
+import java.awt.*;
 
 import static at.beris.jarcommander.helper.Localization.numberFormat;
 
@@ -23,7 +21,7 @@ public class DriveInfoComboBoxRenderer extends JLabel implements ListCellRendere
     @Override
     public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
         IDrive driveInfo = (IDrive) value;
-        setText(driveInfo.getPath() + " [" + numberFormat().format((double) driveInfo.getSpaceTotal() / (1024 * 1024 * 1024))
+        setText(driveInfo.getFile().getPath() + " [" + numberFormat().format((double) driveInfo.getSpaceTotal() / (1024 * 1024 * 1024))
                 + "G / " + calculateSpaceFreePercentage(driveInfo) + "% free]");
         return this;
     }

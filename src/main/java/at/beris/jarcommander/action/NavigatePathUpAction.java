@@ -10,6 +10,7 @@
 package at.beris.jarcommander.action;
 
 import at.beris.jarcommander.ApplicationContext;
+import at.beris.jarcommander.filesystem.FileUtils;
 import at.beris.jarcommander.filesystem.file.FileManager;
 import at.beris.jarcommander.ui.NavigationPanel;
 import at.beris.jarcommander.ui.SessionPanel;
@@ -18,6 +19,7 @@ import org.apache.log4j.Logger;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.net.URL;
 
 public class NavigatePathUpAction extends CustomAction {
     private final static Logger LOGGER = Logger.getLogger(NavigatePathUpAction.class);
@@ -39,6 +41,7 @@ public class NavigatePathUpAction extends CustomAction {
         SessionPanel sessionPanel = (SessionPanel) context.getSessionsPanel().getSelectedComponent();
         NavigationPanel navigationPanel = sessionPanel.getSelectedNavigationPanel();
 
-        navigationPanel.changeDirectory(FileManager.newLocalFile("..").toPath());
+        URL backUrl = FileUtils.newUrl(navigationPanel.getCurrentFile().getUrl(), "/../");
+        navigationPanel.changeDirectory(FileManager.newFile(backUrl));
     }
 }

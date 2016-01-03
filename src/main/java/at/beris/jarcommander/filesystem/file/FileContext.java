@@ -104,26 +104,29 @@ public class FileContext {
     public IFile newFile(URL url) {
         URL normalizedUrl = FileUtils.normalizeUrl(url);
         String fullPath = normalizedUrl.getPath();
-        String[] pathParts = fullPath.split("/");
-
-        String path = "";
         IFile parentFile = null;
 
-        for (int i = 0; i < pathParts.length; i++) {
-            path += pathParts[i];
+        String[] pathParts;
+        if (fullPath.equals("/"))
+            return newFile((IFile) null, normalizedUrl);
+        else {
+            pathParts = fullPath.split("/");
+            String path = "";
+            for (int i = 0; i < pathParts.length; i++) {
+                path += pathParts[i];
 
-            if ((i < pathParts.length - 1) || fullPath.endsWith("/"))
-                path += "/";
+                if ((i < pathParts.length - 1) || fullPath.endsWith("/"))
+                    path += "/";
 
-            try {
-                String pathUrlString = getSiteUrlString(normalizedUrl) + path;
-                URL pathUrl = new URL(pathUrlString);
-                parentFile = newFile(parentFile, pathUrl);
-            } catch (MalformedURLException e) {
-                throw new RuntimeException(e);
+                try {
+                    String pathUrlString = getSiteUrlString(normalizedUrl) + path;
+                    URL pathUrl = new URL(pathUrlString);
+                    parentFile = newFile(parentFile, pathUrl);
+                } catch (MalformedURLException e) {
+                    throw new RuntimeException(e);
+                }
             }
         }
-
         return parentFile;
     }
 

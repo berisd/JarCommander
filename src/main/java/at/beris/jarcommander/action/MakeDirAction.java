@@ -14,9 +14,7 @@ import at.beris.jarcommander.ui.NavigationPanel;
 import at.beris.jarcommander.ui.SessionPanel;
 import org.apache.log4j.Logger;
 
-import javax.swing.Action;
-import javax.swing.JOptionPane;
-import javax.swing.KeyStroke;
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
@@ -49,7 +47,7 @@ public class MakeDirAction extends CustomAction {
         String newDirectoryMame = JOptionPane.showInputDialog("New directory name");
 
         if (newDirectoryMame != null) {
-            File newDirectory = new File(sourcePanel.getCurrentPath().toString(), newDirectoryMame);
+            File newDirectory = new File(sourcePanel.getCurrentFile().toString(), newDirectoryMame);
 
             try {
                 Files.createDirectory(newDirectory.toPath());

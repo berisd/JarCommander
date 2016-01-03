@@ -16,8 +16,8 @@ import at.beris.jarcommander.filesystem.IFileSystem;
 import at.beris.jarcommander.filesystem.drive.IDrive;
 import org.apache.log4j.Logger;
 
-import javax.swing.JComboBox;
-import java.awt.Component;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
@@ -58,10 +58,6 @@ public class DriveComboBox extends JComboBox<IDrive> {
         for (IDrive driveInfo : fileSystem.getDriveList()) {
             addItem(driveInfo);
         }
-    }
-
-    public IFileSystem getFileSystem() {
-        return fileSystem;
     }
 
     private class MouseListener extends MouseAdapter {

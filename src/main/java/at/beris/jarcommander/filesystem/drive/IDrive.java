@@ -9,12 +9,12 @@
 
 package at.beris.jarcommander.filesystem.drive;
 
-import at.beris.jarcommander.filesystem.path.IPath;
+import at.beris.jarcommander.filesystem.file.IFile;
 
 public interface IDrive {
-    IPath getPath();
+    IFile getFile();
 
-    void setPath(IPath path);
+    void setFile(IFile file);
 
     long getSpaceTotal();
 
@@ -23,6 +23,4 @@ public interface IDrive {
     long getSpaceLeft();
 
     void setSpaceLeft(long spaceLeft);
-
-    IPath getPath(String path);
 }

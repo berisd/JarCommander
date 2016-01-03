@@ -13,7 +13,6 @@ import at.beris.jarcommander.Application;
 import at.beris.jarcommander.filesystem.file.CopyListener;
 import at.beris.jarcommander.filesystem.file.FileManager;
 import at.beris.jarcommander.filesystem.file.IFile;
-import at.beris.jarcommander.filesystem.path.IPath;
 import org.apache.log4j.Logger;
 
 import javax.swing.*;
@@ -27,15 +26,15 @@ public class CopyTask extends SwingWorker<Void, Integer> implements CopyListener
     private final static Logger LOGGER = org.apache.log4j.Logger.getLogger(CopyTask.class);
 
     private List<IFile> sourceList;
-    private IPath targetPath;
+    private IFile targetFile;
     private long bytesTotal = 0L;
     private long bytesCopied = 0L;
     private long totalCountFiles = 0;
     private CopyTaskListener listener;
 
-    public CopyTask(List<IFile> sourceList, IPath targetPath, CopyTaskListener listener) {
+    public CopyTask(List<IFile> sourceList, IFile targetFile, CopyTaskListener listener) {
         this.sourceList = sourceList;
-        this.targetPath = targetPath;
+        this.targetFile = targetFile;
         this.listener = listener;
 
         listener.setCurrentProgressBar(0);
@@ -57,7 +56,7 @@ public class CopyTask extends SwingWorker<Void, Integer> implements CopyListener
                     break;
                 if (sourceFile.getName().equals(".."))
                     continue;
-                IFile targetFile = FileManager.newFile(targetPath.toFile(), sourceFile.getUrl());
+                IFile targetFile = FileManager.newFile(this.targetFile, sourceFile.getUrl());
                 copyFiles(sourceFile, targetFile);
             }
         } catch (Exception ex) {

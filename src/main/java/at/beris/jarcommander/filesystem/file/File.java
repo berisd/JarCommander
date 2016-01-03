@@ -14,7 +14,6 @@ import at.beris.jarcommander.filesystem.file.client.IClient;
 import at.beris.jarcommander.filesystem.file.operation.CopyOperation;
 import at.beris.jarcommander.filesystem.file.provider.IFileOperationProvider;
 import at.beris.jarcommander.filesystem.model.FileModel;
-import at.beris.jarcommander.filesystem.path.IPath;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
@@ -85,11 +84,6 @@ public class File implements IFile {
     }
 
     @Override
-    public void setLastModified(Date lastModified) {
-        getModel().setLastModified(lastModified);
-    }
-
-    @Override
     public long getSize() {
         return model.getSize();
     }
@@ -102,11 +96,6 @@ public class File implements IFile {
     @Override
     public String getPath() {
         return model.getPath();
-    }
-
-    @Override
-    public IPath toPath() {
-        return null;
     }
 
     @Override
@@ -130,9 +119,18 @@ public class File implements IFile {
     }
 
     @Override
-    public void addFile(Set<IFile> files) {
-        for (IFile file : files)
-            fileOperationProvider.add(this, file);
+    public IFile getRoot() {
+        IFile file = this;
+
+        while (file.getParent() != null)
+            file = file.getParent();
+
+        return file;
+    }
+
+    @Override
+    public boolean isRoot() {
+        return this.toString().equals(getRoot() != null ? getRoot().toString() : "");
     }
 
     @Override
@@ -213,5 +211,10 @@ public class File implements IFile {
     @Override
     public String toString() {
         return model.getUrl().toString();
+    }
+
+    @Override
+    public int compareTo(IFile file) {
+        return file.getModel().getUrl().toString().compareTo(file.getUrl().toString());
     }
 }

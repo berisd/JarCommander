@@ -11,27 +11,16 @@ package at.beris.jarcommander.ui.table;
 
 import at.beris.jarcommander.ApplicationContext;
 import at.beris.jarcommander.FileDefaultComparator;
-import at.beris.jarcommander.action.ActionFactory;
-import at.beris.jarcommander.action.CustomAction;
-import at.beris.jarcommander.action.ExecuteFileAction;
-import at.beris.jarcommander.action.NavigatePathUpAction;
-import at.beris.jarcommander.action.ScrollToBottomAction;
-import at.beris.jarcommander.action.ScrollToLetterInFileTablePaneAction;
-import at.beris.jarcommander.action.ScrollToTopAction;
-import at.beris.jarcommander.action.SelectNavigationPanelAction;
-import at.beris.jarcommander.action.SwitchNavigationPanelAction;
+import at.beris.jarcommander.action.*;
 import at.beris.jarcommander.filesystem.file.IFile;
-import at.beris.jarcommander.filesystem.path.IPath;
 import org.apache.log4j.Logger;
 
-import javax.swing.JTable;
-import javax.swing.RowSorter;
-import javax.swing.SortOrder;
+import javax.swing.*;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
-import java.awt.Component;
+import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -43,7 +32,7 @@ public class FileTable extends JTable {
     private final static Logger LOGGER = Logger.getLogger(FileTablePane.class);
 
     private TableRowSorter<TableModel> rowSorter;
-    private IPath path;
+    private IFile path;
     private ApplicationContext context;
     private ActionFactory actionFactory;
 
@@ -94,7 +83,7 @@ public class FileTable extends JTable {
         repaint();
     }
 
-    public void setPath(IPath path) {
+    public void setPath(IFile path) {
         this.path = path;
         ((PathTableModel) getModel()).setPath(path);
         rowSorter.sort();

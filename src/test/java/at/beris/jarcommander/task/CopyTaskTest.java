@@ -12,7 +12,6 @@ package at.beris.jarcommander.task;
 import at.beris.jarcommander.filesystem.file.CopyListener;
 import at.beris.jarcommander.filesystem.file.FileManager;
 import at.beris.jarcommander.filesystem.file.IFile;
-import at.beris.jarcommander.filesystem.path.IPath;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -28,11 +27,11 @@ public class CopyTaskTest {
     @Test
     public void copyFiles() throws Exception {
         CopyTaskListener copyTaskListener = Mockito.mock(CopyTaskListener.class);
-        IPath targetPath = createPathMock();
+        IFile targetFile = createFileMock();
         List<IFile> sourceFiles = createSourceFileMockList();
         FileManager fileManager = createFileFactoryMock();
 
-        CopyTask copyTask = new CopyTask(sourceFiles, targetPath, copyTaskListener);
+        CopyTask copyTask = new CopyTask(sourceFiles, targetFile, copyTaskListener);
         copyTask.execute();
         copyTask.get();
 
@@ -44,11 +43,6 @@ public class CopyTaskTest {
         FileManager fileManager = Mockito.mock(FileManager.class);
 //        Mockito.when(fileManager.newInstance(any(IFile.class), any(String.class))).thenReturn(Mockito.mock(IFile.class));
         return fileManager;
-    }
-
-    private IPath createPathMock() {
-        IPath path = Mockito.mock(IPath.class);
-        return path;
     }
 
     private List<IFile> createSourceFileMockList() {

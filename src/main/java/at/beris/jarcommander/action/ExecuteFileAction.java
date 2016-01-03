@@ -16,8 +16,7 @@ import at.beris.jarcommander.ui.SessionPanel;
 import at.beris.jarcommander.ui.table.FileTable;
 import org.apache.log4j.Logger;
 
-import javax.swing.Action;
-import javax.swing.KeyStroke;
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
@@ -47,7 +46,7 @@ public class ExecuteFileAction extends CustomAction {
         if (firstSelectedRowIndex >= 0) {
             IFile file = (IFile) fileTable.getModel().getValueAt(fileTable.convertRowIndexToModel(firstSelectedRowIndex), 0);
             if (file.isDirectory()) {
-                navigationPanel.changeDirectory(file.toPath());
+                navigationPanel.changeDirectory(file);
             } else {
                 navigationPanel.executeFile(file);
             }

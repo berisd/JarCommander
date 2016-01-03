@@ -11,8 +11,8 @@ package at.beris.jarcommander.filesystem;
 
 import at.beris.jarcommander.filesystem.drive.IDrive;
 import at.beris.jarcommander.filesystem.drive.SshDrive;
+import at.beris.jarcommander.filesystem.file.FileManager;
 import at.beris.jarcommander.filesystem.file.client.SftpClient;
-import at.beris.jarcommander.filesystem.path.SshPath;
 import org.apache.commons.lang3.NotImplementedException;
 
 import java.util.ArrayList;
@@ -40,7 +40,7 @@ public class SshFileSystem implements IFileSystem {
     public List<IDrive> getDriveList() {
         ArrayList<IDrive> driveList = new ArrayList<>();
         SshDrive drive = new SshDrive();
-        drive.setPath(new SshPath(context, "/"));
+        drive.setFile(FileManager.newFile(FileUtils.newUrl("file:/")));
         driveList.add(drive);
         return driveList;
     }

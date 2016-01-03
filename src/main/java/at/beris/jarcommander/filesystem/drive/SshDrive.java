@@ -9,20 +9,21 @@
 
 package at.beris.jarcommander.filesystem.drive;
 
-import at.beris.jarcommander.filesystem.path.IPath;
+
+import at.beris.jarcommander.filesystem.file.IFile;
 import org.apache.commons.lang3.NotImplementedException;
 
 public class SshDrive implements IDrive {
-    private IPath path;
+    private IFile path;
 
     @Override
-    public IPath getPath() {
+    public IFile getFile() {
         return path;
     }
 
     @Override
-    public void setPath(IPath path) {
-        this.path = path;
+    public void setFile(IFile file) {
+        this.path = file;
     }
 
     @Override
@@ -42,11 +43,6 @@ public class SshDrive implements IDrive {
 
     @Override
     public void setSpaceLeft(long spaceLeft) {
-        throw new NotImplementedException("");
-    }
-
-    @Override
-    public IPath getPath(String path) {
         throw new NotImplementedException("");
     }
 }

@@ -31,6 +31,6 @@ public class ChangeDriveAction extends CustomAction {
         NavigationPanel navigationPanel = sessionPanel.getSelectedNavigationPanel();
 
         IDrive driveInfo = (IDrive) ((ParamActionEvent) e).getParam();
-        navigationPanel.changeDirectory(driveInfo.getPath());
+        navigationPanel.changeDirectory(driveInfo.getFile());
     }
 }

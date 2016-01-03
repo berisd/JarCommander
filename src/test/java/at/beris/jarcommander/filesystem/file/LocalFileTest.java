@@ -119,11 +119,11 @@ public class LocalFileTest extends AbstractFileTest {
 //        List<IFile> capturedFiles = fileArgumentCaptor.getAllValues();
 //        List<String> capturedFileNameList = new ArrayList<>();
 //
-//        String absoluteBasePath = capturedFiles.get(0).getPath();
+//        String absoluteBasePath = capturedFiles.get(0).getFile();
 //        String relativeBasePath = targetFileNameList.get(0);
 //
 //        for (int i = 0; i < capturedFiles.size(); i++) {
-//            String capturedFileName = capturedFiles.get(i).getPath();
+//            String capturedFileName = capturedFiles.get(i).getFile();
 //            capturedFileNameList.add(capturedFileName.replace(absoluteBasePath, relativeBasePath));
 //        }
 //

@@ -9,10 +9,9 @@
 
 package at.beris.jarcommander.ui;
 
-import at.beris.jarcommander.filesystem.IFileSystem;
 import at.beris.jarcommander.filesystem.drive.IDrive;
+import at.beris.jarcommander.filesystem.file.FileManager;
 import at.beris.jarcommander.filesystem.file.IFile;
-import at.beris.jarcommander.filesystem.path.IPath;
 import at.beris.jarcommander.ui.combobox.DriveComboBox;
 import at.beris.jarcommander.ui.table.FileTable;
 import at.beris.jarcommander.ui.table.FileTablePane;
@@ -37,7 +36,7 @@ public class NavigationPanel extends JPanel {
     private boolean selected;
     private Border borderNormal;
     private Border borderSelected;
-    private IPath currentPath;
+    private IFile currentFile;
 
     private DriveComboBox driveComboBox;
     private JTextField currentPathTextField;
@@ -54,7 +53,7 @@ public class NavigationPanel extends JPanel {
         addMouseListener(new MouseListener());
 
         final IDrive currentDrive = (IDrive) driveComboBox.getSelectedItem();
-        currentPath = currentDrive.getPath();
+        currentFile = currentDrive.getFile();
 
         currentPathTextField.addKeyListener(new
                                                     KeyAdapter() {
@@ -63,7 +62,7 @@ public class NavigationPanel extends JPanel {
                                                             super.keyPressed(e);
                                                             JTextField textfield = (JTextField) e.getSource();
                                                             if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-                                                                changeDirectory(currentDrive.getPath(textfield.getText()));
+                                                                changeDirectory(FileManager.newFile(textfield.getText()));
                                                             }
                                                         }
                                                     }
@@ -123,13 +122,7 @@ public class NavigationPanel extends JPanel {
     }
 
     public void executeFile(IFile file) {
-        IPath path = file.toPath();
-
-        if (file.isArchive()) {
-            currentPath = path;
-        }
-
-        currentPathTextField.setText(path.toString());
+        currentPathTextField.setText(file.getPath());
         fileTable.listFile(file);
     }
 
@@ -160,28 +153,24 @@ public class NavigationPanel extends JPanel {
     }
 
 
-    public void changeDirectory(IPath newPath) {
+    public void changeDirectory(IFile newPath) {
         String[] pathParts = newPath.toString().split(File.separator);
         String pathLastPart = pathParts[pathParts.length - 1];
 
-        if (pathLastPart.equals("..") && currentPath.equals(currentPath.getRoot()))
+        if (pathLastPart.equals("..") && currentFile.equals(currentFile.getRoot()))
             return;
 
         if (pathLastPart.equals("..")) {
-            currentPath = currentPath.getParent();
+            currentFile = currentFile.getParent();
         } else {
-            currentPath = newPath.normalize();
+            currentFile = newPath;
         }
 
-        currentPathTextField.setText(currentPath.toString());
-        fileTable.setPath(currentPath);
+        currentPathTextField.setText(currentFile.getPath().toString());
+        fileTable.setPath(currentFile);
     }
 
-    public IPath getCurrentPath() {
-        return currentPath;
-    }
-
-    public IFileSystem getFileSystem() {
-        return driveComboBox.getFileSystem();
+    public IFile getCurrentFile() {
+        return currentFile;
     }
 }

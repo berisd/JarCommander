@@ -15,7 +15,7 @@ import at.beris.jarcommander.exception.ApplicationException;
 import at.beris.jarcommander.filesystem.IFileSystem;
 import at.beris.jarcommander.filesystem.LocalFileSystem;
 import at.beris.jarcommander.filesystem.drive.IDrive;
-import at.beris.jarcommander.filesystem.path.IPath;
+import at.beris.jarcommander.filesystem.file.IFile;
 import at.beris.jarcommander.ui.combobox.DriveComboBox;
 import at.beris.jarcommander.ui.table.FileTablePane;
 
@@ -52,10 +52,10 @@ public class UIFactory {
     public NavigationPanel createNavigationPanel(IFileSystem fileSystem) {
         fileSystem.open();
         DriveComboBox driveComboBox = new DriveComboBox(context, fileSystem);
-        IPath currentPath = ((IDrive) driveComboBox.getSelectedItem()).getPath();
+        IFile currentFile = ((IDrive) driveComboBox.getSelectedItem()).getFile();
         final FileTablePane fileTablePane = new FileTablePane(context);
         JTextField currentPathTextField = new JTextField();
-        currentPathTextField.setText(currentPath.toString());
+        currentPathTextField.setText(currentFile.getPath().toString());
         FileTableStatusLabel statusLabel = new FileTableStatusLabel(fileTablePane.getTable());
 
         for (Component component : new Component[]{currentPathTextField, statusLabel}) {
@@ -67,7 +67,7 @@ public class UIFactory {
             });
         }
 
-        fileTablePane.getTable().setPath(currentPath);
+        fileTablePane.getTable().setPath(currentFile);
 
         return new NavigationPanel(fileTablePane, driveComboBox, currentPathTextField, statusLabel);
     }

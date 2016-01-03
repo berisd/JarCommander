@@ -72,7 +72,7 @@ public class CopyTaskDialog extends JDialog implements ActionListener, CopyTaskL
         labelInfo = new JLabel("Copy " + countFileList() + " items to:");
         panel.add(labelInfo);
 
-        labelCopyStatus = new JLabel(targetPanel.getCurrentPath().toString());
+        labelCopyStatus = new JLabel(targetPanel.getCurrentFile().toString());
         panel.add(labelCopyStatus);
 
         return panel;
@@ -128,7 +128,7 @@ public class CopyTaskDialog extends JDialog implements ActionListener, CopyTaskL
 
     public void startWorker() {
         LOGGER.debug("startWorker");
-        copyTask = new CopyTask(fileList, targetPanel.getCurrentPath(), this);
+        copyTask = new CopyTask(fileList, targetPanel.getCurrentFile(), this);
         copyTask.execute();
     }
 

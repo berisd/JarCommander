@@ -11,7 +11,7 @@ package at.beris.jarcommander.filesystem;
 
 import at.beris.jarcommander.filesystem.drive.IDrive;
 import at.beris.jarcommander.filesystem.drive.LocalDrive;
-import at.beris.jarcommander.filesystem.path.LocalPath;
+import at.beris.jarcommander.filesystem.file.FileManager;
 
 import java.io.File;
 import java.io.IOException;
@@ -43,7 +43,7 @@ public class LocalFileSystem implements IFileSystem {
                 for (Path path : FileSystems.getDefault().getRootDirectories()) {
                     FileStore fileStore = Files.getFileStore(path);
                     LocalDrive driveInfo = new LocalDrive();
-                    driveInfo.setPath(new LocalPath(path));
+                    driveInfo.setFile(FileManager.newFile(path.toUri().toURL()));
                     driveInfo.setSpaceTotal(fileStore.getTotalSpace());
                     driveInfo.setSpaceLeft(fileStore.getUsableSpace());
                     driveList.add(driveInfo);
@@ -54,7 +54,7 @@ public class LocalFileSystem implements IFileSystem {
                     Path path = new File(parts[0]).toPath();
 
                     LocalDrive driveInfo = new LocalDrive();
-                    driveInfo.setPath(new LocalPath(path));
+                    driveInfo.setFile(FileManager.newFile(path.toUri().toURL()));
                     driveInfo.setSpaceTotal(fileStore.getTotalSpace());
                     driveInfo.setSpaceLeft(fileStore.getUsableSpace());
                     driveList.add(driveInfo);
@@ -67,7 +67,7 @@ public class LocalFileSystem implements IFileSystem {
         driveList.sort(new Comparator<IDrive>() {
             @Override
             public int compare(IDrive o1, IDrive o2) {
-                return o1.getPath().compareTo(o2.getPath());
+                return o1.getFile().toString().compareTo(o2.getFile().toString());
             }
         });
 

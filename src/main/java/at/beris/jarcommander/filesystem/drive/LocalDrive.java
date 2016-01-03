@@ -9,22 +9,20 @@
 
 package at.beris.jarcommander.filesystem.drive;
 
-import at.beris.jarcommander.filesystem.path.IPath;
-import at.beris.jarcommander.filesystem.path.LocalPath;
-
-import java.nio.file.Paths;
+import at.beris.jarcommander.filesystem.file.FileManager;
+import at.beris.jarcommander.filesystem.file.IFile;
 
 public class LocalDrive implements IDrive {
-    private IPath path;
+    private IFile path;
     private long spaceTotal;
     private long spaceLeft;
 
-    public IPath getPath() {
+    public IFile getFile() {
         return path;
     }
 
-    public void setPath(IPath path) {
-        this.path = path;
+    public void setFile(IFile file) {
+        this.path = file;
     }
 
     public long getSpaceTotal() {
@@ -43,7 +41,7 @@ public class LocalDrive implements IDrive {
         this.spaceLeft = spaceLeft;
     }
 
-    public IPath getPath(String path) {
-        return new LocalPath(Paths.get(path));
+    public IFile getPath(String path) {
+        return FileManager.newLocalFile(path);
     }
 }

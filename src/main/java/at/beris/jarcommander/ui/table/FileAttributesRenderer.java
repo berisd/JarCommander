@@ -13,10 +13,9 @@ import at.beris.jarcommander.filesystem.file.Attribute;
 import at.beris.jarcommander.filesystem.file.UnixAttribute;
 import at.beris.jarcommander.filesystem.file.WindowsAttribute;
 
-import javax.swing.JLabel;
-import javax.swing.JTable;
+import javax.swing.*;
 import javax.swing.table.TableCellRenderer;
-import java.awt.Component;
+import java.awt.*;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
@@ -33,7 +32,7 @@ public class FileAttributesRenderer extends JLabel implements TableCellRenderer 
         Set<Attribute> fileAttributes = (Set<Attribute>) value;
 
         Attribute firstFileAttribute = null;
-        if (fileAttributes.iterator().hasNext()) {
+        if (fileAttributes != null && fileAttributes.iterator().hasNext()) {
             firstFileAttribute = fileAttributes.iterator().next();
         }
 
