@@ -9,6 +9,7 @@
 
 package at.beris.jarcommander.filesystem.file.provider;
 
+import at.beris.jarcommander.filesystem.FileUtils;
 import at.beris.jarcommander.filesystem.file.FileManager;
 import at.beris.jarcommander.filesystem.file.IFile;
 import at.beris.jarcommander.filesystem.file.client.FileInfo;
@@ -18,6 +19,7 @@ import org.apache.commons.lang3.NotImplementedException;
 
 import java.io.*;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 public class SftpFileOperationProvider implements IFileOperationProvider {
@@ -65,7 +67,13 @@ public class SftpFileOperationProvider implements IFileOperationProvider {
 
     @Override
     public List<IFile> list(IClient client, FileModel model) {
-        return null;
+        List<FileInfo> fileInfoList = client.list(model.getPath());
+        List<IFile> fileList = new ArrayList<>();
+
+        for (FileInfo fileInfo : fileInfoList) {
+            fileList.add(FileManager.newFile(FileUtils.newUrl(model.getUrl(), fileInfo.getPath())));
+        }
+        return fileList;
     }
 
     @Override

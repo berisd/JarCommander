@@ -12,23 +12,22 @@ package at.beris.jarcommander.filesystem;
 import at.beris.jarcommander.filesystem.drive.IDrive;
 import at.beris.jarcommander.filesystem.drive.SshDrive;
 import at.beris.jarcommander.filesystem.file.FileManager;
-import at.beris.jarcommander.filesystem.file.client.SftpClient;
+import at.beris.jarcommander.model.SiteModel;
 import org.apache.commons.lang3.NotImplementedException;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class SshFileSystem implements IFileSystem {
-    private SftpClient context;
+    private SiteModel siteModel;
 
-    public SshFileSystem(SftpClient context) {
-        this.context = context;
-        context.init();
+    public SshFileSystem(SiteModel siteModel) {
+        this.siteModel = siteModel;
     }
 
     @Override
     public void open() {
-        context.connect();
+
     }
 
     @Override
@@ -40,7 +39,9 @@ public class SshFileSystem implements IFileSystem {
     public List<IDrive> getDriveList() {
         ArrayList<IDrive> driveList = new ArrayList<>();
         SshDrive drive = new SshDrive();
-        drive.setFile(FileManager.newFile(FileUtils.newUrl("file:/")));
+        String urlString = siteModel.getProtocol().toLowerCase() + "://" + siteModel.getUsername() + ":" + String.valueOf(siteModel.getPassword()) +
+                "@" + siteModel.getHostname() + ":" + String.valueOf(siteModel.getPortNumber()) + "/";
+        drive.setFile(FileManager.newFile(FileUtils.newUrl(urlString)));
         driveList.add(drive);
         return driveList;
     }

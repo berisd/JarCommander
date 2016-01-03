@@ -11,7 +11,6 @@ package at.beris.jarcommander.ui;
 
 import at.beris.jarcommander.ApplicationContext;
 import at.beris.jarcommander.filesystem.SshFileSystem;
-import at.beris.jarcommander.filesystem.file.client.SftpClient;
 import at.beris.jarcommander.helper.ModelViewController;
 import at.beris.jarcommander.model.SiteListModel;
 import at.beris.jarcommander.model.SiteModel;
@@ -189,7 +188,7 @@ public class SiteManagerDialog extends JDialog {
 
     private SiteModel createSiteModel() {
         SiteModel site = new SiteModel();
-        site.setProtocol("SSH");
+        site.setProtocol("SFTP");
         site.addPropertyChangeListener(createSiteModelPropertyChangeListener());
         return site;
     }
@@ -208,13 +207,7 @@ public class SiteManagerDialog extends JDialog {
     }
 
     private void connectToSite() {
-        SftpClient sftpClient = new SftpClient();
-        sftpClient.setHost(currentSite.getHostname());
-        sftpClient.setPort(currentSite.getPortNumber());
-        sftpClient.setUsername(currentSite.getUsername());
-        sftpClient.setPassword(String.valueOf(currentSite.getPassword()));
-
-        SessionPanel sessionPanel = context.getUiFactory().createSessionPanel(currentSite.getHostname(), new SshFileSystem(sftpClient));
+        SessionPanel sessionPanel = context.getUiFactory().createSessionPanel(currentSite.getHostname(), new SshFileSystem(currentSite));
         if (sessionPanel != null) {
             context.getSessionsPanel().setSelectedIndex(context.getSessionsPanel().getTabCount() - 1);
             sessionPanel.selectRightNavigationPanel();

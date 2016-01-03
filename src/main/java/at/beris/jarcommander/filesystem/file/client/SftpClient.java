@@ -16,7 +16,9 @@ import com.jcraft.jsch.*;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Vector;
 
 public class SftpClient implements IClient {
@@ -200,12 +202,32 @@ public class SftpClient implements IClient {
         try {
             checkChannel();
             SftpATTRS sftpATTRS = sftpChannel.stat(path);
+            fileInfo.setPath(path + (sftpATTRS.isDir() && !path.endsWith("/") ? "/" : ""));
             fileInfo.setSize(sftpATTRS.getSize());
             fileInfo.setLastModified(new Date(sftpATTRS.getMTime() * 1000L));
         } catch (SftpException e) {
             handleSftpException(e);
         }
         return fileInfo;
+    }
+
+    @Override
+    public List<FileInfo> list(String path) {
+        List<FileInfo> fileInfoList = new ArrayList<>();
+
+        try {
+            checkChannel();
+            Vector<ChannelSftp.LsEntry> entries = sftpChannel.ls(path);
+            for (ChannelSftp.LsEntry entry : entries) {
+                if (entry.getFilename().equals(".") || entry.getFilename().equals(".."))
+                    continue;
+                fileInfoList.add(getFileInfo(path + entry.getFilename()));
+            }
+        } catch (SftpException e) {
+            handleSftpException(e);
+        }
+
+        return fileInfoList;
     }
 
     private void checkChannel() {

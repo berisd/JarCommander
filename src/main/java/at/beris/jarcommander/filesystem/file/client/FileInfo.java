@@ -14,6 +14,15 @@ import java.util.Date;
 public class FileInfo {
     private Date lastModified;
     long size;
+    String path;
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
+    }
 
     public Date getLastModified() {
         return lastModified;

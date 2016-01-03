@@ -9,10 +9,9 @@
 
 package at.beris.jarcommander.filesystem.file.client;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.List;
 
 public interface IClient {
     void init();
@@ -52,4 +51,6 @@ public interface IClient {
     OutputStream getOutputStream(String path);
 
     FileInfo getFileInfo(String path);
+
+    List<FileInfo> list(String path);
 }
