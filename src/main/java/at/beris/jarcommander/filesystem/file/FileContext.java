@@ -88,7 +88,8 @@ public class FileContext {
             IClient client = createClientInstance(normalizedUrl, fileConfig.getClientClass(protocol));
             IFileOperationProvider fileOperationProvider = createFileOperationProviderInstance(normalizedUrl, fileConfig.getFileOperationProviderClassMap(protocol));
             file = new File(parent, normalizedUrl, new FileModel(), fileOperationProvider, client);
-            file.updateModel();
+            if (file.exists())
+                file.updateModel();
         } catch (InstantiationException e) {
             throw new RuntimeException(e);
         } catch (IllegalAccessException e) {

@@ -40,7 +40,7 @@ public class CopyOperation {
 
             for (IFile sourceChildFile : sourceFile.getFileOperationProvider().list(sourceFile.getClient(), sourceFile.getModel())) {
                 URL targetUrl = targetFile.getUrl();
-                URL targetChildUrl = new URL(targetUrl.getProtocol(), targetUrl.getHost(), targetUrl.getFile() + sourceChildFile.getName() + (sourceChildFile.isDirectory() ? "/" : ""));
+                URL targetChildUrl = new URL(targetUrl, targetUrl.getFile() + sourceChildFile.getName() + (sourceChildFile.isDirectory() ? "/" : ""));
 
                 File targetChildFile = (File) FileManager.newFile(targetFile, targetChildUrl);
                 copyRecursive((File) sourceChildFile, targetChildFile, listener);

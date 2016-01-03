@@ -17,6 +17,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Date;
+import java.util.Vector;
 
 public class SftpClient implements IClient {
     private JSch jsch;
@@ -150,7 +151,20 @@ public class SftpClient implements IClient {
     public void deleteDirectory(String path) {
         try {
             checkChannel();
-            sftpChannel.rmdir(path);
+            if (isDir(path)) {
+                sftpChannel.cd(path);
+                Vector<ChannelSftp.LsEntry> entries = sftpChannel.ls(".");
+                for (ChannelSftp.LsEntry entry : entries) {
+                    if (entry.getFilename().equals(".") || entry.getFilename().equals(".."))
+                        continue;
+                    deleteDirectory(path + entry.getFilename() + (isDir(path + entry.getFilename()) ? "/" : ""));
+                }
+                sftpChannel.cd("..");
+                sftpChannel.rmdir(path);
+            } else {
+                sftpChannel.rm(path);
+            }
+
         } catch (SftpException e) {
             handleSftpException(e);
         }
@@ -214,5 +228,9 @@ public class SftpClient implements IClient {
             throw new FileNotFoundException(e);
         else
             throw new RuntimeException(e);
+    }
+
+    private boolean isDir(String path) throws SftpException {
+        return sftpChannel.stat(path).isDir();
     }
 }

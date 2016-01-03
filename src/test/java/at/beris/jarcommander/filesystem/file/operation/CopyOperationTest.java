@@ -46,7 +46,7 @@ public class CopyOperationTest {
     public static Collection<Object[]> data() throws Exception {
         return Arrays.asList(new Object[][]{
                         {new File(".").toURI().toURL().toString()},
-//                        {"sftp://sshtest:" + readSftpPassword() + "@www.beris.at:22/home/sshtest/"},
+                        {"sftp://sshtest:" + readSftpPassword() + "@www.beris.at:22/home/sshtest/"},
                 }
         );
     }
