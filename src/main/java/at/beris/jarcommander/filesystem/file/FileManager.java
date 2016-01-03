@@ -42,6 +42,10 @@ public class FileManager {
         return getFileContext().newFile(url);
     }
 
+    public static IFile newFile(URL parentUrl, URL url) {
+        return getFileContext().newFile(parentUrl, url);
+    }
+
     /**
      * Creates a file instance for the corresponding url
      *

@@ -42,7 +42,7 @@ public class FileContext {
      */
     public IFile newLocalFile(String path) {
         try {
-            return newFile(null, new java.io.File(path).toURI().toURL());
+            return newFile((IFile) null, new java.io.File(path).toURI().toURL());
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         }
@@ -56,12 +56,15 @@ public class FileContext {
      */
     public IFile newFile(String url) {
         try {
-            return newFile(null, new URL(url));
+            return newFile((IFile) null, new URL(url));
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         }
     }
 
+    public IFile newFile(URL parentUrl, URL url) {
+        return newFile(newFile(parentUrl), url);
+    }
 
     /**
      * Creates a file instance for the corresponding url
