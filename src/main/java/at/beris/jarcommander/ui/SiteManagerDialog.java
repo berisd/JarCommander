@@ -10,7 +10,7 @@
 package at.beris.jarcommander.ui;
 
 import at.beris.jarcommander.ApplicationContext;
-import at.beris.jarcommander.filesystem.SshFileSystem;
+import at.beris.jarcommander.filesystem.RemoteFileSystem;
 import at.beris.jarcommander.helper.ModelViewController;
 import at.beris.jarcommander.model.SiteListModel;
 import at.beris.jarcommander.model.SiteModel;
@@ -207,7 +207,7 @@ public class SiteManagerDialog extends JDialog {
     }
 
     private void connectToSite() {
-        SessionPanel sessionPanel = context.getUiFactory().createSessionPanel(currentSite.getHostname(), new SshFileSystem(currentSite));
+        SessionPanel sessionPanel = context.getUiFactory().createSessionPanel(currentSite.getHostname(), new RemoteFileSystem(currentSite));
         if (sessionPanel != null) {
             context.getSessionsPanel().setSelectedIndex(context.getSessionsPanel().getTabCount() - 1);
             sessionPanel.selectRightNavigationPanel();

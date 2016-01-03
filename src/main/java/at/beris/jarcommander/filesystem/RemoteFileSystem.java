@@ -10,35 +10,24 @@
 package at.beris.jarcommander.filesystem;
 
 import at.beris.jarcommander.filesystem.drive.IDrive;
-import at.beris.jarcommander.filesystem.drive.SshDrive;
+import at.beris.jarcommander.filesystem.drive.RemoteDrive;
 import at.beris.jarcommander.filesystem.file.FileManager;
 import at.beris.jarcommander.model.SiteModel;
-import org.apache.commons.lang3.NotImplementedException;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class SshFileSystem implements IFileSystem {
+public class RemoteFileSystem implements IFileSystem {
     private SiteModel siteModel;
 
-    public SshFileSystem(SiteModel siteModel) {
+    public RemoteFileSystem(SiteModel siteModel) {
         this.siteModel = siteModel;
-    }
-
-    @Override
-    public void open() {
-
-    }
-
-    @Override
-    public void close() {
-        throw new NotImplementedException("");
     }
 
     @Override
     public List<IDrive> getDriveList() {
         ArrayList<IDrive> driveList = new ArrayList<>();
-        SshDrive drive = new SshDrive();
+        RemoteDrive drive = new RemoteDrive();
         String urlString = siteModel.getProtocol().toLowerCase() + "://" + siteModel.getUsername() + ":" + String.valueOf(siteModel.getPassword()) +
                 "@" + siteModel.getHostname() + ":" + String.valueOf(siteModel.getPortNumber()) + "/";
         drive.setFile(FileManager.newFile(FileUtils.newUrl(urlString)));

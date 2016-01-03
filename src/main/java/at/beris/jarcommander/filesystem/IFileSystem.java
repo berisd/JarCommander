@@ -14,9 +14,5 @@ import at.beris.jarcommander.filesystem.drive.IDrive;
 import java.util.List;
 
 public interface IFileSystem {
-    void open();
-
-    void close();
-
     List<IDrive> getDriveList();
 }

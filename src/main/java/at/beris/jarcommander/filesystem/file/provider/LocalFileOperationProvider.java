@@ -10,7 +10,6 @@
 package at.beris.jarcommander.filesystem.file.provider;
 
 import at.beris.jarcommander.Application;
-import at.beris.jarcommander.filesystem.SshBlockCopy;
 import at.beris.jarcommander.filesystem.file.FileManager;
 import at.beris.jarcommander.filesystem.file.IFile;
 import at.beris.jarcommander.filesystem.file.client.IClient;
@@ -33,13 +32,6 @@ import java.util.List;
 
 public class LocalFileOperationProvider implements IFileOperationProvider {
     private final static Logger LOGGER = org.apache.log4j.Logger.getLogger(LocalFileOperationProvider.class);
-
-    private SshBlockCopy sshBlockCopy;
-    private long filesProcessed;
-
-    public LocalFileOperationProvider() {
-        sshBlockCopy = new SshBlockCopy();
-    }
 
     @Override
     public IFile create(IClient client, FileModel model) {

@@ -29,7 +29,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import static at.beris.jarcommander.filesystem.IBlockCopy.COPY_BUFFER_SIZE;
+import static at.beris.jarcommander.filesystem.file.operation.CopyOperation.COPY_BUFFER_SIZE;
 import static at.beris.jarcommander.filesystem.file.TestFileHelper.*;
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.anyLong;

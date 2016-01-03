@@ -21,7 +21,7 @@ import java.time.Instant;
 import java.util.List;
 
 import static at.beris.jarcommander.ApplicationContext.HOME_DIRECTORY;
-import static at.beris.jarcommander.filesystem.IBlockCopy.COPY_BUFFER_SIZE;
+import static at.beris.jarcommander.filesystem.file.operation.CopyOperation.COPY_BUFFER_SIZE;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.times;
 

@@ -50,7 +50,6 @@ public class UIFactory {
     }
 
     public NavigationPanel createNavigationPanel(IFileSystem fileSystem) {
-        fileSystem.open();
         DriveComboBox driveComboBox = new DriveComboBox(context, fileSystem);
         IFile currentFile = ((IDrive) driveComboBox.getSelectedItem()).getFile();
         final FileTablePane fileTablePane = new FileTablePane(context);

@@ -75,14 +75,6 @@ public class LocalFileSystem implements IFileSystem {
     }
 
     @Override
-    public void open() {
-    }
-
-    @Override
-    public void close() {
-    }
-
-    @Override
     public List<IDrive> getDriveList() {
         return driveList;
     }

@@ -13,7 +13,7 @@ package at.beris.jarcommander.filesystem.drive;
 import at.beris.jarcommander.filesystem.file.IFile;
 import org.apache.commons.lang3.NotImplementedException;
 
-public class SshDrive implements IDrive {
+public class RemoteDrive implements IDrive {
     private IFile path;
 
     @Override

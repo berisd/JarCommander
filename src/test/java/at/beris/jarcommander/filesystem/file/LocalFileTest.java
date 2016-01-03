@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import static at.beris.jarcommander.filesystem.IBlockCopy.COPY_BUFFER_SIZE;
+import static at.beris.jarcommander.filesystem.file.operation.CopyOperation.COPY_BUFFER_SIZE;
 import static org.junit.Assert.*;
 
 public class LocalFileTest extends AbstractFileTest {
