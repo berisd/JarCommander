@@ -92,7 +92,7 @@
                 </configuration>
                 <executions>
                     <execution>
-                        <phase>site</phase>
+                        <phase>package</phase>
                         <goals>
                             <goal>cobertura</goal>
                         </goals>
