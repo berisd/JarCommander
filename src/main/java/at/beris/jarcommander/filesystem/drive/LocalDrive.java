@@ -9,8 +9,8 @@
 
 package at.beris.jarcommander.filesystem.drive;
 
-import at.beris.jarcommander.filesystem.file.FileManager;
-import at.beris.jarcommander.filesystem.file.IFile;
+import at.beris.virtualfile.FileManager;
+import at.beris.virtualfile.IFile;
 
 public class LocalDrive implements IDrive {
     private IFile path;

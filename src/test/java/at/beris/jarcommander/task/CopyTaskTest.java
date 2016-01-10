@@ -9,12 +9,14 @@
 
 package at.beris.jarcommander.task;
 
-import at.beris.jarcommander.filesystem.file.CopyListener;
-import at.beris.jarcommander.filesystem.file.FileManager;
-import at.beris.jarcommander.filesystem.file.IFile;
+import at.beris.virtualfile.IFile;
+import at.beris.virtualfile.operation.CopyListener;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.omg.SendingContext.RunTime;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,7 +31,6 @@ public class CopyTaskTest {
         CopyTaskListener copyTaskListener = Mockito.mock(CopyTaskListener.class);
         IFile targetFile = createFileMock();
         List<IFile> sourceFiles = createSourceFileMockList();
-        FileManager fileManager = createFileFactoryMock();
 
         CopyTask copyTask = new CopyTask(sourceFiles, targetFile, copyTaskListener);
         copyTask.execute();
@@ -37,12 +38,6 @@ public class CopyTaskTest {
 
         for (IFile sourceFile : sourceFiles)
             Mockito.verify(sourceFile, times(1)).copy(any(IFile.class), any(CopyListener.class));
-    }
-
-    private FileManager createFileFactoryMock() {
-        FileManager fileManager = Mockito.mock(FileManager.class);
-//        Mockito.when(fileManager.newInstance(any(IFile.class), any(String.class))).thenReturn(Mockito.mock(IFile.class));
-        return fileManager;
     }
 
     private List<IFile> createSourceFileMockList() {
@@ -56,6 +51,11 @@ public class CopyTaskTest {
         IFile file = Mockito.mock(IFile.class);
         Mockito.when(file.getName()).thenReturn("filename");
         Mockito.when(file.getSize()).thenReturn(1L);
+        try {
+            Mockito.when(file.getUrl()).thenReturn(new java.io.File("filename").toURI().toURL());
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
         return file;
     }
 }

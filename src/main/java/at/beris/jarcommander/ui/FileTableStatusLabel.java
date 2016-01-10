@@ -9,7 +9,7 @@
 
 package at.beris.jarcommander.ui;
 
-import at.beris.jarcommander.filesystem.file.IFile;
+import at.beris.virtualfile.IFile;
 import at.beris.jarcommander.ui.table.FileTable;
 
 import javax.swing.JLabel;

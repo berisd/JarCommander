@@ -15,7 +15,7 @@ import at.beris.jarcommander.exception.ApplicationException;
 import at.beris.jarcommander.filesystem.IFileSystem;
 import at.beris.jarcommander.filesystem.LocalFileSystem;
 import at.beris.jarcommander.filesystem.drive.IDrive;
-import at.beris.jarcommander.filesystem.file.IFile;
+import at.beris.virtualfile.IFile;
 import at.beris.jarcommander.ui.combobox.DriveComboBox;
 import at.beris.jarcommander.ui.table.FileTablePane;
 

@@ -9,7 +9,7 @@
 
 package at.beris.jarcommander;
 
-import at.beris.jarcommander.filesystem.file.IFile;
+import at.beris.virtualfile.IFile;
 
 import java.util.Comparator;
 

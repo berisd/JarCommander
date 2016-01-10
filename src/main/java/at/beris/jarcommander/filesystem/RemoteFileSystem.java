@@ -11,8 +11,9 @@ package at.beris.jarcommander.filesystem;
 
 import at.beris.jarcommander.filesystem.drive.IDrive;
 import at.beris.jarcommander.filesystem.drive.RemoteDrive;
-import at.beris.jarcommander.filesystem.file.FileManager;
+import at.beris.virtualfile.FileManager;
 import at.beris.jarcommander.model.SiteModel;
+import at.beris.virtualfile.FileUtils;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -10,9 +10,9 @@
 package at.beris.jarcommander.ui.table;
 
 import at.beris.jarcommander.Application;
-import at.beris.jarcommander.filesystem.FileUtils;
-import at.beris.jarcommander.filesystem.file.FileManager;
-import at.beris.jarcommander.filesystem.file.IFile;
+import at.beris.virtualfile.FileManager;
+import at.beris.virtualfile.FileUtils;
+import at.beris.virtualfile.IFile;
 import org.apache.log4j.Logger;
 
 import javax.swing.table.AbstractTableModel;
@@ -37,23 +37,15 @@ public class PathTableModel extends AbstractTableModel {
         LOGGER.debug("setFile");
         this.path = path;
         fileList.clear();
-        try {
-            if (!path.isRoot())
-                fileList.add(FileManager.newFile(FileUtils.newUrl(path.getUrl(), "/../")));
-            fileList.addAll(path.list());
-        } catch (IOException e) {
-            Application.logException(e);
-        }
+        if (!path.isRoot())
+            fileList.add(FileManager.newFile(FileUtils.newUrl(path.getUrl(), "/../")));
+        fileList.addAll(path.list());
     }
 
     public void listFile(IFile file) {
         LOGGER.debug("listFile " + file);
         fileList.clear();
-        try {
-            fileList.addAll(file.list());
-        } catch (IOException e) {
-            Application.logException(e);
-        }
+        fileList.addAll(file.list());
     }
 
     @Override

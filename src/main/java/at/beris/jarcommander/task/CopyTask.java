@@ -10,9 +10,9 @@
 package at.beris.jarcommander.task;
 
 import at.beris.jarcommander.Application;
-import at.beris.jarcommander.filesystem.file.CopyListener;
-import at.beris.jarcommander.filesystem.file.FileManager;
-import at.beris.jarcommander.filesystem.file.IFile;
+import at.beris.virtualfile.operation.CopyListener;
+import at.beris.virtualfile.FileManager;
+import at.beris.virtualfile.IFile;
 import org.apache.log4j.Logger;
 
 import javax.swing.*;
@@ -86,11 +86,7 @@ public class CopyTask extends SwingWorker<Void, Integer> implements CopyListener
 
         List<IFile> fileList;
         if (sourceFile.isDirectory()) {
-            try {
                 fileList = sourceFile.list();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
         } else {
             fileList = Collections.singletonList(sourceFile);
         }

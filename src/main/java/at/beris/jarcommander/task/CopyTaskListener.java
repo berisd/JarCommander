@@ -9,7 +9,7 @@
 
 package at.beris.jarcommander.task;
 
-import at.beris.jarcommander.filesystem.file.IFile;
+import at.beris.virtualfile.IFile;
 
 public interface CopyTaskListener {
     void setCurrentProgressBar(int progress);

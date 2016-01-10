@@ -10,8 +10,8 @@
 package at.beris.jarcommander.ui;
 
 import at.beris.jarcommander.filesystem.drive.IDrive;
-import at.beris.jarcommander.filesystem.file.FileManager;
-import at.beris.jarcommander.filesystem.file.IFile;
+import at.beris.virtualfile.FileManager;
+import at.beris.virtualfile.IFile;
 import at.beris.jarcommander.ui.combobox.DriveComboBox;
 import at.beris.jarcommander.ui.table.FileTable;
 import at.beris.jarcommander.ui.table.FileTablePane;

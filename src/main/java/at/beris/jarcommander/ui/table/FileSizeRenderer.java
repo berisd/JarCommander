@@ -1,6 +1,6 @@
 package at.beris.jarcommander.ui.table;
 
-import at.beris.jarcommander.filesystem.file.IFile;
+import at.beris.virtualfile.IFile;
 
 import javax.swing.JLabel;
 import javax.swing.JTable;

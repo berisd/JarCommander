@@ -11,7 +11,7 @@ package at.beris.jarcommander.filesystem;
 
 import at.beris.jarcommander.filesystem.drive.IDrive;
 import at.beris.jarcommander.filesystem.drive.LocalDrive;
-import at.beris.jarcommander.filesystem.file.FileManager;
+import at.beris.virtualfile.FileManager;
 
 import java.io.File;
 import java.io.IOException;

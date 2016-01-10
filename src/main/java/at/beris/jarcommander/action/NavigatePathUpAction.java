@@ -10,8 +10,8 @@
 package at.beris.jarcommander.action;
 
 import at.beris.jarcommander.ApplicationContext;
-import at.beris.jarcommander.filesystem.FileUtils;
-import at.beris.jarcommander.filesystem.file.FileManager;
+import at.beris.virtualfile.FileUtils;
+import at.beris.virtualfile.FileManager;
 import at.beris.jarcommander.ui.NavigationPanel;
 import at.beris.jarcommander.ui.SessionPanel;
 import org.apache.log4j.Logger;

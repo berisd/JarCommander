@@ -12,7 +12,7 @@ package at.beris.jarcommander.ui.table;
 import at.beris.jarcommander.ApplicationContext;
 import at.beris.jarcommander.FileDefaultComparator;
 import at.beris.jarcommander.action.*;
-import at.beris.jarcommander.filesystem.file.IFile;
+import at.beris.virtualfile.IFile;
 import org.apache.log4j.Logger;
 
 import javax.swing.*;

@@ -9,9 +9,9 @@
 
 package at.beris.jarcommander.ui.table;
 
-import at.beris.jarcommander.filesystem.file.Attribute;
-import at.beris.jarcommander.filesystem.file.UnixAttribute;
-import at.beris.jarcommander.filesystem.file.WindowsAttribute;
+import at.beris.virtualfile.Attribute;
+import at.beris.virtualfile.UnixAttribute;
+import at.beris.virtualfile.WindowsAttribute;
 
 import javax.swing.*;
 import javax.swing.table.TableCellRenderer;

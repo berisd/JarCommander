@@ -10,7 +10,7 @@
 package at.beris.jarcommander.ui.dialog;
 
 import at.beris.jarcommander.ApplicationContext;
-import at.beris.jarcommander.filesystem.file.IFile;
+import at.beris.virtualfile.IFile;
 import at.beris.jarcommander.task.CopyTask;
 import at.beris.jarcommander.task.CopyTaskListener;
 import at.beris.jarcommander.ui.NavigationPanel;

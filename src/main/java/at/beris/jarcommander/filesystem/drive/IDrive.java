@@ -9,7 +9,7 @@
 
 package at.beris.jarcommander.filesystem.drive;
 
-import at.beris.jarcommander.filesystem.file.IFile;
+import at.beris.virtualfile.IFile;
 
 public interface IDrive {
     IFile getFile();

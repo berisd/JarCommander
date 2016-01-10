@@ -10,7 +10,7 @@
 package at.beris.jarcommander.filesystem.drive;
 
 
-import at.beris.jarcommander.filesystem.file.IFile;
+import at.beris.virtualfile.IFile;
 import org.apache.commons.lang3.NotImplementedException;
 
 public class RemoteDrive implements IDrive {
