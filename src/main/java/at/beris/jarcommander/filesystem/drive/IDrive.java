@@ -9,12 +9,12 @@
 
 package at.beris.jarcommander.filesystem.drive;
 
-import at.beris.virtualfile.IFile;
+import at.beris.virtualfile.File;
 
 public interface IDrive {
-    IFile getFile();
+    File getFile();
 
-    void setFile(IFile file);
+    void setFile(File file);
 
     long getSpaceTotal();
 

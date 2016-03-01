@@ -10,8 +10,8 @@
 package at.beris.jarcommander.ui;
 
 import at.beris.jarcommander.filesystem.drive.IDrive;
+import at.beris.virtualfile.File;
 import at.beris.virtualfile.FileManager;
-import at.beris.virtualfile.IFile;
 import at.beris.jarcommander.ui.combobox.DriveComboBox;
 import at.beris.jarcommander.ui.table.FileTable;
 import at.beris.jarcommander.ui.table.FileTablePane;
@@ -24,7 +24,6 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,7 +35,7 @@ public class NavigationPanel extends JPanel {
     private boolean selected;
     private Border borderNormal;
     private Border borderSelected;
-    private IFile currentFile;
+    private File currentFile;
 
     private DriveComboBox driveComboBox;
     private JTextField currentPathTextField;
@@ -121,7 +120,7 @@ public class NavigationPanel extends JPanel {
         }
     }
 
-    public void executeFile(IFile file) {
+    public void executeFile(File file) {
         currentPathTextField.setText(file.getPath());
         fileTable.listFile(file);
     }
@@ -137,11 +136,11 @@ public class NavigationPanel extends JPanel {
         }
     }
 
-    public List<IFile> getSelection() {
-        List<IFile> fileList = new ArrayList<>();
+    public List<File> getSelection() {
+        List<File> fileList = new ArrayList<>();
         for (int rowIndex : fileTablePane.getTable().getSelectedRows()) {
             int modelIndex = fileTablePane.getTable().getRowSorter().convertRowIndexToModel(rowIndex);
-            fileList.add((IFile) fileTablePane.getTable().getModel().getValueAt(modelIndex, 0));
+            fileList.add((File) fileTablePane.getTable().getModel().getValueAt(modelIndex, 0));
         }
         return fileList;
     }
@@ -153,8 +152,8 @@ public class NavigationPanel extends JPanel {
     }
 
 
-    public void changeDirectory(IFile newPath) {
-        String[] pathParts = newPath.toString().split(File.separator);
+    public void changeDirectory(File newPath) {
+        String[] pathParts = newPath.toString().split(java.io.File.separator);
         String pathLastPart = pathParts[pathParts.length - 1];
 
         if (pathLastPart.equals("..") && currentFile.equals(currentFile.getRoot()))
@@ -170,7 +169,7 @@ public class NavigationPanel extends JPanel {
         fileTable.setPath(currentFile);
     }
 
-    public IFile getCurrentFile() {
+    public File getCurrentFile() {
         return currentFile;
     }
 }

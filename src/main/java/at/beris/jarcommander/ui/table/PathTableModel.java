@@ -9,14 +9,12 @@
 
 package at.beris.jarcommander.ui.table;
 
-import at.beris.jarcommander.Application;
+import at.beris.virtualfile.File;
 import at.beris.virtualfile.FileManager;
-import at.beris.virtualfile.FileUtils;
-import at.beris.virtualfile.IFile;
+import at.beris.virtualfile.util.FileUtils;
 import org.apache.log4j.Logger;
 
 import javax.swing.table.AbstractTableModel;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -26,14 +24,14 @@ public class PathTableModel extends AbstractTableModel {
     private final static Logger LOGGER = Logger.getLogger(PathTableModel.class);
 
     private static final int columnCount = 4;
-    private List<IFile> fileList;
-    private IFile path;
+    private List<File> fileList;
+    private File path;
 
     public PathTableModel() {
         fileList = new ArrayList<>();
     }
 
-    public void setPath(IFile path) {
+    public void setPath(File path) {
         LOGGER.debug("setFile");
         this.path = path;
         fileList.clear();
@@ -42,7 +40,7 @@ public class PathTableModel extends AbstractTableModel {
         fileList.addAll(path.list());
     }
 
-    public void listFile(IFile file) {
+    public void listFile(File file) {
         LOGGER.debug("listFile " + file);
         fileList.clear();
         fileList.addAll(file.list());
@@ -68,7 +66,7 @@ public class PathTableModel extends AbstractTableModel {
     public Class<?> getColumnClass(int columnIndex) {
         switch (columnIndex) {
             case 0:
-                return IFile.class;
+                return File.class;
             case 1:
                 return Date.class;
             case 2:
@@ -92,13 +90,13 @@ public class PathTableModel extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        IFile file = fileList.get(rowIndex);
+        File file = fileList.get(rowIndex);
 
         switch (columnIndex) {
             case 0:
                 return file;
             case 1:
-                return file.getLastModified();
+                return file.getLastModifiedTime();
             case 2:
                 return file.getSize();
             case 3:

@@ -12,7 +12,7 @@ package at.beris.jarcommander.ui.table;
 import at.beris.jarcommander.ApplicationContext;
 import at.beris.jarcommander.FileDefaultComparator;
 import at.beris.jarcommander.action.*;
-import at.beris.virtualfile.IFile;
+import at.beris.virtualfile.File;
 import org.apache.log4j.Logger;
 
 import javax.swing.*;
@@ -32,7 +32,7 @@ public class FileTable extends JTable {
     private final static Logger LOGGER = Logger.getLogger(FileTablePane.class);
 
     private TableRowSorter<TableModel> rowSorter;
-    private IFile path;
+    private File path;
     private ApplicationContext context;
     private ActionFactory actionFactory;
 
@@ -47,7 +47,7 @@ public class FileTable extends JTable {
         setSelectionModel(new FileTableSelectionModel(this));
 
         getColumnModel().getColumn(0).setCellRenderer(new FileNameRenderer());
-        getColumnModel().getColumn(1).setCellRenderer(new DateRenderer());
+        getColumnModel().getColumn(1).setCellRenderer(new FileTimeRenderer());
         getColumnModel().getColumn(2).setCellRenderer(new FileSizeRenderer());
         getColumnModel().getColumn(3).setCellRenderer(new FileAttributesRenderer());
 
@@ -83,7 +83,7 @@ public class FileTable extends JTable {
         repaint();
     }
 
-    public void setPath(IFile path) {
+    public void setPath(File path) {
         this.path = path;
         ((PathTableModel) getModel()).setPath(path);
         rowSorter.sort();
@@ -92,7 +92,7 @@ public class FileTable extends JTable {
         requestFocusInWindow();
     }
 
-    public void listFile(IFile file) {
+    public void listFile(File file) {
         ((PathTableModel) getModel()).listFile(file);
         rowSorter.sort();
         getSelectionModel().clearSelection();

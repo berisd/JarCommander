@@ -9,7 +9,10 @@
 
 package at.beris.jarcommander.ui.table;
 
-import at.beris.virtualfile.Attribute;
+import at.beris.virtualfile.attribute.BasicFilePermission;
+import at.beris.virtualfile.attribute.FileAttribute;
+import at.beris.virtualfile.attribute.PosixFilePermission;
+import at.beris.virtualfile.attribute.DosFileAttribute;
 
 import javax.swing.*;
 import javax.swing.table.TableCellRenderer;
@@ -20,29 +23,29 @@ import java.util.List;
 import static at.beris.jarcommander.ApplicationContext.SELECTION_FOREGROUND_COLOR;
 
 public class FileAttributesRenderer extends JLabel implements TableCellRenderer {
-    private Map<Attribute, AttributeText> attributeTextMap;
-    private List<Attribute> windowsAttributeList;
-    private List<Attribute> posixAttributeList;
+    private Map<FileAttribute, AttributeText> attributeTextMap;
+    private List<FileAttribute> windowsAttributeList;
+    private List<FileAttribute> posixAttributeList;
 
     public FileAttributesRenderer() {
         attributeTextMap = createAttributeTextMap();
 
-        windowsAttributeList = Arrays.asList(Attribute.READ_ONLY, Attribute.WRITE, Attribute.EXECUTE);
-        posixAttributeList = Arrays.asList(Attribute.OWNER_READ, Attribute.OWNER_WRITE,
-                Attribute.OWNER_EXECUTE, Attribute.GROUP_READ, Attribute.GROUP_WRITE, Attribute.GROUP_EXECUTE,
-                Attribute.OTHERS_READ, Attribute.OTHERS_WRITE, Attribute.OTHERS_EXECUTE);
+        windowsAttributeList = Arrays.asList(BasicFilePermission.READ, BasicFilePermission.WRITE, BasicFilePermission.EXECUTE, DosFileAttribute.ARCHIVE, DosFileAttribute.HIDDEN, DosFileAttribute.READ_ONLY, DosFileAttribute.SYSTEM);
+        posixAttributeList = Arrays.asList(PosixFilePermission.OWNER_READ, PosixFilePermission.OWNER_WRITE,
+                PosixFilePermission.OWNER_EXECUTE, PosixFilePermission.GROUP_READ, PosixFilePermission.GROUP_WRITE, PosixFilePermission.GROUP_EXECUTE,
+                PosixFilePermission.OTHERS_READ, PosixFilePermission.OTHERS_WRITE, PosixFilePermission.OTHERS_EXECUTE);
     }
 
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         StringBuilder shortText = new StringBuilder("");
         StringBuilder longText = new StringBuilder("");
-        Set<Attribute> fileAttributes = (Set<Attribute>) value;
+        Set<FileAttribute> fileAttributes = (Set<FileAttribute>) value;
 
-        boolean isWindows = fileAttributes.contains(Attribute.READ_ONLY) || fileAttributes.contains(Attribute.WRITE) || fileAttributes.contains(Attribute.EXECUTE);
-        List<Attribute> attributeList = isWindows ? windowsAttributeList : posixAttributeList;
+        boolean isWindows = fileAttributes.contains(BasicFilePermission.READ) || fileAttributes.contains(BasicFilePermission.WRITE) || fileAttributes.contains(BasicFilePermission.EXECUTE);
+        List<FileAttribute> attributeList = isWindows ? windowsAttributeList : posixAttributeList;
 
-        for (Attribute attribute : attributeList) {
+        for (FileAttribute attribute : attributeList) {
             if (fileAttributes.contains(attribute)) {
                 shortText.append(attributeTextMap.get(attribute).shortText);
                 if (longText.length() > 0)
@@ -78,22 +81,24 @@ public class FileAttributesRenderer extends JLabel implements TableCellRenderer 
         public String longText;
     }
 
-    private Map<Attribute, AttributeText> createAttributeTextMap() {
-        Map<Attribute, AttributeText> attributeTextMap = new HashMap<>();
-        attributeTextMap.put(Attribute.READ_ONLY, new AttributeText('R', "Read"));
-        attributeTextMap.put(Attribute.WRITE, new AttributeText('W', "Write"));
-        attributeTextMap.put(Attribute.EXECUTE, new AttributeText('X', "Execute"));
-        attributeTextMap.put(Attribute.HIDDEN, new AttributeText('H', "Hidden"));
-        attributeTextMap.put(Attribute.ARCHIVE, new AttributeText('A', "Archive"));
-        attributeTextMap.put(Attribute.OWNER_READ, new AttributeText('R', "Owner Read"));
-        attributeTextMap.put(Attribute.OWNER_WRITE, new AttributeText('W', "Owner Write"));
-        attributeTextMap.put(Attribute.OWNER_EXECUTE, new AttributeText('X', "Owner Execute"));
-        attributeTextMap.put(Attribute.GROUP_READ, new AttributeText('R', "Group Read"));
-        attributeTextMap.put(Attribute.GROUP_WRITE, new AttributeText('W', "Group Write"));
-        attributeTextMap.put(Attribute.GROUP_EXECUTE, new AttributeText('X', "Group Execute"));
-        attributeTextMap.put(Attribute.OTHERS_READ, new AttributeText('R', "Others Read"));
-        attributeTextMap.put(Attribute.OTHERS_WRITE, new AttributeText('W', "Others Write"));
-        attributeTextMap.put(Attribute.OTHERS_EXECUTE, new AttributeText('X', "Others Execute"));
+    private Map<FileAttribute, AttributeText> createAttributeTextMap() {
+        Map<FileAttribute, AttributeText> attributeTextMap = new HashMap<>();
+        attributeTextMap.put(BasicFilePermission.READ, new AttributeText('R', "Read"));
+        attributeTextMap.put(BasicFilePermission.WRITE, new AttributeText('W', "Write"));
+        attributeTextMap.put(BasicFilePermission.EXECUTE, new AttributeText('X', "Execute"));
+        attributeTextMap.put(DosFileAttribute.ARCHIVE, new AttributeText('A', "Archive"));
+        attributeTextMap.put(DosFileAttribute.HIDDEN, new AttributeText('H', "Hidden"));
+        attributeTextMap.put(DosFileAttribute.READ_ONLY, new AttributeText('r', "Read-Only"));
+        attributeTextMap.put(DosFileAttribute.SYSTEM, new AttributeText('S', "System"));
+        attributeTextMap.put(PosixFilePermission.OWNER_READ, new AttributeText('R', "Owner Read"));
+        attributeTextMap.put(PosixFilePermission.OWNER_WRITE, new AttributeText('W', "Owner Write"));
+        attributeTextMap.put(PosixFilePermission.OWNER_EXECUTE, new AttributeText('X', "Owner Execute"));
+        attributeTextMap.put(PosixFilePermission.GROUP_READ, new AttributeText('R', "Group Read"));
+        attributeTextMap.put(PosixFilePermission.GROUP_WRITE, new AttributeText('W', "Group Write"));
+        attributeTextMap.put(PosixFilePermission.GROUP_EXECUTE, new AttributeText('X', "Group Execute"));
+        attributeTextMap.put(PosixFilePermission.OTHERS_READ, new AttributeText('R', "Others Read"));
+        attributeTextMap.put(PosixFilePermission.OTHERS_WRITE, new AttributeText('W', "Others Write"));
+        attributeTextMap.put(PosixFilePermission.OTHERS_EXECUTE, new AttributeText('X', "Others Execute"));
 
         return attributeTextMap;
     }

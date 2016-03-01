@@ -9,14 +9,12 @@
 
 package at.beris.jarcommander.task;
 
-import at.beris.virtualfile.IFile;
+import at.beris.virtualfile.File;
 import at.beris.virtualfile.operation.CopyListener;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.omg.SendingContext.RunTime;
 
 import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,31 +22,31 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.times;
 
 public class CopyTaskTest {
-    private static List<IFile> sourceFiles;
+    private static List<File> sourceFiles;
 
     @Test
     public void copyFiles() throws Exception {
         CopyTaskListener copyTaskListener = Mockito.mock(CopyTaskListener.class);
-        IFile targetFile = createFileMock();
-        List<IFile> sourceFiles = createSourceFileMockList();
+        File targetFile = createFileMock();
+        List<File> sourceFiles = createSourceFileMockList();
 
         CopyTask copyTask = new CopyTask(sourceFiles, targetFile, copyTaskListener);
         copyTask.execute();
         copyTask.get();
 
-        for (IFile sourceFile : sourceFiles)
-            Mockito.verify(sourceFile, times(1)).copy(any(IFile.class), any(CopyListener.class));
+        for (File sourceFile : sourceFiles)
+            Mockito.verify(sourceFile, times(1)).copy(any(File.class), any(CopyListener.class));
     }
 
-    private List<IFile> createSourceFileMockList() {
+    private List<File> createSourceFileMockList() {
         sourceFiles = new ArrayList<>();
         sourceFiles.add(createFileMock());
         sourceFiles.add(createFileMock());
         return sourceFiles;
     }
 
-    private IFile createFileMock() {
-        IFile file = Mockito.mock(IFile.class);
+    private File createFileMock() {
+        File file = Mockito.mock(File.class);
         Mockito.when(file.getName()).thenReturn("filename");
         Mockito.when(file.getSize()).thenReturn(1L);
         try {

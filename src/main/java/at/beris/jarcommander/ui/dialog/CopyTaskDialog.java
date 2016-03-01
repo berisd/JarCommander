@@ -10,7 +10,7 @@
 package at.beris.jarcommander.ui.dialog;
 
 import at.beris.jarcommander.ApplicationContext;
-import at.beris.virtualfile.IFile;
+import at.beris.virtualfile.File;
 import at.beris.jarcommander.task.CopyTask;
 import at.beris.jarcommander.task.CopyTaskListener;
 import at.beris.jarcommander.ui.NavigationPanel;
@@ -34,10 +34,10 @@ public class CopyTaskDialog extends JDialog implements ActionListener, CopyTaskL
     private JLabel labelCopyStatus;
 
     private NavigationPanel targetPanel;
-    private List<IFile> fileList;
+    private List<File> fileList;
     private ApplicationContext context;
 
-    public CopyTaskDialog(List<IFile> fileList, NavigationPanel targetPanel, ApplicationContext context) {
+    public CopyTaskDialog(List<File> fileList, NavigationPanel targetPanel, ApplicationContext context) {
         this.fileList = fileList;
         this.targetPanel = targetPanel;
         this.context = context;
@@ -81,7 +81,7 @@ public class CopyTaskDialog extends JDialog implements ActionListener, CopyTaskL
     private int countFileList() {
         int count = 0;
 
-        for (IFile file : fileList) {
+        for (File file : fileList) {
             if (file.getName().equals(".."))
                 continue;
             count++;
@@ -164,7 +164,7 @@ public class CopyTaskDialog extends JDialog implements ActionListener, CopyTaskL
     }
 
     @Override
-    public int fileExists(IFile file) {
+    public int fileExists(File file) {
         return JOptionPane.showConfirmDialog(this, file.getPath() + " already exists! " +
                         System.lineSeparator() + "Would you like to overwrite it?", "File exists",
                 JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);

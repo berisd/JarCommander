@@ -9,19 +9,19 @@
 
 package at.beris.jarcommander.filesystem.drive;
 
+import at.beris.virtualfile.File;
 import at.beris.virtualfile.FileManager;
-import at.beris.virtualfile.IFile;
 
 public class LocalDrive implements IDrive {
-    private IFile path;
+    private File path;
     private long spaceTotal;
     private long spaceLeft;
 
-    public IFile getFile() {
+    public File getFile() {
         return path;
     }
 
-    public void setFile(IFile file) {
+    public void setFile(File file) {
         this.path = file;
     }
 
@@ -41,7 +41,7 @@ public class LocalDrive implements IDrive {
         this.spaceLeft = spaceLeft;
     }
 
-    public IFile getPath(String path) {
+    public File getPath(String path) {
         return FileManager.newLocalFile(path);
     }
 }

@@ -9,7 +9,7 @@
 
 package at.beris.jarcommander.ui.table;
 
-import at.beris.virtualfile.IFile;
+import at.beris.virtualfile.File;
 
 import javax.swing.JLabel;
 import javax.swing.JTable;
@@ -21,7 +21,7 @@ import static at.beris.jarcommander.ApplicationContext.SELECTION_FOREGROUND_COLO
 public class FileNameRenderer extends JLabel implements TableCellRenderer {
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-        IFile file = (IFile) value;
+        File file = (File) value;
         setText(file.getName());
         setToolTipText(file.getName());
 

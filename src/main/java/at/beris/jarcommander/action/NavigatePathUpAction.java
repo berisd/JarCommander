@@ -10,7 +10,7 @@
 package at.beris.jarcommander.action;
 
 import at.beris.jarcommander.ApplicationContext;
-import at.beris.virtualfile.FileUtils;
+import at.beris.virtualfile.util.FileUtils;
 import at.beris.virtualfile.FileManager;
 import at.beris.jarcommander.ui.NavigationPanel;
 import at.beris.jarcommander.ui.SessionPanel;

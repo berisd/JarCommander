@@ -1,6 +1,6 @@
 package at.beris.jarcommander.ui.table;
 
-import at.beris.virtualfile.IFile;
+import at.beris.virtualfile.File;
 
 import javax.swing.JLabel;
 import javax.swing.JTable;
@@ -14,7 +14,7 @@ public class FileSizeRenderer extends JLabel implements TableCellRenderer {
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         Long size = (Long) value;
-        IFile file = (IFile) table.getValueAt(row, 0);
+        File file = (File) table.getValueAt(row, 0);
 
         String text = file.isDirectory() ? "<DIR>" : numberFormat().format((double) size / 1024) + "K";
 

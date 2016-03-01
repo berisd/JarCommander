@@ -10,7 +10,7 @@
 package at.beris.jarcommander.action;
 
 import at.beris.jarcommander.ApplicationContext;
-import at.beris.virtualfile.IFile;
+import at.beris.virtualfile.File;
 import at.beris.jarcommander.ui.NavigationPanel;
 import at.beris.jarcommander.ui.SessionPanel;
 import at.beris.jarcommander.ui.table.FileTable;
@@ -21,7 +21,6 @@ import javax.swing.JViewport;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
-import java.io.File;
 
 public class ScrollToLetterInFileTablePaneAction extends CustomAction {
     private final static Logger LOGGER = Logger.getLogger(ScrollToLetterInFileTablePaneAction.class);
@@ -42,8 +41,8 @@ public class ScrollToLetterInFileTablePaneAction extends CustomAction {
         Character keyChar = (Character) ((ParamActionEvent) e).getParam();
 
         for (int rowIndex = 0; rowIndex < fileTable.getRowCount(); rowIndex++) {
-            IFile file = (IFile) fileTable.getValueAt(rowIndex, 0);
-            String[] fileNameParts = file.toString().split(File.separator);
+            File file = (File) fileTable.getValueAt(rowIndex, 0);
+            String[] fileNameParts = file.toString().split(java.io.File.separator);
             String fileName = fileNameParts[fileNameParts.length - 1];
             if (fileName.toLowerCase().charAt(0) == Character.toLowerCase(keyChar)) {
                 Rectangle rect = fileTable.getCellRect(rowIndex, 0, true);

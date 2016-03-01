@@ -9,22 +9,22 @@
 
 package at.beris.jarcommander.ui.table;
 
-import javax.swing.JLabel;
-import javax.swing.JTable;
+import javax.swing.*;
 import javax.swing.table.TableCellRenderer;
-import java.awt.Component;
+import java.awt.*;
+import java.nio.file.attribute.FileTime;
 import java.util.Date;
 
 import static at.beris.jarcommander.ApplicationContext.SELECTION_FOREGROUND_COLOR;
 import static at.beris.jarcommander.helper.Localization.dateFormat;
 
-public class DateRenderer extends JLabel implements TableCellRenderer {
+public class FileTimeRenderer extends JLabel implements TableCellRenderer {
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-        Date date = (Date) value;
+        FileTime filetime = (FileTime) value;
 
         if (value != null) {
-            String text = dateFormat().format(date);
+            String text = dateFormat().format(new Date(filetime.toMillis()));
             setText(text);
             setToolTipText(text);
         } else {

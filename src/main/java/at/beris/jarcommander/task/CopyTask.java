@@ -10,9 +10,9 @@
 package at.beris.jarcommander.task;
 
 import at.beris.jarcommander.Application;
+import at.beris.virtualfile.File;
 import at.beris.virtualfile.operation.CopyListener;
 import at.beris.virtualfile.FileManager;
-import at.beris.virtualfile.IFile;
 import org.apache.log4j.Logger;
 
 import javax.swing.*;
@@ -25,14 +25,14 @@ import static at.beris.jarcommander.Application.logException;
 public class CopyTask extends SwingWorker<Void, Integer> implements CopyListener {
     private final static Logger LOGGER = org.apache.log4j.Logger.getLogger(CopyTask.class);
 
-    private List<IFile> sourceList;
-    private IFile targetFile;
+    private List<File> sourceList;
+    private File targetFile;
     private long bytesTotal = 0L;
     private long bytesCopied = 0L;
     private long totalCountFiles = 0;
     private CopyTaskListener listener;
 
-    public CopyTask(List<IFile> sourceList, IFile targetFile, CopyTaskListener listener) {
+    public CopyTask(List<File> sourceList, File targetFile, CopyTaskListener listener) {
         this.sourceList = sourceList;
         this.targetFile = targetFile;
         this.listener = listener;
@@ -45,18 +45,18 @@ public class CopyTask extends SwingWorker<Void, Integer> implements CopyListener
     public Void doInBackground() throws Exception {
         LOGGER.debug("doInBackground");
         try {
-            for (IFile sourceFile : sourceList) {
+            for (File sourceFile : sourceList) {
                 if (sourceFile.getName().equals(".."))
                     continue;
                 retrieveFileInfo(sourceFile);
             }
 
-            for (IFile sourceFile : sourceList) {
+            for (File sourceFile : sourceList) {
                 if (isCancelled())
                     break;
                 if (sourceFile.getName().equals(".."))
                     continue;
-                IFile targetFile = FileManager.newFile(this.targetFile, sourceFile.getUrl());
+                File targetFile = FileManager.newFile(this.targetFile, sourceFile.getUrl());
                 copyFiles(sourceFile, targetFile);
             }
         } catch (Exception ex) {
@@ -80,18 +80,18 @@ public class CopyTask extends SwingWorker<Void, Integer> implements CopyListener
         listener.done();
     }
 
-    private void retrieveFileInfo(IFile sourceFile) {
+    private void retrieveFileInfo(File sourceFile) {
         if (sourceFile.getName().equals(".."))
             return;
 
-        List<IFile> fileList;
+        List<File> fileList;
         if (sourceFile.isDirectory()) {
                 fileList = sourceFile.list();
         } else {
             fileList = Collections.singletonList(sourceFile);
         }
 
-        for (IFile file : fileList) {
+        for (File file : fileList) {
             if (file.getName().equals(".."))
                 continue;
             if (file.isDirectory()) {
@@ -103,7 +103,7 @@ public class CopyTask extends SwingWorker<Void, Integer> implements CopyListener
         }
     }
 
-    private void copyFiles(IFile sourceFile, IFile targetFile) throws IOException {
+    private void copyFiles(File sourceFile, File targetFile) throws IOException {
         try {
             sourceFile.copy(targetFile, this);
         } catch (RuntimeException ex) {
@@ -141,7 +141,7 @@ public class CopyTask extends SwingWorker<Void, Integer> implements CopyListener
     }
 
     @Override
-    public void fileExists(IFile file) {
+    public void fileExists(File file) {
         int result = listener.fileExists(file);
         switch (result) {
             case JOptionPane.NO_OPTION:
