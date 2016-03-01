@@ -12,7 +12,7 @@ package at.beris.jarcommander.filesystem.drive;
 import at.beris.virtualfile.File;
 import at.beris.virtualfile.FileManager;
 
-public class LocalDrive implements IDrive {
+public class LocalDrive implements Drive {
     private File path;
     private long spaceTotal;
     private long spaceLeft;

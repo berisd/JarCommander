@@ -9,7 +9,7 @@
 
 package at.beris.jarcommander.ui.combobox;
 
-import at.beris.jarcommander.filesystem.drive.IDrive;
+import at.beris.jarcommander.filesystem.drive.Drive;
 
 import javax.swing.*;
 import java.awt.*;
@@ -20,13 +20,13 @@ public class DriveInfoComboBoxRenderer extends JLabel implements ListCellRendere
 
     @Override
     public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-        IDrive driveInfo = (IDrive) value;
+        Drive driveInfo = (Drive) value;
         setText(driveInfo.getFile().getPath() + " [" + numberFormat().format((double) driveInfo.getSpaceTotal() / (1024 * 1024 * 1024))
                 + "G / " + calculateSpaceFreePercentage(driveInfo) + "% free]");
         return this;
     }
 
-    private long calculateSpaceFreePercentage(IDrive driveInfo) {
+    private long calculateSpaceFreePercentage(Drive driveInfo) {
         if (driveInfo.getSpaceLeft() == 0 || driveInfo.getSpaceTotal() == 0)
             return 0;
         return driveInfo.getSpaceLeft() * 100 / driveInfo.getSpaceTotal();

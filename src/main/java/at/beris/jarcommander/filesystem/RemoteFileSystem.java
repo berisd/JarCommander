@@ -9,7 +9,7 @@
 
 package at.beris.jarcommander.filesystem;
 
-import at.beris.jarcommander.filesystem.drive.IDrive;
+import at.beris.jarcommander.filesystem.drive.Drive;
 import at.beris.jarcommander.filesystem.drive.RemoteDrive;
 import at.beris.virtualfile.FileManager;
 import at.beris.jarcommander.model.SiteModel;
@@ -18,7 +18,7 @@ import at.beris.virtualfile.util.FileUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RemoteFileSystem implements IFileSystem {
+public class RemoteFileSystem implements FileSystem {
     private SiteModel siteModel;
 
     public RemoteFileSystem(SiteModel siteModel) {
@@ -26,8 +26,8 @@ public class RemoteFileSystem implements IFileSystem {
     }
 
     @Override
-    public List<IDrive> getDriveList() {
-        ArrayList<IDrive> driveList = new ArrayList<>();
+    public List<Drive> getDriveList() {
+        ArrayList<Drive> driveList = new ArrayList<>();
         RemoteDrive drive = new RemoteDrive();
         String urlString = siteModel.getProtocol().toLowerCase() + "://" + siteModel.getUsername() + ":" + String.valueOf(siteModel.getPassword()) +
                 "@" + siteModel.getHostname() + ":" + String.valueOf(siteModel.getPortNumber()) + "/";

@@ -11,7 +11,7 @@ package at.beris.jarcommander.filesystem.drive;
 
 import at.beris.virtualfile.File;
 
-public interface IDrive {
+public interface Drive {
     File getFile();
 
     void setFile(File file);

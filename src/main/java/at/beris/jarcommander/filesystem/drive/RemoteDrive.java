@@ -13,7 +13,7 @@ package at.beris.jarcommander.filesystem.drive;
 import at.beris.virtualfile.File;
 import org.apache.commons.lang3.NotImplementedException;
 
-public class RemoteDrive implements IDrive {
+public class RemoteDrive implements Drive {
     private File path;
 
     @Override

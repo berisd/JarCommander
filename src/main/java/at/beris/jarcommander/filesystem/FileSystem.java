@@ -9,10 +9,10 @@
 
 package at.beris.jarcommander.filesystem;
 
-import at.beris.jarcommander.filesystem.drive.IDrive;
+import at.beris.jarcommander.filesystem.drive.Drive;
 
 import java.util.List;
 
-public interface IFileSystem {
-    List<IDrive> getDriveList();
+public interface FileSystem {
+    List<Drive> getDriveList();
 }

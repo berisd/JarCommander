@@ -9,7 +9,7 @@
 
 package at.beris.jarcommander.ui;
 
-import at.beris.jarcommander.filesystem.drive.IDrive;
+import at.beris.jarcommander.filesystem.drive.Drive;
 import at.beris.virtualfile.File;
 import at.beris.virtualfile.FileManager;
 import at.beris.jarcommander.ui.combobox.DriveComboBox;
@@ -51,7 +51,7 @@ public class NavigationPanel extends JPanel {
 
         addMouseListener(new MouseListener());
 
-        final IDrive currentDrive = (IDrive) driveComboBox.getSelectedItem();
+        final Drive currentDrive = (Drive) driveComboBox.getSelectedItem();
         currentFile = currentDrive.getFile();
 
         currentPathTextField.addKeyListener(new
