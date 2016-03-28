@@ -11,7 +11,7 @@ package at.beris.jarcommander.ui.table;
 
 import at.beris.virtualfile.File;
 import at.beris.virtualfile.FileManager;
-import at.beris.virtualfile.util.FileUtils;
+import at.beris.virtualfile.util.UrlUtils;
 import org.apache.log4j.Logger;
 
 import javax.swing.table.AbstractTableModel;
@@ -36,7 +36,7 @@ public class PathTableModel extends AbstractTableModel {
         this.path = path;
         fileList.clear();
         if (!path.isRoot())
-            fileList.add(FileManager.newFile(FileUtils.newUrl(path.getUrl(), "/../")));
+            fileList.add(FileManager.newFile(UrlUtils.newUrl(path.getUrl(), "/../")));
         fileList.addAll(path.list());
     }
 

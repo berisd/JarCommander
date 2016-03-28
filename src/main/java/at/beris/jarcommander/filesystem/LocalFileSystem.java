@@ -67,7 +67,7 @@ public class LocalFileSystem implements FileSystem {
         driveList.sort(new Comparator<Drive>() {
             @Override
             public int compare(Drive o1, Drive o2) {
-                return o1.getFile().toString().compareTo(o2.getFile().toString());
+                return o1.getFile().getName().compareTo(o2.getFile().getName());
             }
         });
 

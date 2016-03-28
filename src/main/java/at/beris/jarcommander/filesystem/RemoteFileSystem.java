@@ -11,9 +11,9 @@ package at.beris.jarcommander.filesystem;
 
 import at.beris.jarcommander.filesystem.drive.Drive;
 import at.beris.jarcommander.filesystem.drive.RemoteDrive;
-import at.beris.virtualfile.FileManager;
 import at.beris.jarcommander.model.SiteModel;
-import at.beris.virtualfile.util.FileUtils;
+import at.beris.virtualfile.FileManager;
+import at.beris.virtualfile.util.UrlUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +31,7 @@ public class RemoteFileSystem implements FileSystem {
         RemoteDrive drive = new RemoteDrive();
         String urlString = siteModel.getProtocol().toLowerCase() + "://" + siteModel.getUsername() + ":" + String.valueOf(siteModel.getPassword()) +
                 "@" + siteModel.getHostname() + ":" + String.valueOf(siteModel.getPortNumber()) + "/";
-        drive.setFile(FileManager.newFile(FileUtils.newUrl(urlString)));
+        drive.setFile(FileManager.newFile(UrlUtils.newUrl(urlString)));
         driveList.add(drive);
         return driveList;
     }

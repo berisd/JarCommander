@@ -10,10 +10,10 @@
 package at.beris.jarcommander.action;
 
 import at.beris.jarcommander.ApplicationContext;
-import at.beris.virtualfile.util.FileUtils;
-import at.beris.virtualfile.FileManager;
 import at.beris.jarcommander.ui.NavigationPanel;
 import at.beris.jarcommander.ui.SessionPanel;
+import at.beris.virtualfile.FileManager;
+import at.beris.virtualfile.util.UrlUtils;
 import org.apache.log4j.Logger;
 
 import javax.swing.*;
@@ -41,7 +41,7 @@ public class NavigatePathUpAction extends CustomAction {
         SessionPanel sessionPanel = (SessionPanel) context.getSessionsPanel().getSelectedComponent();
         NavigationPanel navigationPanel = sessionPanel.getSelectedNavigationPanel();
 
-        URL backUrl = FileUtils.newUrl(navigationPanel.getCurrentFile().getUrl(), "/../");
+        URL backUrl = UrlUtils.newUrl(navigationPanel.getCurrentFile().getUrl(), "/../");
         navigationPanel.changeDirectory(FileManager.newFile(backUrl));
     }
 }
