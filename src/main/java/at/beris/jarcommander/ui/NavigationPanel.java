@@ -10,11 +10,11 @@
 package at.beris.jarcommander.ui;
 
 import at.beris.jarcommander.filesystem.drive.Drive;
-import at.beris.virtualfile.File;
-import at.beris.virtualfile.FileManager;
 import at.beris.jarcommander.ui.combobox.DriveComboBox;
 import at.beris.jarcommander.ui.table.FileTable;
 import at.beris.jarcommander.ui.table.FileTablePane;
+import at.beris.virtualfile.File;
+import at.beris.virtualfile.FileManager;
 import org.apache.log4j.Logger;
 
 import javax.swing.*;
@@ -24,9 +24,11 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static at.beris.jarcommander.Application.logException;
 import static at.beris.jarcommander.ApplicationContext.SELECTION_FOREGROUND_COLOR;
 
 public class NavigationPanel extends JPanel {
@@ -61,7 +63,12 @@ public class NavigationPanel extends JPanel {
                                                             super.keyPressed(e);
                                                             JTextField textfield = (JTextField) e.getSource();
                                                             if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-                                                                changeDirectory(FileManager.newFile(textfield.getText()));
+
+                                                                try {
+                                                                    changeDirectory(FileManager.newFile(textfield.getText()));
+                                                                } catch (IOException e1) {
+                                                                    logException(e1);
+                                                                }
                                                             }
                                                         }
                                                     }
@@ -121,7 +128,11 @@ public class NavigationPanel extends JPanel {
     }
 
     public void executeFile(File file) {
-        currentPathTextField.setText(file.getPath());
+        try {
+            currentPathTextField.setText(file.getPath());
+        } catch (IOException e) {
+            logException(e);
+        }
         fileTable.listFile(file);
     }
 
@@ -156,17 +167,20 @@ public class NavigationPanel extends JPanel {
         String[] pathParts = newPath.toString().split(java.io.File.separator);
         String pathLastPart = pathParts[pathParts.length - 1];
 
-        if (pathLastPart.equals("..") && currentFile.equals(currentFile.getRoot()))
-            return;
+        try {
+            if (pathLastPart.equals("..") && currentFile.equals(currentFile.getRoot()))
+                return;
+            if (pathLastPart.equals("..")) {
+                currentFile = currentFile.getParent();
+            } else {
+                currentFile = newPath;
+            }
 
-        if (pathLastPart.equals("..")) {
-            currentFile = currentFile.getParent();
-        } else {
-            currentFile = newPath;
+            currentPathTextField.setText(currentFile.getPath().toString());
+            fileTable.setPath(currentFile);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-
-        currentPathTextField.setText(currentFile.getPath().toString());
-        fileTable.setPath(currentFile);
     }
 
     public File getCurrentFile() {

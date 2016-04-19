@@ -9,14 +9,16 @@
 
 package at.beris.jarcommander.ui;
 
-import at.beris.virtualfile.File;
 import at.beris.jarcommander.ui.table.FileTable;
+import at.beris.virtualfile.File;
 
-import javax.swing.JLabel;
+import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import java.io.IOException;
 
 import static at.beris.jarcommander.helper.Localization.numberFormat;
+import static at.beris.jarcommander.Application.logException;
 
 public class FileTableStatusLabel extends JLabel {
     private FileTable fileTable;
@@ -47,19 +49,23 @@ public class FileTableStatusLabel extends JLabel {
             File file = (File) fileTable.getValueAt(rowIndex, 0);
             boolean isCellSelected = fileTable.isCellSelected(rowIndex, 0);
 
-            if (file.isDirectory()) {
-                totalNoOfDirs++;
-                if (isCellSelected)
-                    selectedNoOfDirs++;
-            } else {
-                totalNoOfFiles++;
-                if (isCellSelected)
-                    selectedNoOfFiles++;
-            }
+            try {
+                if (file.isDirectory()) {
+                    totalNoOfDirs++;
+                    if (isCellSelected)
+                        selectedNoOfDirs++;
+                } else {
+                    totalNoOfFiles++;
+                    if (isCellSelected)
+                        selectedNoOfFiles++;
+                }
 
-            totalSize += file.getSize();
-            if (isCellSelected)
-                selectedSize += file.getSize();
+                totalSize += file.getSize();
+                if (isCellSelected)
+                    selectedSize += file.getSize();
+            } catch (IOException e) {
+                logException(e);
+            }
         }
 
         setText(numberFormat().format((double) selectedSize / 1024) + "K / " + numberFormat().format((double) totalSize / 1024)

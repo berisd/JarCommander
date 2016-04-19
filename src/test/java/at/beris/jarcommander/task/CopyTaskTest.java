@@ -14,6 +14,7 @@ import at.beris.virtualfile.operation.CopyListener;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,14 +39,14 @@ public class CopyTaskTest {
             Mockito.verify(sourceFile, times(1)).copy(any(File.class), any(CopyListener.class));
     }
 
-    private List<File> createSourceFileMockList() {
+    private List<File> createSourceFileMockList() throws IOException {
         sourceFiles = new ArrayList<>();
         sourceFiles.add(createFileMock());
         sourceFiles.add(createFileMock());
         return sourceFiles;
     }
 
-    private File createFileMock() {
+    private File createFileMock() throws IOException {
         File file = Mockito.mock(File.class);
         Mockito.when(file.getName()).thenReturn("filename");
         Mockito.when(file.getSize()).thenReturn(1L);

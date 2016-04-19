@@ -12,6 +12,10 @@ package at.beris.jarcommander.filesystem.drive;
 import at.beris.virtualfile.File;
 import at.beris.virtualfile.FileManager;
 
+import java.io.IOException;
+
+import static at.beris.jarcommander.Application.logException;
+
 public class LocalDrive implements Drive {
     private File path;
     private long spaceTotal;
@@ -42,6 +46,11 @@ public class LocalDrive implements Drive {
     }
 
     public File getPath(String path) {
-        return FileManager.newLocalFile(path);
+        try {
+            return FileManager.newLocalFile(path);
+        } catch (IOException e) {
+            logException(e);
+        }
+        return null;
     }
 }

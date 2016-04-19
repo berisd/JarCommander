@@ -19,7 +19,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.util.List;
+
+import static at.beris.jarcommander.Application.logException;
 
 public class CopyTaskDialog extends JDialog implements ActionListener, CopyTaskListener {
     private final static org.apache.log4j.Logger LOGGER = org.apache.log4j.Logger.getLogger(CopyTaskDialog.class);
@@ -82,8 +85,12 @@ public class CopyTaskDialog extends JDialog implements ActionListener, CopyTaskL
         int count = 0;
 
         for (File file : fileList) {
-            if (file.getName().equals(".."))
-                continue;
+            try {
+                if (file.getName().equals(".."))
+                    continue;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             count++;
         }
 
@@ -165,9 +172,14 @@ public class CopyTaskDialog extends JDialog implements ActionListener, CopyTaskL
 
     @Override
     public int fileExists(File file) {
-        return JOptionPane.showConfirmDialog(this, file.getPath() + " already exists! " +
-                        System.lineSeparator() + "Would you like to overwrite it?", "File exists",
-                JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+        try {
+            return JOptionPane.showConfirmDialog(this, file.getPath() + " already exists! " +
+                            System.lineSeparator() + "Would you like to overwrite it?", "File exists",
+                    JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+        } catch (IOException e) {
+            logException(e);
+        }
+        return JOptionPane.NO_OPTION;
     }
 
     @Override

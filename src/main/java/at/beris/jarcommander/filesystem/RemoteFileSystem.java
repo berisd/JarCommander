@@ -15,8 +15,11 @@ import at.beris.jarcommander.model.SiteModel;
 import at.beris.virtualfile.FileManager;
 import at.beris.virtualfile.util.UrlUtils;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import static at.beris.jarcommander.Application.logException;
 
 public class RemoteFileSystem implements FileSystem {
     private SiteModel siteModel;
@@ -31,7 +34,11 @@ public class RemoteFileSystem implements FileSystem {
         RemoteDrive drive = new RemoteDrive();
         String urlString = siteModel.getProtocol().toLowerCase() + "://" + siteModel.getUsername() + ":" + String.valueOf(siteModel.getPassword()) +
                 "@" + siteModel.getHostname() + ":" + String.valueOf(siteModel.getPortNumber()) + "/";
-        drive.setFile(FileManager.newFile(UrlUtils.newUrl(urlString)));
+        try {
+            drive.setFile(FileManager.newFile(UrlUtils.newUrl(urlString)));
+        } catch (IOException e) {
+            logException(e);
+        }
         driveList.add(drive);
         return driveList;
     }

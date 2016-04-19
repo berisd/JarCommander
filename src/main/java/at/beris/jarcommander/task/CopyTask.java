@@ -81,25 +81,30 @@ public class CopyTask extends SwingWorker<Void, Integer> implements CopyListener
     }
 
     private void retrieveFileInfo(File sourceFile) {
-        if (sourceFile.getName().equals(".."))
-            return;
+        try {
+            if (sourceFile.getName().equals(".."))
+                return;
 
-        List<File> fileList;
-        if (sourceFile.isDirectory()) {
+            List<File> fileList;
+            if (sourceFile.isDirectory()) {
                 fileList = sourceFile.list();
-        } else {
-            fileList = Collections.singletonList(sourceFile);
-        }
-
-        for (File file : fileList) {
-            if (file.getName().equals(".."))
-                continue;
-            if (file.isDirectory()) {
-                retrieveFileInfo(file);
             } else {
-                bytesTotal += file.getSize();
-                totalCountFiles++;
+                fileList = Collections.singletonList(sourceFile);
             }
+
+            for (File file : fileList) {
+                if (file.getName().equals(".."))
+                    continue;
+                if (file.isDirectory()) {
+                    retrieveFileInfo(file);
+                } else {
+                    bytesTotal += file.getSize();
+                    totalCountFiles++;
+                }
+            }
+        }
+        catch(IOException e) {
+            logException(e);
         }
     }
 
@@ -145,13 +150,21 @@ public class CopyTask extends SwingWorker<Void, Integer> implements CopyListener
         int result = listener.fileExists(file);
         switch (result) {
             case JOptionPane.NO_OPTION:
-                bytesCopied += file.getSize();
+                try {
+                    bytesCopied += file.getSize();
+                } catch (IOException e) {
+                    logException(e);
+                }
                 listener.setAllProgressBar((int) (bytesCopied * 100 / bytesTotal));
                 return;
             case JOptionPane.CANCEL_OPTION:
                 cancel(true);
             default:
-                file.delete();
+                try {
+                    file.delete();
+                } catch (IOException e) {
+                    logException(e);
+                }
         }
     }
 }
