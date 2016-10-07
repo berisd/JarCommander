@@ -13,7 +13,7 @@ import at.beris.jarcommander.ApplicationContext;
 import at.beris.jarcommander.ui.NavigationPanel;
 import at.beris.jarcommander.ui.SessionPanel;
 import at.beris.jarcommander.ui.table.FileTable;
-import at.beris.virtualfile.File;
+import at.beris.virtualfile.VirtualFile;
 import org.apache.log4j.Logger;
 
 import javax.swing.*;
@@ -47,7 +47,7 @@ public class ExecuteFileAction extends CustomAction {
         int firstSelectedRowIndex = fileTable.getSelectedRow();
 
         if (firstSelectedRowIndex >= 0) {
-            File file = (File) fileTable.getModel().getValueAt(fileTable.convertRowIndexToModel(firstSelectedRowIndex), 0);
+            VirtualFile file = (VirtualFile) fileTable.getModel().getValueAt(fileTable.convertRowIndexToModel(firstSelectedRowIndex), 0);
             try {
                 if (file.isDirectory()) {
                     navigationPanel.changeDirectory(file);

@@ -9,8 +9,8 @@
 
 package at.beris.jarcommander.task;
 
-import at.beris.virtualfile.File;
-import at.beris.virtualfile.operation.CopyListener;
+import at.beris.virtualfile.VirtualFile;
+import at.beris.virtualfile.provider.operation.CopyListener;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -23,31 +23,31 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.times;
 
 public class CopyTaskTest {
-    private static List<File> sourceFiles;
+    private static List<VirtualFile> sourceFiles;
 
     @Test
     public void copyFiles() throws Exception {
         CopyTaskListener copyTaskListener = Mockito.mock(CopyTaskListener.class);
-        File targetFile = createFileMock();
-        List<File> sourceFiles = createSourceFileMockList();
+        VirtualFile targetFile = createFileMock();
+        List<VirtualFile> sourceFiles = createSourceFileMockList();
 
         CopyTask copyTask = new CopyTask(sourceFiles, targetFile, copyTaskListener);
         copyTask.execute();
         copyTask.get();
 
-        for (File sourceFile : sourceFiles)
-            Mockito.verify(sourceFile, times(1)).copy(any(File.class), any(CopyListener.class));
+        for (VirtualFile sourceFile : sourceFiles)
+            Mockito.verify(sourceFile, times(1)).copy(any(VirtualFile.class), any(CopyListener.class));
     }
 
-    private List<File> createSourceFileMockList() throws IOException {
+    private List<VirtualFile> createSourceFileMockList() throws IOException {
         sourceFiles = new ArrayList<>();
         sourceFiles.add(createFileMock());
         sourceFiles.add(createFileMock());
         return sourceFiles;
     }
 
-    private File createFileMock() throws IOException {
-        File file = Mockito.mock(File.class);
+    private VirtualFile createFileMock() throws IOException {
+        VirtualFile file = Mockito.mock(VirtualFile.class);
         Mockito.when(file.getName()).thenReturn("filename");
         Mockito.when(file.getSize()).thenReturn(1L);
         try {

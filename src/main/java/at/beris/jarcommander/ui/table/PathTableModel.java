@@ -9,8 +9,8 @@
 
 package at.beris.jarcommander.ui.table;
 
-import at.beris.virtualfile.File;
 import at.beris.virtualfile.FileManager;
+import at.beris.virtualfile.VirtualFile;
 import at.beris.virtualfile.util.UrlUtils;
 import org.apache.log4j.Logger;
 
@@ -27,14 +27,14 @@ public class PathTableModel extends AbstractTableModel {
     private final static Logger LOGGER = Logger.getLogger(PathTableModel.class);
 
     private static final int columnCount = 4;
-    private List<File> fileList;
-    private File path;
+    private List<VirtualFile> fileList;
+    private VirtualFile path;
 
     public PathTableModel() {
         fileList = new ArrayList<>();
     }
 
-    public void setPath(File path) {
+    public void setPath(VirtualFile path) {
         LOGGER.debug("setFile");
         this.path = path;
         fileList.clear();
@@ -48,7 +48,7 @@ public class PathTableModel extends AbstractTableModel {
         }
     }
 
-    public void listFile(File file) {
+    public void listFile(VirtualFile file) {
         LOGGER.debug("listFile " + file);
         fileList.clear();
         try {
@@ -78,7 +78,7 @@ public class PathTableModel extends AbstractTableModel {
     public Class<?> getColumnClass(int columnIndex) {
         switch (columnIndex) {
             case 0:
-                return File.class;
+                return VirtualFile.class;
             case 1:
                 return Date.class;
             case 2:
@@ -102,7 +102,7 @@ public class PathTableModel extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        File file = fileList.get(rowIndex);
+        VirtualFile file = fileList.get(rowIndex);
 
         try {
             switch (columnIndex) {
@@ -115,8 +115,7 @@ public class PathTableModel extends AbstractTableModel {
                 case 3:
                     return file.getAttributes();
             }
-        }
-        catch(IOException e) {
+        } catch (IOException e) {
             logException(e);
         }
         return null;

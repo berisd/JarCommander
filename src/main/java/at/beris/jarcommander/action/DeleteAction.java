@@ -12,7 +12,7 @@ package at.beris.jarcommander.action;
 import at.beris.jarcommander.ApplicationContext;
 import at.beris.jarcommander.ui.NavigationPanel;
 import at.beris.jarcommander.ui.SessionPanel;
-import at.beris.virtualfile.File;
+import at.beris.virtualfile.VirtualFile;
 import org.apache.log4j.Logger;
 
 import javax.swing.*;
@@ -49,7 +49,7 @@ public class DeleteAction extends CustomAction {
         } else {
             int deletion = JOptionPane.showConfirmDialog(context.getApplicationWindow(), "Delete " + countFileList(sourcePanel.getSelection()) + " items?", "Deletion", JOptionPane.YES_NO_OPTION);
             if (deletion == JOptionPane.YES_OPTION) {
-                for (File file : sourcePanel.getSelection()) {
+                for (VirtualFile file : sourcePanel.getSelection()) {
                     try {
                         if (file.getName().equals(".."))
                             continue;
@@ -63,10 +63,10 @@ public class DeleteAction extends CustomAction {
         }
     }
 
-    private int countFileList(List<File> fileList) {
+    private int countFileList(List<VirtualFile> fileList) {
         int count = 0;
 
-        for (File file : fileList) {
+        for (VirtualFile file : fileList) {
             try {
                 if (file.getName().equals(".."))
                     continue;

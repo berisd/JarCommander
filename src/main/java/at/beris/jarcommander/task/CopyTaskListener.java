@@ -9,7 +9,7 @@
 
 package at.beris.jarcommander.task;
 
-import at.beris.virtualfile.File;
+import at.beris.virtualfile.VirtualFile;
 
 public interface CopyTaskListener {
     void setCurrentProgressBar(int progress);
@@ -20,7 +20,7 @@ public interface CopyTaskListener {
 
     void startCopyFile(String fileName, long currentFileNumber, long totalCountFiles);
 
-    int fileExists(File file);
+    int fileExists(VirtualFile file);
 
     int showError(String message);
 }

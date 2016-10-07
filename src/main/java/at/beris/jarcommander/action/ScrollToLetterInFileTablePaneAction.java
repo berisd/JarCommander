@@ -10,16 +10,15 @@
 package at.beris.jarcommander.action;
 
 import at.beris.jarcommander.ApplicationContext;
-import at.beris.virtualfile.File;
 import at.beris.jarcommander.ui.NavigationPanel;
 import at.beris.jarcommander.ui.SessionPanel;
 import at.beris.jarcommander.ui.table.FileTable;
 import at.beris.jarcommander.ui.table.FileTablePane;
+import at.beris.virtualfile.VirtualFile;
 import org.apache.log4j.Logger;
 
-import javax.swing.JViewport;
-import java.awt.Point;
-import java.awt.Rectangle;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 
 public class ScrollToLetterInFileTablePaneAction extends CustomAction {
@@ -41,7 +40,7 @@ public class ScrollToLetterInFileTablePaneAction extends CustomAction {
         Character keyChar = (Character) ((ParamActionEvent) e).getParam();
 
         for (int rowIndex = 0; rowIndex < fileTable.getRowCount(); rowIndex++) {
-            File file = (File) fileTable.getValueAt(rowIndex, 0);
+            VirtualFile file = (VirtualFile) fileTable.getValueAt(rowIndex, 0);
             String[] fileNameParts = file.toString().split(java.io.File.separator);
             String fileName = fileNameParts[fileNameParts.length - 1];
             if (fileName.toLowerCase().charAt(0) == Character.toLowerCase(keyChar)) {

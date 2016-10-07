@@ -9,23 +9,23 @@
 
 package at.beris.jarcommander.filesystem.drive;
 
-import at.beris.virtualfile.File;
 import at.beris.virtualfile.FileManager;
+import at.beris.virtualfile.VirtualFile;
 
 import java.io.IOException;
 
 import static at.beris.jarcommander.Application.logException;
 
 public class LocalDrive implements Drive {
-    private File path;
+    private VirtualFile path;
     private long spaceTotal;
     private long spaceLeft;
 
-    public File getFile() {
+    public VirtualFile getFile() {
         return path;
     }
 
-    public void setFile(File file) {
+    public void setFile(VirtualFile file) {
         this.path = file;
     }
 
@@ -45,7 +45,7 @@ public class LocalDrive implements Drive {
         this.spaceLeft = spaceLeft;
     }
 
-    public File getPath(String path) {
+    public VirtualFile getPath(String path) {
         try {
             return FileManager.newLocalFile(path);
         } catch (IOException e) {

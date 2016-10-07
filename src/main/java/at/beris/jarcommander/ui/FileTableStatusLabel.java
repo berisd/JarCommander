@@ -10,15 +10,15 @@
 package at.beris.jarcommander.ui;
 
 import at.beris.jarcommander.ui.table.FileTable;
-import at.beris.virtualfile.File;
+import at.beris.virtualfile.VirtualFile;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.io.IOException;
 
-import static at.beris.jarcommander.helper.Localization.numberFormat;
 import static at.beris.jarcommander.Application.logException;
+import static at.beris.jarcommander.helper.Localization.numberFormat;
 
 public class FileTableStatusLabel extends JLabel {
     private FileTable fileTable;
@@ -46,7 +46,7 @@ public class FileTableStatusLabel extends JLabel {
         long totalNoOfDirs = 0;
 
         for (int rowIndex = 0; rowIndex < fileTable.getRowCount(); rowIndex++) {
-            File file = (File) fileTable.getValueAt(rowIndex, 0);
+            VirtualFile file = (VirtualFile) fileTable.getValueAt(rowIndex, 0);
             boolean isCellSelected = fileTable.isCellSelected(rowIndex, 0);
 
             try {

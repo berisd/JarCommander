@@ -13,8 +13,8 @@ import at.beris.jarcommander.filesystem.drive.Drive;
 import at.beris.jarcommander.ui.combobox.DriveComboBox;
 import at.beris.jarcommander.ui.table.FileTable;
 import at.beris.jarcommander.ui.table.FileTablePane;
-import at.beris.virtualfile.File;
 import at.beris.virtualfile.FileManager;
+import at.beris.virtualfile.VirtualFile;
 import org.apache.log4j.Logger;
 
 import javax.swing.*;
@@ -37,7 +37,7 @@ public class NavigationPanel extends JPanel {
     private boolean selected;
     private Border borderNormal;
     private Border borderSelected;
-    private File currentFile;
+    private VirtualFile currentFile;
 
     private DriveComboBox driveComboBox;
     private JTextField currentPathTextField;
@@ -127,7 +127,7 @@ public class NavigationPanel extends JPanel {
         }
     }
 
-    public void executeFile(File file) {
+    public void executeFile(VirtualFile file) {
         try {
             currentPathTextField.setText(file.getPath());
         } catch (IOException e) {
@@ -147,11 +147,11 @@ public class NavigationPanel extends JPanel {
         }
     }
 
-    public List<File> getSelection() {
-        List<File> fileList = new ArrayList<>();
+    public List<VirtualFile> getSelection() {
+        List<VirtualFile> fileList = new ArrayList<>();
         for (int rowIndex : fileTablePane.getTable().getSelectedRows()) {
             int modelIndex = fileTablePane.getTable().getRowSorter().convertRowIndexToModel(rowIndex);
-            fileList.add((File) fileTablePane.getTable().getModel().getValueAt(modelIndex, 0));
+            fileList.add((VirtualFile) fileTablePane.getTable().getModel().getValueAt(modelIndex, 0));
         }
         return fileList;
     }
@@ -163,7 +163,7 @@ public class NavigationPanel extends JPanel {
     }
 
 
-    public void changeDirectory(File newPath) {
+    public void changeDirectory(VirtualFile newPath) {
         String[] pathParts = newPath.toString().split(java.io.File.separator);
         String pathLastPart = pathParts[pathParts.length - 1];
 
@@ -183,7 +183,7 @@ public class NavigationPanel extends JPanel {
         }
     }
 
-    public File getCurrentFile() {
+    public VirtualFile getCurrentFile() {
         return currentFile;
     }
 }

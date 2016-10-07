@@ -12,7 +12,7 @@ package at.beris.jarcommander.ui.table;
 import at.beris.jarcommander.ApplicationContext;
 import at.beris.jarcommander.FileDefaultComparator;
 import at.beris.jarcommander.action.*;
-import at.beris.virtualfile.File;
+import at.beris.virtualfile.VirtualFile;
 import org.apache.log4j.Logger;
 
 import javax.swing.*;
@@ -32,7 +32,7 @@ public class FileTable extends JTable {
     private final static Logger LOGGER = Logger.getLogger(FileTablePane.class);
 
     private TableRowSorter<TableModel> rowSorter;
-    private File path;
+    private VirtualFile path;
     private ApplicationContext context;
     private ActionFactory actionFactory;
 
@@ -83,7 +83,7 @@ public class FileTable extends JTable {
         repaint();
     }
 
-    public void setPath(File path) {
+    public void setPath(VirtualFile path) {
         this.path = path;
         ((PathTableModel) getModel()).setPath(path);
         rowSorter.sort();
@@ -92,7 +92,7 @@ public class FileTable extends JTable {
         requestFocusInWindow();
     }
 
-    public void listFile(File file) {
+    public void listFile(VirtualFile file) {
         ((PathTableModel) getModel()).listFile(file);
         rowSorter.sort();
         getSelectionModel().clearSelection();

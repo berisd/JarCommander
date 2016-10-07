@@ -9,20 +9,20 @@
 
 package at.beris.jarcommander;
 
-import at.beris.virtualfile.File;
+import at.beris.virtualfile.VirtualFile;
 
 import java.io.IOException;
 import java.util.Comparator;
 
 import static at.beris.jarcommander.Application.logException;
 
-public class FileDefaultComparator implements Comparator<File> {
+public class FileDefaultComparator implements Comparator<VirtualFile> {
     @Override
-    public int compare(File o1, File o2) {
+    public int compare(VirtualFile o1, VirtualFile o2) {
         return compareTo(o1, o2);
     }
 
-    public int compareTo(File file1, File file2) {
+    public int compareTo(VirtualFile file1, VirtualFile file2) {
         if (file1 == null && file2 == null) {
             return 0;
         } else if (file1 == null || file2 == null) {
@@ -37,8 +37,7 @@ public class FileDefaultComparator implements Comparator<File> {
                 cmp = file1.getName().toUpperCase().compareTo(file2.getName().toUpperCase());
             }
             return cmp;
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             logException(e);
         }
         return -1;

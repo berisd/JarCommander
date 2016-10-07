@@ -10,19 +10,19 @@
 package at.beris.jarcommander.filesystem.drive;
 
 
-import at.beris.virtualfile.File;
+import at.beris.virtualfile.VirtualFile;
 import org.apache.commons.lang3.NotImplementedException;
 
 public class RemoteDrive implements Drive {
-    private File path;
+    private VirtualFile path;
 
     @Override
-    public File getFile() {
+    public VirtualFile getFile() {
         return path;
     }
 
     @Override
-    public void setFile(File file) {
+    public void setFile(VirtualFile file) {
         this.path = file;
     }
 

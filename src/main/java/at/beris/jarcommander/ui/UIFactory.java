@@ -15,15 +15,16 @@ import at.beris.jarcommander.exception.ApplicationException;
 import at.beris.jarcommander.filesystem.FileSystem;
 import at.beris.jarcommander.filesystem.LocalFileSystem;
 import at.beris.jarcommander.filesystem.drive.Drive;
-import at.beris.virtualfile.File;
 import at.beris.jarcommander.ui.combobox.DriveComboBox;
 import at.beris.jarcommander.ui.table.FileTablePane;
+import at.beris.virtualfile.VirtualFile;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
+
 import static at.beris.jarcommander.Application.logException;
 
 public class UIFactory {
@@ -53,7 +54,7 @@ public class UIFactory {
 
     public NavigationPanel createNavigationPanel(FileSystem fileSystem) {
         DriveComboBox driveComboBox = new DriveComboBox(context, fileSystem);
-        File currentFile = ((Drive) driveComboBox.getSelectedItem()).getFile();
+        VirtualFile currentFile = ((Drive) driveComboBox.getSelectedItem()).getFile();
         final FileTablePane fileTablePane = new FileTablePane(context);
         JTextField currentPathTextField = new JTextField();
         try {

@@ -10,10 +10,10 @@
 package at.beris.jarcommander.ui.dialog;
 
 import at.beris.jarcommander.ApplicationContext;
-import at.beris.virtualfile.File;
 import at.beris.jarcommander.task.CopyTask;
 import at.beris.jarcommander.task.CopyTaskListener;
 import at.beris.jarcommander.ui.NavigationPanel;
+import at.beris.virtualfile.VirtualFile;
 
 import javax.swing.*;
 import java.awt.*;
@@ -37,10 +37,10 @@ public class CopyTaskDialog extends JDialog implements ActionListener, CopyTaskL
     private JLabel labelCopyStatus;
 
     private NavigationPanel targetPanel;
-    private List<File> fileList;
+    private List<VirtualFile> fileList;
     private ApplicationContext context;
 
-    public CopyTaskDialog(List<File> fileList, NavigationPanel targetPanel, ApplicationContext context) {
+    public CopyTaskDialog(List<VirtualFile> fileList, NavigationPanel targetPanel, ApplicationContext context) {
         this.fileList = fileList;
         this.targetPanel = targetPanel;
         this.context = context;
@@ -84,7 +84,7 @@ public class CopyTaskDialog extends JDialog implements ActionListener, CopyTaskL
     private int countFileList() {
         int count = 0;
 
-        for (File file : fileList) {
+        for (VirtualFile file : fileList) {
             try {
                 if (file.getName().equals(".."))
                     continue;
@@ -171,7 +171,7 @@ public class CopyTaskDialog extends JDialog implements ActionListener, CopyTaskL
     }
 
     @Override
-    public int fileExists(File file) {
+    public int fileExists(VirtualFile file) {
         try {
             return JOptionPane.showConfirmDialog(this, file.getPath() + " already exists! " +
                             System.lineSeparator() + "Would you like to overwrite it?", "File exists",
