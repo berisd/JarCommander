@@ -11,10 +11,7 @@ package at.beris.jarcommander;
 
 import at.beris.virtualfile.VirtualFile;
 
-import java.io.IOException;
 import java.util.Comparator;
-
-import static at.beris.jarcommander.Application.logException;
 
 public class FileDefaultComparator implements Comparator<VirtualFile> {
     @Override
@@ -28,18 +25,13 @@ public class FileDefaultComparator implements Comparator<VirtualFile> {
         } else if (file1 == null || file2 == null) {
             return file1 == null ? -1 : 1;
         }
-        try {
-            int cmp = compareTo(file1.getParent(), file2.getParent());
-            if (cmp == 0) {
-                if (file1.isDirectory() != file2.isDirectory()) {
-                    return file1.isDirectory() ? -1 : 1;
-                }
-                cmp = file1.getName().toUpperCase().compareTo(file2.getName().toUpperCase());
+        int cmp = compareTo(file1.getParent(), file2.getParent());
+        if (cmp == 0) {
+            if (file1.isDirectory() != file2.isDirectory()) {
+                return file1.isDirectory() ? -1 : 1;
             }
-            return cmp;
-        } catch (IOException e) {
-            logException(e);
+            cmp = file1.getName().toUpperCase().compareTo(file2.getName().toUpperCase());
         }
-        return -1;
+        return cmp;
     }
 }

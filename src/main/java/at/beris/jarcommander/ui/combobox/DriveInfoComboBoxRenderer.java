@@ -13,22 +13,16 @@ import at.beris.jarcommander.filesystem.drive.Drive;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.IOException;
 
 import static at.beris.jarcommander.helper.Localization.numberFormat;
-import static at.beris.jarcommander.Application.logException;
 
 public class DriveInfoComboBoxRenderer extends JLabel implements ListCellRenderer {
 
     @Override
     public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
         Drive driveInfo = (Drive) value;
-        try {
-            setText(driveInfo.getFile().getPath() + " [" + numberFormat().format((double) driveInfo.getSpaceTotal() / (1024 * 1024 * 1024))
-                    + "G / " + calculateSpaceFreePercentage(driveInfo) + "% free]");
-        } catch (IOException e) {
-            logException(e);
-        }
+        setText(driveInfo.getFile().getPath() + " [" + numberFormat().format((double) driveInfo.getSpaceTotal() / (1024 * 1024 * 1024))
+                + "G / " + calculateSpaceFreePercentage(driveInfo) + "% free]");
         return this;
     }
 

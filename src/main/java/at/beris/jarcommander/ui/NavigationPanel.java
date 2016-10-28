@@ -24,11 +24,9 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static at.beris.jarcommander.Application.logException;
 import static at.beris.jarcommander.ApplicationContext.SELECTION_FOREGROUND_COLOR;
 
 public class NavigationPanel extends JPanel {
@@ -56,22 +54,16 @@ public class NavigationPanel extends JPanel {
         final Drive currentDrive = (Drive) driveComboBox.getSelectedItem();
         currentFile = currentDrive.getFile();
 
-        currentPathTextField.addKeyListener(new
-                                                    KeyAdapter() {
-                                                        @Override
-                                                        public void keyPressed(KeyEvent e) {
-                                                            super.keyPressed(e);
-                                                            JTextField textfield = (JTextField) e.getSource();
-                                                            if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-
-                                                                try {
-                                                                    changeDirectory(FileManager.newFile(textfield.getText()));
-                                                                } catch (IOException e1) {
-                                                                    logException(e1);
-                                                                }
-                                                            }
-                                                        }
+        currentPathTextField.addKeyListener(new KeyAdapter() {
+                                                @Override
+                                                public void keyPressed(KeyEvent e) {
+                                                    super.keyPressed(e);
+                                                    JTextField textfield = (JTextField) e.getSource();
+                                                    if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                                                        changeDirectory(FileManager.newFile(textfield.getText()));
                                                     }
+                                                }
+                                            }
         );
 
         borderNormal = BorderFactory.createEtchedBorder();
@@ -128,11 +120,7 @@ public class NavigationPanel extends JPanel {
     }
 
     public void executeFile(VirtualFile file) {
-        try {
-            currentPathTextField.setText(file.getPath());
-        } catch (IOException e) {
-            logException(e);
-        }
+        currentPathTextField.setText(file.getPath());
         fileTable.listFile(file);
     }
 
@@ -163,24 +151,20 @@ public class NavigationPanel extends JPanel {
     }
 
 
-    public void changeDirectory(VirtualFile newPath) {
-        String[] pathParts = newPath.toString().split(java.io.File.separator);
+    public void changeDirectory(VirtualFile newFile) {
+        String[] pathParts = newFile.getPath().split("/");
         String pathLastPart = pathParts[pathParts.length - 1];
 
-        try {
-            if (pathLastPart.equals("..") && currentFile.equals(currentFile.getRoot()))
-                return;
-            if (pathLastPart.equals("..")) {
-                currentFile = currentFile.getParent();
-            } else {
-                currentFile = newPath;
-            }
-
-            currentPathTextField.setText(currentFile.getPath().toString());
-            fileTable.setPath(currentFile);
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (pathLastPart.equals("..") && currentFile.getPath().equals(currentFile.getRoot().getPath()))
+            return;
+        if (pathLastPart.equals("..")) {
+            currentFile = currentFile.getParent();
+        } else {
+            currentFile = newFile;
         }
+
+        currentPathTextField.setText(currentFile.getPath().toString());
+        fileTable.setPath(currentFile);
     }
 
     public VirtualFile getCurrentFile() {

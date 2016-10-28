@@ -19,10 +19,7 @@ import org.apache.log4j.Logger;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.io.IOException;
 import java.net.URL;
-
-import static at.beris.jarcommander.Application.logException;
 
 public class NavigatePathUpAction extends CustomAction {
     private final static Logger LOGGER = Logger.getLogger(NavigatePathUpAction.class);
@@ -44,13 +41,8 @@ public class NavigatePathUpAction extends CustomAction {
         SessionPanel sessionPanel = (SessionPanel) context.getSessionsPanel().getSelectedComponent();
         NavigationPanel navigationPanel = sessionPanel.getSelectedNavigationPanel();
 
-        URL backUrl = null;
-        try {
-            backUrl = UrlUtils.newUrl(navigationPanel.getCurrentFile().getUrl(), "/../");
-            navigationPanel.changeDirectory(FileManager.newFile(backUrl));
-        } catch (IOException e1) {
-            logException(e1);
-        }
+        URL backUrl = UrlUtils.newUrl(navigationPanel.getCurrentFile().getUrl(), "/../");
+        navigationPanel.changeDirectory(FileManager.newFile(backUrl));
 
     }
 }

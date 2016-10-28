@@ -19,9 +19,6 @@ import org.apache.log4j.Logger;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.io.IOException;
-
-import static at.beris.jarcommander.Application.logException;
 
 public class ExecuteFileAction extends CustomAction {
     private final static Logger LOGGER = Logger.getLogger(ExecuteFileAction.class);
@@ -48,14 +45,10 @@ public class ExecuteFileAction extends CustomAction {
 
         if (firstSelectedRowIndex >= 0) {
             VirtualFile file = (VirtualFile) fileTable.getModel().getValueAt(fileTable.convertRowIndexToModel(firstSelectedRowIndex), 0);
-            try {
-                if (file.isDirectory()) {
-                    navigationPanel.changeDirectory(file);
-                } else {
-                    navigationPanel.executeFile(file);
-                }
-            } catch (IOException e1) {
-                logException(e1);
+            if (file.isDirectory()) {
+                navigationPanel.changeDirectory(file);
+            } else {
+                navigationPanel.executeFile(file);
             }
         }
     }

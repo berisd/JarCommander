@@ -15,9 +15,7 @@ import at.beris.virtualfile.VirtualFile;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import java.io.IOException;
 
-import static at.beris.jarcommander.Application.logException;
 import static at.beris.jarcommander.helper.Localization.numberFormat;
 
 public class FileTableStatusLabel extends JLabel {
@@ -49,23 +47,19 @@ public class FileTableStatusLabel extends JLabel {
             VirtualFile file = (VirtualFile) fileTable.getValueAt(rowIndex, 0);
             boolean isCellSelected = fileTable.isCellSelected(rowIndex, 0);
 
-            try {
-                if (file.isDirectory()) {
-                    totalNoOfDirs++;
-                    if (isCellSelected)
-                        selectedNoOfDirs++;
-                } else {
-                    totalNoOfFiles++;
-                    if (isCellSelected)
-                        selectedNoOfFiles++;
-                }
-
-                totalSize += file.getSize();
+            if (file.isDirectory()) {
+                totalNoOfDirs++;
                 if (isCellSelected)
-                    selectedSize += file.getSize();
-            } catch (IOException e) {
-                logException(e);
+                    selectedNoOfDirs++;
+            } else {
+                totalNoOfFiles++;
+                if (isCellSelected)
+                    selectedNoOfFiles++;
             }
+
+            totalSize += file.getSize();
+            if (isCellSelected)
+                selectedSize += file.getSize();
         }
 
         setText(numberFormat().format((double) selectedSize / 1024) + "K / " + numberFormat().format((double) totalSize / 1024)

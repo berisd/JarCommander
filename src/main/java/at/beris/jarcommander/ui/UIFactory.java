@@ -23,9 +23,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.IOException;
-
-import static at.beris.jarcommander.Application.logException;
 
 public class UIFactory {
     private ApplicationContext context;
@@ -57,11 +54,7 @@ public class UIFactory {
         VirtualFile currentFile = ((Drive) driveComboBox.getSelectedItem()).getFile();
         final FileTablePane fileTablePane = new FileTablePane(context);
         JTextField currentPathTextField = new JTextField();
-        try {
-            currentPathTextField.setText(currentFile.getPath().toString());
-        } catch (IOException e) {
-            logException(e);
-        }
+        currentPathTextField.setText(currentFile.getPath().toString());
         FileTableStatusLabel statusLabel = new FileTableStatusLabel(fileTablePane.getTable());
 
         for (Component component : new Component[]{currentPathTextField, statusLabel}) {

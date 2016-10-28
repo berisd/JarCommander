@@ -9,10 +9,9 @@
 
 package at.beris.jarcommander.ui.table;
 
-import at.beris.virtualfile.attribute.BasicFilePermission;
+import at.beris.virtualfile.attribute.DosFileAttribute;
 import at.beris.virtualfile.attribute.FileAttribute;
 import at.beris.virtualfile.attribute.PosixFilePermission;
-import at.beris.virtualfile.attribute.DosFileAttribute;
 
 import javax.swing.*;
 import javax.swing.table.TableCellRenderer;
@@ -24,13 +23,11 @@ import static at.beris.jarcommander.ApplicationContext.SELECTION_FOREGROUND_COLO
 
 public class FileAttributesRenderer extends JLabel implements TableCellRenderer {
     private Map<FileAttribute, AttributeText> attributeTextMap;
-    private List<FileAttribute> windowsAttributeList;
     private List<FileAttribute> posixAttributeList;
 
     public FileAttributesRenderer() {
         attributeTextMap = createAttributeTextMap();
 
-        windowsAttributeList = Arrays.asList(BasicFilePermission.READ, BasicFilePermission.WRITE, BasicFilePermission.EXECUTE, DosFileAttribute.ARCHIVE, DosFileAttribute.HIDDEN, DosFileAttribute.READ_ONLY, DosFileAttribute.SYSTEM);
         posixAttributeList = Arrays.asList(PosixFilePermission.OWNER_READ, PosixFilePermission.OWNER_WRITE,
                 PosixFilePermission.OWNER_EXECUTE, PosixFilePermission.GROUP_READ, PosixFilePermission.GROUP_WRITE, PosixFilePermission.GROUP_EXECUTE,
                 PosixFilePermission.OTHERS_READ, PosixFilePermission.OTHERS_WRITE, PosixFilePermission.OTHERS_EXECUTE);
@@ -42,8 +39,7 @@ public class FileAttributesRenderer extends JLabel implements TableCellRenderer 
         StringBuilder longText = new StringBuilder("");
         Set<FileAttribute> fileAttributes = (Set<FileAttribute>) value;
 
-        boolean isWindows = fileAttributes.contains(BasicFilePermission.READ) || fileAttributes.contains(BasicFilePermission.WRITE) || fileAttributes.contains(BasicFilePermission.EXECUTE);
-        List<FileAttribute> attributeList = isWindows ? windowsAttributeList : posixAttributeList;
+        List<FileAttribute> attributeList = posixAttributeList;
 
         for (FileAttribute attribute : attributeList) {
             if (fileAttributes.contains(attribute)) {
@@ -83,9 +79,9 @@ public class FileAttributesRenderer extends JLabel implements TableCellRenderer 
 
     private Map<FileAttribute, AttributeText> createAttributeTextMap() {
         Map<FileAttribute, AttributeText> attributeTextMap = new HashMap<>();
-        attributeTextMap.put(BasicFilePermission.READ, new AttributeText('R', "Read"));
-        attributeTextMap.put(BasicFilePermission.WRITE, new AttributeText('W', "Write"));
-        attributeTextMap.put(BasicFilePermission.EXECUTE, new AttributeText('X', "Execute"));
+//        attributeTextMap.put(BasicFilePermission.READ, new AttributeText('R', "Read"));
+//        attributeTextMap.put(BasicFilePermission.WRITE, new AttributeText('W', "Write"));
+//        attributeTextMap.put(BasicFilePermission.EXECUTE, new AttributeText('X', "Execute"));
         attributeTextMap.put(DosFileAttribute.ARCHIVE, new AttributeText('A', "Archive"));
         attributeTextMap.put(DosFileAttribute.HIDDEN, new AttributeText('H', "Hidden"));
         attributeTextMap.put(DosFileAttribute.READ_ONLY, new AttributeText('r', "Read-Only"));

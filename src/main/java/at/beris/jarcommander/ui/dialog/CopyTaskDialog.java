@@ -19,10 +19,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
 import java.util.List;
-
-import static at.beris.jarcommander.Application.logException;
 
 public class CopyTaskDialog extends JDialog implements ActionListener, CopyTaskListener {
     private final static org.apache.log4j.Logger LOGGER = org.apache.log4j.Logger.getLogger(CopyTaskDialog.class);
@@ -75,7 +72,7 @@ public class CopyTaskDialog extends JDialog implements ActionListener, CopyTaskL
         labelInfo = new JLabel("Copy " + countFileList() + " items to:");
         panel.add(labelInfo);
 
-        labelCopyStatus = new JLabel(targetPanel.getCurrentFile().toString());
+        labelCopyStatus = new JLabel(targetPanel.getCurrentFile().getPath());
         panel.add(labelCopyStatus);
 
         return panel;
@@ -85,12 +82,8 @@ public class CopyTaskDialog extends JDialog implements ActionListener, CopyTaskL
         int count = 0;
 
         for (VirtualFile file : fileList) {
-            try {
-                if (file.getName().equals(".."))
-                    continue;
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            if (file.getName().equals(".."))
+                continue;
             count++;
         }
 
@@ -172,14 +165,9 @@ public class CopyTaskDialog extends JDialog implements ActionListener, CopyTaskL
 
     @Override
     public int fileExists(VirtualFile file) {
-        try {
-            return JOptionPane.showConfirmDialog(this, file.getPath() + " already exists! " +
-                            System.lineSeparator() + "Would you like to overwrite it?", "File exists",
-                    JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
-        } catch (IOException e) {
-            logException(e);
-        }
-        return JOptionPane.NO_OPTION;
+        return JOptionPane.showConfirmDialog(this, file.getPath() + " already exists! " +
+                        System.lineSeparator() + "Would you like to overwrite it?", "File exists",
+                JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
     }
 
     @Override

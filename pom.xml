@@ -60,7 +60,12 @@
             <artifactId>virtualfile</artifactId>
             <version>0.2-SNAPSHOT</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.apache.tika</groupId>
+            <artifactId>tika-core</artifactId>
+            <version>1.13</version>
+            <optional>true</optional>
+        </dependency>
     </dependencies>
 
     <build>

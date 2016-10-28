@@ -15,13 +15,10 @@ import at.beris.virtualfile.util.UrlUtils;
 import org.apache.log4j.Logger;
 
 import javax.swing.table.AbstractTableModel;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
-
-import static at.beris.jarcommander.Application.logException;
 
 public class PathTableModel extends AbstractTableModel {
     private final static Logger LOGGER = Logger.getLogger(PathTableModel.class);
@@ -38,24 +35,16 @@ public class PathTableModel extends AbstractTableModel {
         LOGGER.debug("setFile");
         this.path = path;
         fileList.clear();
-        try {
-            if (!path.isRoot())
-                fileList.add(FileManager.newFile(UrlUtils.newUrl(path.getUrl(), "/../")));
+        if (!path.equals("/"))
+            fileList.add(FileManager.newFile(UrlUtils.newUrl(path.getUrl(), "/../")));
 
-            fileList.addAll(path.list());
-        } catch (IOException e) {
-            logException(e);
-        }
+        fileList.addAll(path.list());
     }
 
     public void listFile(VirtualFile file) {
         LOGGER.debug("listFile " + file);
         fileList.clear();
-        try {
-            fileList.addAll(file.list());
-        } catch (IOException e) {
-            logException(e);
-        }
+        fileList.addAll(file.list());
     }
 
     @Override
@@ -103,20 +92,15 @@ public class PathTableModel extends AbstractTableModel {
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
         VirtualFile file = fileList.get(rowIndex);
-
-        try {
-            switch (columnIndex) {
-                case 0:
-                    return file;
-                case 1:
-                    return file.getLastModifiedTime();
-                case 2:
-                    return file.getSize();
-                case 3:
-                    return file.getAttributes();
-            }
-        } catch (IOException e) {
-            logException(e);
+        switch (columnIndex) {
+            case 0:
+                return file;
+            case 1:
+                return file.getLastModifiedTime();
+            case 2:
+                return file.getSize();
+            case 3:
+                return file.getAttributes();
         }
         return null;
     }

@@ -12,7 +12,9 @@ package at.beris.jarcommander.task;
 import at.beris.jarcommander.Application;
 import at.beris.virtualfile.FileManager;
 import at.beris.virtualfile.VirtualFile;
-import at.beris.virtualfile.provider.operation.CopyListener;
+import at.beris.virtualfile.provider.operation.FileOperationListener;
+import at.beris.virtualfile.util.FileUtils;
+import at.beris.virtualfile.util.UrlUtils;
 import org.apache.log4j.Logger;
 
 import javax.swing.*;
@@ -22,7 +24,7 @@ import java.util.List;
 
 import static at.beris.jarcommander.Application.logException;
 
-public class CopyTask extends SwingWorker<Void, Integer> implements CopyListener {
+public class CopyTask extends SwingWorker<Void, Integer> implements FileOperationListener {
     private final static Logger LOGGER = org.apache.log4j.Logger.getLogger(CopyTask.class);
 
     private List<VirtualFile> sourceList;
@@ -56,7 +58,8 @@ public class CopyTask extends SwingWorker<Void, Integer> implements CopyListener
                     break;
                 if (sourceFile.getName().equals(".."))
                     continue;
-                VirtualFile targetFile = FileManager.newFile(this.targetFile, sourceFile.getUrl());
+
+                VirtualFile targetFile = FileManager.newFile(UrlUtils.newUrl(this.targetFile.getUrl(), FileUtils.getName(sourceFile.getUrl().getPath())));
                 copyFiles(sourceFile, targetFile);
             }
         } catch (Exception ex) {
@@ -81,29 +84,25 @@ public class CopyTask extends SwingWorker<Void, Integer> implements CopyListener
     }
 
     private void retrieveFileInfo(VirtualFile sourceFile) {
-        try {
-            if (sourceFile.getName().equals(".."))
-                return;
+        if (sourceFile.getName().equals(".."))
+            return;
 
-            List<VirtualFile> fileList;
-            if (sourceFile.isDirectory()) {
-                fileList = sourceFile.list();
+        List<VirtualFile> fileList;
+        if (sourceFile.isDirectory()) {
+            fileList = sourceFile.list();
+        } else {
+            fileList = Collections.singletonList(sourceFile);
+        }
+
+        for (VirtualFile file : fileList) {
+            if (file.getName().equals(".."))
+                continue;
+            if (file.isDirectory()) {
+                retrieveFileInfo(file);
             } else {
-                fileList = Collections.singletonList(sourceFile);
+                bytesTotal += file.getSize();
+                totalCountFiles++;
             }
-
-            for (VirtualFile file : fileList) {
-                if (file.getName().equals(".."))
-                    continue;
-                if (file.isDirectory()) {
-                    retrieveFileInfo(file);
-                } else {
-                    bytesTotal += file.getSize();
-                    totalCountFiles++;
-                }
-            }
-        } catch (IOException e) {
-            logException(e);
         }
     }
 
@@ -128,21 +127,17 @@ public class CopyTask extends SwingWorker<Void, Integer> implements CopyListener
 
 
     @Override
-    public void startFile(VirtualFile virtualFile, long currentFileNumber) {
-        try {
-            listener.startCopyFile(virtualFile.getName(), currentFileNumber, totalCountFiles);
-        } catch (IOException e) {
-            Application.logException(e);
-        }
+    public void startProcessingFile(VirtualFile virtualFile, long currentFileNumber) {
+        listener.startCopyFile(virtualFile.getName(), currentFileNumber, totalCountFiles);
     }
 
     @Override
-    public void finishedFile(VirtualFile virtualFile) {
+    public void finishedProcessingFile(VirtualFile virtualFile) {
 
     }
 
     @Override
-    public void afterBlockCopied(long fileSize, long bytesCopiedBlock, long bytesCopiedTotal) {
+    public void afterStreamBufferProcessed(long fileSize, long bytesCopiedBlock, long bytesCopiedTotal) {
         bytesCopied += bytesCopiedBlock;
 
         listener.setAllProgressBar((int) (bytesCopied * 100 / bytesTotal));
@@ -159,22 +154,14 @@ public class CopyTask extends SwingWorker<Void, Integer> implements CopyListener
         int result = listener.fileExists(file);
         switch (result) {
             case JOptionPane.NO_OPTION:
-                try {
-                    bytesCopied += file.getSize();
-                } catch (IOException e) {
-                    logException(e);
-                }
+                bytesCopied += file.getSize();
                 listener.setAllProgressBar((int) (bytesCopied * 100 / bytesTotal));
                 break;
             case JOptionPane.CANCEL_OPTION:
                 cancel(true);
                 break;
             default:
-                try {
-                    file.delete();
-                } catch (IOException e) {
-                    logException(e);
-                }
+                file.delete();
                 return true;
         }
         return false;

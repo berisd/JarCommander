@@ -10,7 +10,7 @@
 package at.beris.jarcommander.task;
 
 import at.beris.virtualfile.VirtualFile;
-import at.beris.virtualfile.provider.operation.CopyListener;
+import at.beris.virtualfile.provider.operation.FileOperationListener;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -36,7 +36,7 @@ public class CopyTaskTest {
         copyTask.get();
 
         for (VirtualFile sourceFile : sourceFiles)
-            Mockito.verify(sourceFile, times(1)).copy(any(VirtualFile.class), any(CopyListener.class));
+            Mockito.verify(sourceFile, times(1)).copy(any(VirtualFile.class), any(FileOperationListener.class));
     }
 
     private List<VirtualFile> createSourceFileMockList() throws IOException {

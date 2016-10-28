@@ -14,21 +14,15 @@ import at.beris.virtualfile.VirtualFile;
 import javax.swing.*;
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
-import java.io.IOException;
 
-import static at.beris.jarcommander.Application.logException;
 import static at.beris.jarcommander.ApplicationContext.SELECTION_FOREGROUND_COLOR;
 
 public class FileNameRenderer extends JLabel implements TableCellRenderer {
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         VirtualFile file = (VirtualFile) value;
-        try {
-            setText(file.getName());
-            setToolTipText(file.getName());
-        } catch (IOException e) {
-            logException(e);
-        }
+        setText(file.getName());
+        setToolTipText(file.getName());
 
         if (isSelected) {
             setForeground(SELECTION_FOREGROUND_COLOR);

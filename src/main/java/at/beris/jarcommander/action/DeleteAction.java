@@ -18,10 +18,7 @@ import org.apache.log4j.Logger;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.io.IOException;
 import java.util.List;
-
-import static at.beris.jarcommander.Application.logException;
 
 public class DeleteAction extends CustomAction {
     private final static Logger LOGGER = Logger.getLogger(DeleteAction.class);
@@ -50,13 +47,9 @@ public class DeleteAction extends CustomAction {
             int deletion = JOptionPane.showConfirmDialog(context.getApplicationWindow(), "Delete " + countFileList(sourcePanel.getSelection()) + " items?", "Deletion", JOptionPane.YES_NO_OPTION);
             if (deletion == JOptionPane.YES_OPTION) {
                 for (VirtualFile file : sourcePanel.getSelection()) {
-                    try {
-                        if (file.getName().equals(".."))
-                            continue;
-                        file.delete();
-                    } catch (IOException e) {
-                        logException(e);
-                    }
+                    if (file.getName().equals(".."))
+                        continue;
+                    file.delete();
                 }
                 sourcePanel.refresh();
             }
@@ -67,12 +60,8 @@ public class DeleteAction extends CustomAction {
         int count = 0;
 
         for (VirtualFile file : fileList) {
-            try {
-                if (file.getName().equals(".."))
-                    continue;
-            } catch (IOException e) {
-                logException(e);
-            }
+            if (file.getName().equals(".."))
+                continue;
             count++;
         }
 
