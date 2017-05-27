@@ -15,7 +15,8 @@ import at.beris.jarcommander.ui.combobox.DriveComboBox;
 import at.beris.jarcommander.ui.table.FileTable;
 import at.beris.jarcommander.ui.table.FileTablePane;
 import at.beris.virtualfile.VirtualFile;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -30,7 +31,7 @@ import java.util.List;
 import static at.beris.jarcommander.ApplicationContext.SELECTION_FOREGROUND_COLOR;
 
 public class NavigationPanel extends JPanel {
-    private final static Logger LOGGER = Logger.getLogger(NavigationPanel.class.getName());
+    private final static Logger LOGGER = LoggerFactory.getLogger(NavigationPanel.class.getName());
 
     private boolean selected;
     private Border borderNormal;

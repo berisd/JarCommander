@@ -11,18 +11,18 @@ package at.beris.jarcommander.ui.table;
 
 import at.beris.jarcommander.ApplicationContext;
 import at.beris.jarcommander.action.SelectNavigationPanelAction;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import javax.swing.JScrollPane;
-import java.awt.Point;
-import java.awt.Rectangle;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 public class FileTablePane extends JScrollPane {
-    private final static Logger LOGGER = Logger.getLogger(FileTablePane.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(FileTablePane.class);
 
     private FileTable table;
     private ApplicationContext context;

@@ -12,7 +12,8 @@ package at.beris.jarcommander.action;
 import at.beris.jarcommander.ApplicationContext;
 import at.beris.jarcommander.ui.NavigationPanel;
 import at.beris.jarcommander.ui.SessionPanel;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -25,7 +26,7 @@ import java.nio.file.Files;
 import static at.beris.jarcommander.Application.logException;
 
 public class MakeDirAction extends CustomAction {
-    private final static Logger LOGGER = Logger.getLogger(MakeDirAction.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(MakeDirAction.class);
 
     public MakeDirAction(ApplicationContext context) {
         super(context);

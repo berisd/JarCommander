@@ -13,7 +13,8 @@ import at.beris.jarcommander.ApplicationContext;
 import at.beris.jarcommander.ui.NavigationPanel;
 import at.beris.jarcommander.ui.SessionPanel;
 import at.beris.virtualfile.VirtualFile;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -21,7 +22,7 @@ import java.awt.event.KeyEvent;
 import java.util.List;
 
 public class DeleteAction extends CustomAction {
-    private final static Logger LOGGER = Logger.getLogger(DeleteAction.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(DeleteAction.class);
 
     public DeleteAction(ApplicationContext context) {
         super(context);

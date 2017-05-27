@@ -10,15 +10,15 @@
 package at.beris.jarcommander.action;
 
 import at.beris.jarcommander.ApplicationContext;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import javax.swing.Action;
-import javax.swing.KeyStroke;
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
 public class RenameAction extends CustomAction {
-    private final static Logger LOGGER = Logger.getLogger(RenameAction.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(RenameAction.class);
 
     public RenameAction(ApplicationContext context) {
         super(context);

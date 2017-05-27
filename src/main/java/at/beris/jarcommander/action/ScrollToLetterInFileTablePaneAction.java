@@ -15,14 +15,15 @@ import at.beris.jarcommander.ui.SessionPanel;
 import at.beris.jarcommander.ui.table.FileTable;
 import at.beris.jarcommander.ui.table.FileTablePane;
 import at.beris.virtualfile.VirtualFile;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 
 public class ScrollToLetterInFileTablePaneAction extends CustomAction {
-    private final static Logger LOGGER = Logger.getLogger(ScrollToLetterInFileTablePaneAction.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(ScrollToLetterInFileTablePaneAction.class);
 
     public ScrollToLetterInFileTablePaneAction(ApplicationContext context) {
         super(context);

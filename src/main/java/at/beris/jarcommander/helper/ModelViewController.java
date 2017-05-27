@@ -11,7 +11,8 @@ package at.beris.jarcommander.helper;
 
 import at.beris.jarcommander.model.AbstractModel;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
@@ -35,7 +36,7 @@ import java.util.Objects;
 import static at.beris.jarcommander.Application.logException;
 
 public class ModelViewController {
-    private final static Logger LOGGER = Logger.getLogger(ModelViewController.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(ModelViewController.class);
 
     private AbstractModel model;
     private Container view;

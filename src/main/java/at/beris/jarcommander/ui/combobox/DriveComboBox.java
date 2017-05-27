@@ -14,7 +14,8 @@ import at.beris.jarcommander.action.ChangeDriveAction;
 import at.beris.jarcommander.action.SelectNavigationPanelAction;
 import at.beris.jarcommander.filesystem.FileSystem;
 import at.beris.jarcommander.filesystem.drive.Drive;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import java.awt.*;
@@ -25,7 +26,7 @@ import java.awt.event.MouseEvent;
 
 public class DriveComboBox extends JComboBox<Drive> {
 
-    private final static Logger LOGGER = Logger.getLogger(DriveComboBox.class.getName());
+    private final static Logger LOGGER = LoggerFactory.getLogger(DriveComboBox.class.getName());
 
     private FileSystem fileSystem;
     private ApplicationContext context;

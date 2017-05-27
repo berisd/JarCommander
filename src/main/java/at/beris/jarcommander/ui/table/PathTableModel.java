@@ -12,7 +12,8 @@ package at.beris.jarcommander.ui.table;
 import at.beris.jarcommander.Application;
 import at.beris.virtualfile.VirtualFile;
 import at.beris.virtualfile.util.UrlUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.table.AbstractTableModel;
 import java.util.ArrayList;
@@ -21,7 +22,7 @@ import java.util.HashSet;
 import java.util.List;
 
 public class PathTableModel extends AbstractTableModel {
-    private final static Logger LOGGER = Logger.getLogger(PathTableModel.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(PathTableModel.class);
 
     private static final int columnCount = 4;
     private List<VirtualFile> fileList;

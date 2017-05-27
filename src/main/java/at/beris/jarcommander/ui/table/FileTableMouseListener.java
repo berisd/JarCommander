@@ -12,16 +12,15 @@ package at.beris.jarcommander.ui.table;
 import at.beris.jarcommander.ApplicationContext;
 import at.beris.jarcommander.action.ExecuteFileAction;
 import at.beris.jarcommander.action.SelectNavigationPanelAction;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import javax.swing.JTable;
-import java.awt.Component;
-import java.awt.event.ActionEvent;
+import javax.swing.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 public class FileTableMouseListener extends MouseAdapter {
-    private final static Logger LOGGER = Logger.getLogger(FileTableMouseListener.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(FileTableMouseListener.class);
 
     private ApplicationContext context;
 

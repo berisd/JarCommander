@@ -14,15 +14,15 @@ import at.beris.jarcommander.ui.NavigationPanel;
 import at.beris.jarcommander.ui.SessionPanel;
 import at.beris.jarcommander.ui.table.FileTable;
 import at.beris.jarcommander.ui.table.FileTablePane;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import javax.swing.Action;
-import javax.swing.KeyStroke;
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
 public class ScrollToBottomAction extends CustomAction {
-    private final static Logger LOGGER = Logger.getLogger(ScrollToBottomAction.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(ScrollToBottomAction.class);
 
     public ScrollToBottomAction(ApplicationContext context) {
         super(context);

@@ -14,7 +14,8 @@ import at.beris.virtualfile.VirtualFile;
 import at.beris.virtualfile.provider.operation.FileOperationListener;
 import at.beris.virtualfile.util.FileUtils;
 import at.beris.virtualfile.util.UrlUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import java.io.IOException;
@@ -24,7 +25,7 @@ import java.util.List;
 import static at.beris.jarcommander.Application.logException;
 
 public class CopyTask extends SwingWorker<Void, Integer> implements FileOperationListener {
-    private final static Logger LOGGER = org.apache.log4j.Logger.getLogger(CopyTask.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(CopyTask.class);
 
     private List<VirtualFile> sourceList;
     private VirtualFile targetFile;

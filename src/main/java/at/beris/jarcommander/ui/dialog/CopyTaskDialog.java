@@ -14,6 +14,8 @@ import at.beris.jarcommander.task.CopyTask;
 import at.beris.jarcommander.task.CopyTaskListener;
 import at.beris.jarcommander.ui.NavigationPanel;
 import at.beris.virtualfile.VirtualFile;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import java.awt.*;
@@ -22,7 +24,7 @@ import java.awt.event.ActionListener;
 import java.util.List;
 
 public class CopyTaskDialog extends JDialog implements ActionListener, CopyTaskListener {
-    private final static org.apache.log4j.Logger LOGGER = org.apache.log4j.Logger.getLogger(CopyTaskDialog.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(CopyTaskDialog.class);
 
 
     private JProgressBar progressbarCurrent;

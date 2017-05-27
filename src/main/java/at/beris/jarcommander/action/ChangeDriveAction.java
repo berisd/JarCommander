@@ -13,12 +13,13 @@ import at.beris.jarcommander.ApplicationContext;
 import at.beris.jarcommander.filesystem.drive.Drive;
 import at.beris.jarcommander.ui.NavigationPanel;
 import at.beris.jarcommander.ui.SessionPanel;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.awt.event.ActionEvent;
 
 public class ChangeDriveAction extends CustomAction {
-    private final static Logger LOGGER = Logger.getLogger(ChangeDriveAction.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(ChangeDriveAction.class);
 
     public ChangeDriveAction(ApplicationContext context) {
         super(context);

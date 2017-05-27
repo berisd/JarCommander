@@ -15,7 +15,8 @@ import at.beris.jarcommander.helper.ModelViewController;
 import at.beris.jarcommander.model.SiteListModel;
 import at.beris.jarcommander.model.SiteModel;
 import at.beris.jarcommander.ui.list.SiteCellRenderer;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -36,7 +37,7 @@ import static at.beris.jarcommander.Application.logException;
 import static at.beris.jarcommander.ApplicationContext.HOME_DIRECTORY;
 
 public class SiteManagerDialog extends JDialog {
-    private final static Logger LOGGER = Logger.getLogger(SiteManagerDialog.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(SiteManagerDialog.class);
 
     private SiteModel currentSite;
     private ModelViewController modelViewcontroller;

@@ -11,15 +11,15 @@ package at.beris.jarcommander.action;
 
 import at.beris.jarcommander.ApplicationContext;
 import at.beris.jarcommander.ui.SessionPanel;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import javax.swing.Action;
-import javax.swing.KeyStroke;
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
 public class RefreshAction extends CustomAction {
-    private final static Logger LOGGER = Logger.getLogger(RefreshAction.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(RefreshAction.class);
 
     public RefreshAction(ApplicationContext context) {
         super(context);

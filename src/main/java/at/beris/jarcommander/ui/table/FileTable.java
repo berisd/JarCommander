@@ -13,7 +13,8 @@ import at.beris.jarcommander.ApplicationContext;
 import at.beris.jarcommander.FileDefaultComparator;
 import at.beris.jarcommander.action.*;
 import at.beris.virtualfile.VirtualFile;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import javax.swing.table.TableCellRenderer;
@@ -29,7 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FileTable extends JTable {
-    private final static Logger LOGGER = Logger.getLogger(FileTablePane.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(FileTablePane.class);
 
     private TableRowSorter<TableModel> rowSorter;
     private VirtualFile path;

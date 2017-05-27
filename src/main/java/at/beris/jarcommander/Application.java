@@ -9,14 +9,15 @@
 
 package at.beris.jarcommander;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 
 public class Application {
     private final static ApplicationContext CONTEXT = new ApplicationContext();
 
-    private final static Logger LOGGER = Logger.getLogger(Application.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(Application.class);
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> CONTEXT.getApplicationWindow().setVisible(true)

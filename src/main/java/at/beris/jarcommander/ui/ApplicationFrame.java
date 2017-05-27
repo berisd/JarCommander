@@ -10,41 +10,19 @@
 package at.beris.jarcommander.ui;
 
 import at.beris.jarcommander.ApplicationContext;
-import at.beris.jarcommander.action.ActionFactory;
-import at.beris.jarcommander.action.CopyAction;
-import at.beris.jarcommander.action.DeleteAction;
-import at.beris.jarcommander.action.MakeDirAction;
-import at.beris.jarcommander.action.MoveAction;
-import at.beris.jarcommander.action.QuitAction;
-import at.beris.jarcommander.action.RefreshAction;
-import at.beris.jarcommander.action.RenameAction;
-import at.beris.jarcommander.action.ShowAboutDialogAction;
-import at.beris.jarcommander.action.ShowSiteDialogAction;
+import at.beris.jarcommander.action.*;
 import at.beris.jarcommander.ui.button.ButtonFactory;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JToolBar;
-import javax.swing.KeyStroke;
-import javax.swing.WindowConstants;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 
 public class ApplicationFrame extends JFrame {
-    private final static Logger LOGGER = Logger.getLogger(ApplicationFrame.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(ApplicationFrame.class);
     private ApplicationContext context;
     private ActionFactory actionFactory;
     private ButtonFactory buttonFactory;

@@ -9,13 +9,14 @@
 
 package at.beris.jarcommander.ui;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import javax.swing.JPanel;
-import java.awt.GridLayout;
+import javax.swing.*;
+import java.awt.*;
 
 public class SessionPanel extends JPanel {
-    private final static Logger LOGGER = Logger.getLogger(SessionPanel.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(SessionPanel.class);
 
     private NavigationPanel leftNavigationPanel;
     private NavigationPanel rightNavigationPanel;

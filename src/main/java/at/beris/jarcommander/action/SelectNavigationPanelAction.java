@@ -12,13 +12,14 @@ package at.beris.jarcommander.action;
 import at.beris.jarcommander.ApplicationContext;
 import at.beris.jarcommander.ui.NavigationPanel;
 import at.beris.jarcommander.ui.SessionPanel;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.awt.Component;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 
-    public class SelectNavigationPanelAction extends CustomAction {
-    private final static Logger LOGGER = Logger.getLogger(SelectNavigationPanelAction.class);
+public class SelectNavigationPanelAction extends CustomAction {
+    private final static Logger LOGGER = LoggerFactory.getLogger(SelectNavigationPanelAction.class);
 
     public SelectNavigationPanelAction(ApplicationContext context) {
         super(context);
