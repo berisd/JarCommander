@@ -9,7 +9,7 @@
 
 package at.beris.jarcommander.ui.table;
 
-import at.beris.virtualfile.FileManager;
+import at.beris.jarcommander.Application;
 import at.beris.virtualfile.VirtualFile;
 import at.beris.virtualfile.util.UrlUtils;
 import org.apache.log4j.Logger;
@@ -36,7 +36,7 @@ public class PathTableModel extends AbstractTableModel {
         this.path = path;
         fileList.clear();
         if (!path.equals("/"))
-            fileList.add(FileManager.newFile(UrlUtils.newUrl(path.getUrl(), "/../")));
+            fileList.add(Application.getContext().getFileManager().resolveFile(UrlUtils.newUrl(path.getUrl(), "/../")));
 
         fileList.addAll(path.list());
     }

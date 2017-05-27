@@ -9,11 +9,11 @@
 
 package at.beris.jarcommander.ui;
 
+import at.beris.jarcommander.Application;
 import at.beris.jarcommander.filesystem.drive.Drive;
 import at.beris.jarcommander.ui.combobox.DriveComboBox;
 import at.beris.jarcommander.ui.table.FileTable;
 import at.beris.jarcommander.ui.table.FileTablePane;
-import at.beris.virtualfile.FileManager;
 import at.beris.virtualfile.VirtualFile;
 import org.apache.log4j.Logger;
 
@@ -60,7 +60,7 @@ public class NavigationPanel extends JPanel {
                                                     super.keyPressed(e);
                                                     JTextField textfield = (JTextField) e.getSource();
                                                     if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-                                                        changeDirectory(FileManager.newFile(textfield.getText()));
+                                                        changeDirectory(Application.getContext().getFileManager().resolveFile(textfield.getText()));
                                                     }
                                                 }
                                             }

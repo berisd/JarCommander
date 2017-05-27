@@ -15,6 +15,7 @@ import at.beris.jarcommander.action.CustomAction;
 import at.beris.jarcommander.ui.ApplicationFrame;
 import at.beris.jarcommander.ui.UIFactory;
 import at.beris.jarcommander.ui.button.ButtonFactory;
+import at.beris.virtualfile.VirtualFileManager;
 import org.reflections.Reflections;
 
 import javax.swing.*;
@@ -33,6 +34,14 @@ public class ApplicationContext {
     private ButtonFactory buttonFactory;
     private UIFactory uiFactory;
     private Window applicationWindow;
+    private VirtualFileManager fileManager;
+
+    public VirtualFileManager getFileManager() {
+        if (fileManager == null) {
+            fileManager = VirtualFileManager.createManager();
+        }
+        return fileManager;
+    }
 
     public Window getApplicationWindow() {
         if (applicationWindow == null) {

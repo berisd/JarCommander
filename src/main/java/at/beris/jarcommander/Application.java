@@ -11,18 +11,15 @@ package at.beris.jarcommander;
 
 import org.apache.log4j.Logger;
 
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 
 public class Application {
+    private final static ApplicationContext CONTEXT = new ApplicationContext();
+
     private final static Logger LOGGER = Logger.getLogger(Application.class);
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(new Runnable() {
-                                       @Override
-                                       public void run() {
-                                           new ApplicationContext().getApplicationWindow().setVisible(true);
-                                       }
-                                   }
+        SwingUtilities.invokeLater(() -> CONTEXT.getApplicationWindow().setVisible(true)
         );
     }
 
@@ -36,5 +33,9 @@ public class Application {
         }
 
         LOGGER.warn(sb.toString());
+    }
+
+    public static ApplicationContext getContext() {
+        return CONTEXT;
     }
 }

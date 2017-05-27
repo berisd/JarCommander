@@ -9,9 +9,10 @@
 
 package at.beris.jarcommander.filesystem;
 
+import at.beris.jarcommander.Application;
 import at.beris.jarcommander.filesystem.drive.Drive;
 import at.beris.jarcommander.filesystem.drive.LocalDrive;
-import at.beris.virtualfile.FileManager;
+import at.beris.virtualfile.VirtualFileManager;
 
 import java.io.File;
 import java.io.IOException;
@@ -38,12 +39,13 @@ public class LocalFileSystem implements FileSystem {
             return driveList;
 
         boolean isOsWindows = System.getProperty("os.name").toLowerCase().indexOf("windows") >= 0;
+        VirtualFileManager fileManager = Application.getContext().getFileManager();
         try {
             if (isOsWindows) {
                 for (Path path : FileSystems.getDefault().getRootDirectories()) {
                     FileStore fileStore = Files.getFileStore(path);
                     LocalDrive driveInfo = new LocalDrive();
-                    driveInfo.setFile(FileManager.newFile(path.toUri().toURL()));
+                    driveInfo.setFile(fileManager.resolveFile(path.toUri().toURL()));
                     driveInfo.setSpaceTotal(fileStore.getTotalSpace());
                     driveInfo.setSpaceLeft(fileStore.getUsableSpace());
                     driveList.add(driveInfo);
@@ -54,7 +56,7 @@ public class LocalFileSystem implements FileSystem {
                     Path path = new File(parts[0]).toPath();
 
                     LocalDrive driveInfo = new LocalDrive();
-                    driveInfo.setFile(FileManager.newFile(path.toUri().toURL()));
+                    driveInfo.setFile(fileManager.resolveFile(path.toUri().toURL()));
                     driveInfo.setSpaceTotal(fileStore.getTotalSpace());
                     driveInfo.setSpaceLeft(fileStore.getUsableSpace());
                     driveList.add(driveInfo);

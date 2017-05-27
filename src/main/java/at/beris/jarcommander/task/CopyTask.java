@@ -10,7 +10,6 @@
 package at.beris.jarcommander.task;
 
 import at.beris.jarcommander.Application;
-import at.beris.virtualfile.FileManager;
 import at.beris.virtualfile.VirtualFile;
 import at.beris.virtualfile.provider.operation.FileOperationListener;
 import at.beris.virtualfile.util.FileUtils;
@@ -59,7 +58,7 @@ public class CopyTask extends SwingWorker<Void, Integer> implements FileOperatio
                 if (sourceFile.getName().equals(".."))
                     continue;
 
-                VirtualFile targetFile = FileManager.newFile(UrlUtils.newUrl(this.targetFile.getUrl(), FileUtils.getName(sourceFile.getUrl().getPath())));
+                VirtualFile targetFile = Application.getContext().getFileManager().resolveFile(UrlUtils.newUrl(this.targetFile.getUrl(), FileUtils.getName(sourceFile.getUrl().getPath())));
                 copyFiles(sourceFile, targetFile);
             }
         } catch (Exception ex) {

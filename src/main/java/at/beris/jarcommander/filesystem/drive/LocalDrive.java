@@ -9,7 +9,7 @@
 
 package at.beris.jarcommander.filesystem.drive;
 
-import at.beris.virtualfile.FileManager;
+import at.beris.jarcommander.Application;
 import at.beris.virtualfile.VirtualFile;
 
 public class LocalDrive implements Drive {
@@ -42,6 +42,6 @@ public class LocalDrive implements Drive {
     }
 
     public VirtualFile getPath(String path) {
-        return FileManager.newLocalFile(path);
+        return Application.getContext().getFileManager().resolveLocalFile(path);
     }
 }
